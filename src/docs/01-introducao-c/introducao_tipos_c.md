@@ -361,4 +361,4 @@ Chamadas: 2, Contador: 2
 
 ### Conclusão
 
-As variáveis em C são blocos básicos para armazenar e manipular dados. Apesar de simples em conceito, elas oferecem flexibilidade e controle sobre a memória, tornando-se uma ferramenta poderosa. No entanto, esse poder exige responsabilidade: o uso indevido de variáveis pode levar a erros difíceis de rastrear, como vazamentos de memória ou comportamento indefinido. Por isso, entender profundamente como elas funcionam é essencial para qualquer programador que queira dominar a linguagem C.
+Variáveis em C são blocos básicos para armazenar e manipular dados. Apesar de simples em conceito, elas oferecem flexibilidade e controle sobre a memória, tornando-se uma ferramenta poderosa. No entanto, esse poder exige responsabilidade: o uso indevido de variáveis pode levar a erros difíceis de rastrear, como vazamentos de memória ou comportamento indefinido. Por isso, entender profundamente como elas funcionam é essencial para qualquer programador que queira dominar a linguagem C.
