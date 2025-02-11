@@ -1,13 +1,13 @@
 # Linguagem C: Origem e Sintaxe Básica  
 
-A linguagem C é uma das mais influentes da história da computação, sendo a base para diversas outras linguagens modernas, como C++, Java, C#, e Python. Ela foi criada para atender às necessidades de desenvolvimento de sistemas operacionais e programas que exigem controle direto sobre o hardware.
+C é uma das mais influentes da história da computação, sendo a base para diversas outras linguagens tradicionais e modernas, como C++, Java, C#, e Python. Criada para atender às necessidades de desenvolvimento de sistemas operacionais e programas que exigem controle direto sobre o hardware ganhou notoriaedade rapidamente ganhou popularidade devido à sua eficiência e flexibilidade.
 
 ---
 
 ## Surgimento e Criação  
 
 ### Antecessores e Motivação  
-Antes da criação do C, linguagens como **Fortran**, **Cobol** e **ALGOL** dominavam a programação, mas cada uma possuía limitações. Essas linguagens eram voltadas principalmente para aplicações científicas e comerciais e não ofereciam controle direto sobre o hardware.  
+Linguagens como **Fortran**, **Cobol** e **ALGOL** dominavam a programação, porém possuiam limitações. Essas linguagens eram voltadas principalmente para aplicações científicas e comerciais e não ofereciam controle direto sobre o hardware algo que começou a ser necessário com o avança das tecnologias.  
 
 Nos anos 1960, **Ken Thompson**, enquanto trabalhava nos Laboratórios Bell, desenvolveu uma linguagem chamada **B** para ser usada no desenvolvimento do sistema operacional **Unix**. A linguagem B foi baseada em outra linguagem chamada **BCPL** (Basic Combined Programming Language), criada por **Martin Richards** em 1967, que era minimalista e projetada para desenvolvimento de sistemas.  
 
@@ -23,7 +23,7 @@ A linguagem C surgiu como uma extensão da B, adicionando:
 - **Estruturas de controle elaboradas**: como laços e condicionais versáteis.  
 - **Eficiência no uso de ponteiros e memória**: facilitando manipulações de baixo nível.  
 
-O primeiro grande uso do C foi na reescrita do sistema operacional Unix, que originalmente estava em Assembly. Reescrever o Unix em C, em 1973, tornou-o muito mais portátil, facilitando sua adaptação para diferentes tipos de hardware.
+O primeiro grande uso do C foi na reescrita do sistema operacional Unix, que originalmente estava em Assembly. Reescrever o Unix em C, em 1973, tornou-o mais portátil, facilitando sua adaptação para diferentes tipos de hardware.
 
 ---
 
@@ -37,17 +37,18 @@ Em 1989, o American National Standards Institute (ANSI) padronizou a linguagem C
 ---
 
 ## Impacto da Linguagem C  
+
 A criação do C foi revolucionária, pois:  
 1. **Substituiu o Assembly em muitos contextos**: oferecendo uma sintaxe mais legível e produtiva sem sacrificar o desempenho.  
 2. **Portabilidade**: programas em C podiam ser adaptados para diferentes arquiteturas com facilidade.  
-3. **Influência em outras linguagens**: O C foi a base para linguagens como C++, Java e Rust.  
+3. **Influência em outras linguagens**: Serviu como base para linguagens como C++, Java e Rust.  
 4. **Uso em sistemas críticos**: De sistemas operacionais (como Unix, Linux e Windows) até softwares embarcados em dispositivos como automóveis e aparelhos médicos.
 
 ---
 
 ## Sintaxe Básica da Linguagem C  
 
-A linguagem C é estruturada, baseada em funções, e possui uma sintaxe simples e direta. A seguir, vamos explorar os principais elementos da linguagem:  
+A linguagem C é estruturada, baseada em funções, e possui uma sintaxe simples e direta. Vamos explorar os principais elementos da linguagem:  
 
 ### Estrutura Básica de um Programa em C  
 Todo programa em C deve conter a função principal `main()`, que é o ponto de entrada.  
