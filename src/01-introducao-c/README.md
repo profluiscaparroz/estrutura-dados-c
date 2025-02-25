@@ -355,14 +355,11 @@ printf("%d\n", a);  // Imprime 15
 
 Variáveis em C são essenciais para armazenar e manipular dados durante a execução do programa. Compreender os tipos, escopos e como usá-las corretamente é fundamental para escrever programas eficientes e corretos.
 
-## Conversão Explícita (Casting)
-# Conversão de Tipos em C
-
-## Introdução
+## Conversão de Tipos em C
 
 A **conversão de tipos** em C refere-se ao processo de transformar um dado de um tipo para outro. Esse processo pode ocorrer de forma **implícita** ou **explícita** e desempenha um papel fundamental na manipulação eficiente de variáveis e operações matemáticas. Segundo Kernighan e Ritchie (1988), a conversão de tipos é essencial para evitar perda de dados e garantir que operações entre diferentes tipos sejam realizadas corretamente.
 
-## Tipos de Conversão
+### Tipos de Conversão
 
 ### 1. Conversão Implícita (Type Promotion)
 
@@ -880,8 +877,6 @@ Segundo Harbison e Steele (1995), "o uso de variáveis estáticas reduz o uso de
 
 # Escopo de Variáveis em C
 
-## Introdução
-
 O escopo de uma variável em C determina onde essa variável pode ser acessada dentro do programa. Entender os diferentes tipos de escopo é essencial para evitar erros e melhorar a eficiência do código. Segundo Kernighan e Ritchie (1988), o escopo e o tempo de vida de variáveis são aspectos fundamentais na estrutura de um programa em C.
 
 ## Tipos de Escopo
@@ -992,71 +987,154 @@ int main() {
 }
 ```
 
-## Considerações Finais
-
 Compreender o escopo de variáveis em C é crucial para evitar erros de acesso, conflitos de nomes e vazamento de memória. Segundo Kernighan e Ritchie (1988), o uso disciplinado do escopo melhora a modularidade do código e reduz efeitos colaterais inesperados.
 
-## Operadores em C
+## **Operadores em C**
 
-Os operadores em C são símbolos que instruem o compilador a realizar operações matemáticas, lógicas ou de manipulação de bits.
+Os operadores são símbolos especiais utilizados em C para realizar operações matemáticas, lógicas e de manipulação de dados. Eles desempenham um papel fundamental na programação, permitindo a construção de expressões e a execução de cálculos eficientes.
 
-### Operadores Aritméticos
-Executam operações matemáticas básicas:
+### Tipos de Operadores
+
+### 1. Operadores Aritméticos
+
+Os operadores aritméticos são usados para realizar operações matemáticas básicas.
+
+| Operador | Descrição | Exemplo |
+|----------|-----------|---------|
+| `+` | Adição | `a + b` |
+| `-` | Subtração | `a - b` |
+| `*` | Multiplicação | `a * b` |
+| `/` | Divisão | `a / b` |
+| `%` | Módulo (resto da divisão) | `a % b` |
+
+#### Exemplo em C:
 ```c
-int soma = 10 + 5; // Adição
-int subtracao = 10 - 5; // Subtração
-int multiplicacao = 10 * 5; // Multiplicação
-int divisao = 10 / 5; // Divisão
-int resto = 10 % 3; // Módulo
+#include <stdio.h>
+
+int main() {
+    int a = 10, b = 3;
+    printf("Soma: %d\n", a + b);
+    printf("Subtração: %d\n", a - b);
+    printf("Multiplicação: %d\n", a * b);
+    printf("Divisão: %d\n", a / b);
+    printf("Módulo: %d\n", a % b);
+    return 0;
+}
 ```
 
-### Operadores Relacionais
-Comparam valores e retornam verdadeiro (`1`) ou falso (`0`):
+### 2. Operadores Relacionais
+
+Os operadores relacionais são usados para comparar valores e retornam verdadeiro (1) ou falso (0).
+
+| Operador | Descrição | Exemplo |
+|----------|-----------|---------|
+| `==` | Igual a | `a == b` |
+| `!=` | Diferente de | `a != b` |
+| `>` | Maior que | `a > b` |
+| `<` | Menor que | `a < b` |
+| `>=` | Maior ou igual a | `a >= b` |
+| `<=` | Menor ou igual a | `a <= b` |
+
+#### Exemplo em C:
 ```c
-if (a == b) // Igual
-if (a != b) // Diferente
-if (a > b)  // Maior que
-if (a < b)  // Menor que
-if (a >= b) // Maior ou igual
-if (a <= b) // Menor ou igual
+#include <stdio.h>
+
+int main() {
+    int a = 10, b = 3;
+    printf("a == b: %d\n", a == b);
+    printf("a != b: %d\n", a != b);
+    printf("a > b: %d\n", a > b);
+    printf("a < b: %d\n", a < b);
+    printf("a >= b: %d\n", a >= b);
+    printf("a <= b: %d\n", a <= b);
+    return 0;
+}
 ```
 
-### Operadores Lógicos
-Usados para expressões condicionais:
+### 3. Operadores Lógicos
+
+Os operadores lógicos são usados para combinar expressões booleanas.
+
+| Operador | Descrição | Exemplo |
+|----------|-----------|---------|
+| `&&` | AND lógico | `a && b` |
+| `||` | OR lógico | `a || b` |
+| `!` | NOT lógico | `!a` |
+
+#### Exemplo em C:
 ```c
-if (a > 5 && b < 10) // AND lógico
-if (a > 5 || b < 10) // OR lógico
-if (!(a > 5))        // NOT lógico
+#include <stdio.h>
+
+int main() {
+    int a = 1, b = 0;
+    printf("a && b: %d\n", a && b);
+    printf("a || b: %d\n", a || b);
+    printf("!a: %d\n", !a);
+    return 0;
+}
 ```
 
-### Operadores Bitwise
-Operam diretamente nos bits dos números:
+### 4. Operadores de Atribuição
+
+Os operadores de atribuição são usados para armazenar valores em variáveis.
+
+| Operador | Descrição | Exemplo |
+|----------|-----------|---------|
+| `=` | Atribuição | `a = b` |
+| `+=` | Adição e atribuição | `a += b` (equivale a `a = a + b`) |
+| `-=` | Subtração e atribuição | `a -= b` |
+| `*=` | Multiplicação e atribuição | `a *= b` |
+| `/=` | Divisão e atribuição | `a /= b` |
+| `%=` | Módulo e atribuição | `a %= b` |
+
+#### Exemplo em C:
 ```c
-int resultado = a & b;  // AND bitwise
-int resultado = a | b;  // OR bitwise
-int resultado = a ^ b;  // XOR bitwise
-int resultado = ~a;     // NOT bitwise
-int resultado = a << 2; // Shift left
-int resultado = a >> 2; // Shift right
+#include <stdio.h>
+
+int main() {
+    int a = 10;
+    a += 5;
+    printf("a += 5: %d\n", a);
+    a -= 3;
+    printf("a -= 3: %d\n", a);
+    return 0;
+}
 ```
 
-### Operadores de Atribuição
-Atribuem valores a variáveis:
+### 5. Operadores Bitwise
+
+Os operadores bitwise manipulam bits diretamente.
+
+| Operador | Descrição | Exemplo |
+|----------|-----------|---------|
+| `&` | AND bitwise | `a & b` |
+| `|` | OR bitwise | `a | b` |
+| `^` | XOR bitwise | `a ^ b` |
+| `<<` | Deslocamento à esquerda | `a << 1` |
+| `>>` | Deslocamento à direita | `a >> 1` |
+
+#### Exemplo em C:
 ```c
-a += 5; // Equivalente a: a = a + 5;
-a -= 5; // Equivalente a: a = a - 5;
-a *= 5; // Equivalente a: a = a * 5;
-a /= 5; // Equivalente a: a = a / 5;
-a %= 5; // Equivalente a: a = a % 5;
+#include <stdio.h>
+
+int main() {
+    int a = 5, b = 3;
+    printf("a & b: %d\n", a & b);
+    printf("a | b: %d\n", a | b);
+    printf("a ^ b: %d\n", a ^ b);
+    printf("a << 1: %d\n", a << 1);
+    printf("a >> 1: %d\n", a >> 1);
+    return 0;
+}
 ```
 
-De acordo com Deitel e Deitel (2016), "os operadores em C são fundamentais para manipulação de dados e controle de fluxo do programa".
+Os operadores são fundamentais para manipulação de dados e controle de fluxo em C. Compreender suas aplicações e funcionamento é essencial para escrever código eficiente e claro. A escolha adequada de operadores pode influenciar diretamente no desempenho e na legibilidade do código.
 
-## Estruturas de Controle de Fluxo e Laços de Repetição em C
+## **Estruturas de Controle de Fluxo e Laços de Repetição em C**
 
 As **estruturas de controle de fluxo** e **laços de repetição** são fundamentais na programação, pois permitem a tomada de decisões e a execução repetitiva de blocos de código. Segundo Aho, Hopcroft e Ullman (1983), o controle eficiente do fluxo de execução é essencial para a construção de algoritmos otimizados e legíveis.
 
-## Estruturas Condicionais
+### Estruturas Condicionais
 O **controle condicional** em C é um dos pilares fundamentais para a tomada de decisões dentro de um programa. Ele permite que diferentes blocos de código sejam executados dependendo de certas condições. As estruturas de controle condicional mais comuns são o **if**, o **else** e o **switch**.
 
 ### 1. **Estrutura `if`**
@@ -1841,4 +1919,3 @@ Em C, as strings são tratadas como arrays de caracteres, e a manipulação dela
 - Harbison, S. P., & Steele, G. L. (1995). *C: A Reference Manual*. 
 - KERNIGHAN, Brian W.; RITCHIE, Dennis M. **The C Programming Language**. Prentice Hall, 1988.
 - TANENBAUM, A. S. **Structured Computer Organization**. 6ª ed., Pearson, 2016.
-
