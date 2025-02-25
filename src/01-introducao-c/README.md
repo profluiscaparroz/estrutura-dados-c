@@ -2,18 +2,18 @@
 
 ## Sumario
 
-[Tipos de dados e tipagem](#tipos-de-dados-e-tipagem)
-[Variáveis](#variáveis)
-[Conversão Explicíta](#conversão-explícita-casting)
-[Struct](#struct)
-[Constantes](#constantes)
-[Booleanos](#booleano)
-[Variáveis estáticas](#variáveis-estáticas)
-[Estruturas de Controle de Fluxo](#estruturas-condicionais)
-[Laços de repetição](#laços-de-repetição)
-[Estrutura de saltos](#estruturas-de-saltos-na-programação-em-c)
-[Ponteiros](#ponteiros-em-c)
-[String](#string-em-c)
+- [Tipos de dados e tipagem](#tipos-de-dados-e-tipagem)
+- [Variáveis](#variáveis)
+- [Conversão Explicíta](#conversão-explícita-casting)
+- [Struct](#struct)
+- [Constantes](#constantes)
+- [Booleanos](#booleano)
+- [Variáveis estáticas](#variáveis-estáticas)
+- [Estruturas de Controle de Fluxo](#estruturas-condicionais)
+- [Laços de repetição](#laços-de-repetição)
+- [Estrutura de saltos](#estruturas-de-saltos-na-programação-em-c)
+- [Ponteiros](#ponteiros-em-c)
+- [String](#string-em-c)
 
 ---
 
