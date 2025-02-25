@@ -15,6 +15,8 @@
 [Ponteiros](#ponteiros-em-c)
 [String](#string-em-c)
 
+---
+
 ## Tipos de dados e tipagem
 
 Em C, os tipos de dados e a tipagem são conceitos fundamentais para a definição de variáveis e a manipulação de dados. C é uma linguagem fortemente tipada, o que significa que cada variável deve ser declarada com um tipo específico e os tipos de dados devem ser compatíveis para operações aritméticas e lógicas.
