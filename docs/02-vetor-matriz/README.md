@@ -604,7 +604,278 @@ Matriz Inversa:
 1.50 -0.50
 ```
 
-### **10. Conclusão**
+Em C, é comum passar vetores e matrizes para funções para manipulação de dados. A passagem de vetores e matrizes funciona de maneira semelhante, mas há algumas nuances a serem compreendidas. Aqui, abordaremos a passagem de vetores e matrizes para funções, detalhando os conceitos e fornecendo exemplos.
+
+### **10. Passagem de Vetores para Funções**
+
+Vetores em C são, na verdade, ponteiros para o primeiro elemento da lista de dados. Quando passamos um vetor para uma função, estamos passando o endereço do primeiro elemento do vetor, e qualquer modificação feita dentro da função afetará o vetor original.
+
+**Sintaxe para passar um vetor para uma função:**
+
+```c
+void minha_funcao(int vetor[], int tamanho) {
+    // Aqui você pode manipular o vetor
+}
+```
+
+Observe que, ao passar um vetor para uma função, passamos o nome do vetor, que na verdade é um ponteiro para o primeiro elemento.
+
+#### **Exemplo 1: Passando um Vetor para uma Função**
+Aqui está um exemplo de como passar um vetor para uma função que altera seus valores:
+
+```c
+#include <stdio.h>
+
+void incrementar(int vetor[], int tamanho) {
+    for (int i = 0; i < tamanho; i++) {
+        vetor[i] += 1; // Incrementa cada elemento
+    }
+}
+
+int main() {
+    int arr[] = {1, 2, 3, 4, 5};
+    int tamanho = sizeof(arr) / sizeof(arr[0]);
+
+    printf("Antes de incrementar: ");
+    for (int i = 0; i < tamanho; i++) {
+        printf("%d ", arr[i]);
+    }
+    printf("\n");
+
+    // Passando o vetor para a função
+    incrementar(arr, tamanho);
+
+    printf("Depois de incrementar: ");
+    for (int i = 0; i < tamanho; i++) {
+        printf("%d ", arr[i]);
+    }
+    printf("\n");
+
+    return 0;
+}
+```
+
+**Saída:**
+```
+Antes de incrementar: 1 2 3 4 5 
+Depois de incrementar: 2 3 4 5 6
+```
+
+### **10.1 Passagem de Matrizes para Funções**
+
+Matrizes também são passadas para funções como ponteiros, mas devido à sua estrutura bidimensional, a forma de passagem é ligeiramente diferente.
+
+**Sintaxe para passar uma matriz para uma função:**
+
+```c
+void minha_funcao(int matriz[][COLUNAS], int linhas) {
+    // Aqui você pode manipular a matriz
+}
+```
+
+Note que precisamos especificar o número de colunas na definição da matriz, mas o número de linhas pode ser flexível. Também é possível usar o ponteiro para uma matriz bidimensional, mas a forma mais comum é usar a notação de `matriz[][]`.
+
+#### **Exemplo 2: Passando uma Matriz para uma Função**
+Aqui está um exemplo de como passar uma matriz para uma função e realizar uma operação, como somar uma constante a todos os seus elementos:
+
+```c
+#include <stdio.h>
+
+#define LINHAS 3
+#define COLUNAS 3
+
+void somar_constante(int matriz[LINHAS][COLUNAS], int constante) {
+    for (int i = 0; i < LINHAS; i++) {
+        for (int j = 0; j < COLUNAS; j++) {
+            matriz[i][j] += constante; // Soma a constante a cada elemento
+        }
+    }
+}
+
+int main() {
+    int matriz[LINHAS][COLUNAS] = {
+        {1, 2, 3},
+        {4, 5, 6},
+        {7, 8, 9}
+    };
+
+    printf("Matriz antes da soma:\n");
+    for (int i = 0; i < LINHAS; i++) {
+        for (int j = 0; j < COLUNAS; j++) {
+            printf("%d ", matriz[i][j]);
+        }
+        printf("\n");
+    }
+
+    // Passando a matriz para a função
+    somar_constante(matriz, 5);
+
+    printf("Matriz depois da soma de 5:\n");
+    for (int i = 0; i < LINHAS; i++) {
+        for (int j = 0; j < COLUNAS; j++) {
+            printf("%d ", matriz[i][j]);
+        }
+        printf("\n");
+    }
+
+    return 0;
+}
+```
+
+**Saída:**
+```
+Matriz antes da soma:
+1 2 3 
+4 5 6 
+7 8 9 
+Matriz depois da soma de 5:
+6 7 8 
+9 10 11 
+12 13 14
+```
+
+### **10.3 Passagem de Matrizes Dinâmicas para Funções**
+
+Se você estiver usando alocação dinâmica para criar uma matriz (com `malloc` ou `calloc`), a passagem para funções será um pouco diferente. Em vez de passar o nome da matriz, você passará o ponteiro para o primeiro elemento da matriz alocada dinamicamente.
+
+#### **Exemplo 3: Matrizes Dinâmicas**
+Aqui vamos alocar dinamicamente uma matriz 2x2 e passar para uma função para alterar seus elementos.
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+void modificar_matriz(int **matriz, int linhas, int colunas) {
+    for (int i = 0; i < linhas; i++) {
+        for (int j = 0; j < colunas; j++) {
+            matriz[i][j] *= 2; // Multiplica cada elemento por 2
+        }
+    }
+}
+
+int main() {
+    int linhas = 2, colunas = 2;
+    
+    // Alocando memória para a matriz dinamicamente
+    int **matriz = (int **)malloc(linhas * sizeof(int *));
+    for (int i = 0; i < linhas; i++) {
+        matriz[i] = (int *)malloc(colunas * sizeof(int));
+    }
+
+    // Inicializando a matriz
+    matriz[0][0] = 1; matriz[0][1] = 2;
+    matriz[1][0] = 3; matriz[1][1] = 4;
+
+    printf("Matriz antes da modificação:\n");
+    for (int i = 0; i < linhas; i++) {
+        for (int j = 0; j < colunas; j++) {
+            printf("%d ", matriz[i][j]);
+        }
+        printf("\n");
+    }
+
+    // Passando a matriz para a função
+    modificar_matriz(matriz, linhas, colunas);
+
+    printf("Matriz depois da modificação:\n");
+    for (int i = 0; i < linhas; i++) {
+        for (int j = 0; j < colunas; j++) {
+            printf("%d ", matriz[i][j]);
+        }
+        printf("\n");
+    }
+
+    // Liberando memória alocada
+    for (int i = 0; i < linhas; i++) {
+        free(matriz[i]);
+    }
+    free(matriz);
+
+    return 0;
+}
+```
+
+**Saída:**
+```
+Matriz antes da modificação:
+1 2 
+3 4 
+Matriz depois da modificação:
+2 4 
+6 8
+```
+
+### **10.4 Passagem de Matrizes para Funções com Ponteiros**
+Em vez de passar uma matriz bidimensional diretamente para uma função, você pode passar um ponteiro para um bloco de memória contínuo, o que pode ser útil em certas situações de alocação dinâmica.
+
+#### **Exemplo 4: Usando Ponteiros para Passar Matrizes**
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+void modificar_matriz(int *matriz, int linhas, int colunas) {
+    for (int i = 0; i < linhas; i++) {
+        for (int j = 0; j < colunas; j++) {
+            matriz[i * colunas + j] += 10; // Adiciona 10 a cada elemento
+        }
+    }
+}
+
+int main() {
+    int linhas = 2, colunas = 2;
+    
+    // Alocando memória para a matriz dinamicamente
+    int *matriz = (int *)malloc(linhas * colunas * sizeof(int));
+
+    // Inicializando a matriz
+    matriz[0] = 1; matriz[1] = 2;
+    matriz[2] = 3; matriz[3] = 4;
+
+    printf("Matriz antes da modificação:\n");
+    for (int i = 0; i < linhas; i++) {
+        for (int j = 0; j < colunas; j++) {
+            printf("%d ", matriz[i * colunas + j]);
+        }
+        printf("\n");
+    }
+
+    // Passando a matriz para a função
+    modificar_matriz(matriz, linhas, colunas);
+
+    printf("Matriz depois da modificação:\n");
+    for (int i = 0; i < linhas; i++) {
+        for (int j = 0; j < colunas; j++) {
+            printf("%d ", matriz[i * colunas + j]);
+        }
+        printf("\n");
+    }
+
+    // Liberando memória alocada
+    free(matriz);
+
+    return 0;
+}
+```
+
+**Saída:**
+```
+Matriz antes da modificação:
+1 2 
+3 4 
+Matriz depois da modificação:
+11 12 
+13 14
+```
+
+---
+
+### **Considerações Finais**
+- **Vetores** são passados por referência para funções, ou seja, qualquer modificação dentro da função afetará o vetor original.
+- **Matrizes** funcionam de forma semelhante a vetores em termos de passagem de dados, mas, por serem bidimensionais, exigem um pouco mais de atenção na manipulação e nas funções.
+- **Matrizes dinâmicas** podem ser alocadas dinamicamente usando `malloc` ou `calloc`, e sua passagem para funções pode ser feita com ponteiros.
+
+
+### **Conclusão**
 
 Matrizes são uma parte fundamental das estruturas de dados e são amplamente utilizadas em computação científica, processamento de imagens, gráficos, álgebra linear e em muitas outras áreas. O conhecimento sobre como manipular matrizes é essencial para a construção de algoritmos eficientes e para a resolução de problemas complexos em muitas disciplinas da ciência da computação. 
 
