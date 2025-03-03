@@ -34,7 +34,14 @@ Os vetores possuem características fundamentais que os diferenciam de outras es
 - **Elemento de vetor**: Os elementos são itens armazenados e podem ser acessados por seu índice.
 - **Comprimento do vetor**: O comprimento é determinado pelo número de elementos que ela pode conter.
 
----
+#### Exemplo conceitual
+
+|Índice:   |  0  |  1  |  2  |  3  |  4  |
+|----------|------|-----|-----|-----|------|
+|Valor:    | 10  | 20  | 30  | 40  | 50  |
+|Endereço Memória:    | xB0451fa0  | xB0451fa4  | xB0451fa8  | xB0415fac  | xB0415fb0  |
+
+
 
 ## **3. Declaração e Inicialização de Vetores**  
 
@@ -339,6 +346,7 @@ Compreender **busca, ordenação e manipulação dinâmica** de vetores é essen
 As **matrizes** são estruturas matemáticas fundamentais utilizadas para organizar e manipular dados numéricos em diversas áreas da matemática e ciências aplicadas. Elas são representadas como **tabelas retangulares de números**, organizadas em **linhas e colunas**.  
 
 Uma matriz com $m$ linhas e $n$ colunas é chamada de **matriz $m \times n$ (m por n)** e pode ser representada da seguinte forma:  
+
 
 $A = \begin{bmatrix} a_{11} & a_{12} & \dots & a_{1n} \\ a_{21} & a_{22} & \dots & a_{2n} \\ \vdots & \vdots & \ddots & \vdots \\ a_{m1} & a_{m2} & \dots & a_{mn} \end{bmatrix}$
 
