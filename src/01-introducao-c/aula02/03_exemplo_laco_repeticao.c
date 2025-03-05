@@ -144,10 +144,10 @@ int main(void) {
     exemploContinue();
     exibirIdadePares();
 
-    int idades[] = {15, 25, 36, 40, 85, 74, 12, 30};
-    printf("%d\n", sizeof(idades));
-    printf("%d", sizeof(idades[0]));
-    printf("%d", sizeof(idades) / sizeof(idades[0]));
+    unsigned int idades[] = {15, 25, 36, 40, 85, 74, 12, 30};
+    printf("%lu\n", sizeof(idades));
+    printf("%lu", sizeof(idades[0]));
+    printf("%lu", sizeof(idades) / sizeof(idades[0]));
     size_t tamanho = sizeof(idades) / sizeof(idades[0]);
     for (int i = 0; i < tamanho; i++)
     {
