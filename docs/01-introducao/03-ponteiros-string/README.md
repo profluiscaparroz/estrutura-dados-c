@@ -434,7 +434,7 @@ Os principais métodos para alocação dinâmica são:
 
 ---
 
-## 🔹 `malloc()` – Alocação de Memória Simples
+##  `malloc()` – Alocação de Memória Simples
 
 A função `malloc` aloca um bloco de memória de tamanho especificado e retorna um ponteiro para o primeiro byte desse bloco. A memória alocada **não é inicializada**, ou seja, pode conter lixo.
 
@@ -475,14 +475,14 @@ int main() {
     return 0;
 }
 ```
-### 🚨 Cuidados:
+###  Cuidados:
 1. **A memória não é inicializada:** pode conter valores aleatórios (lixo).
 2. **Se `malloc` falhar, retorna `NULL`**, então sempre verifique a alocação antes de usar a memória.
 3. **Deve ser liberada com `free`** para evitar vazamento de memória.
 
 ---
 
-## 🔹 `calloc()` – Alocação Contínua com Inicialização
+##  `calloc()` – Alocação Contínua com Inicialização
 
 A função `calloc` também aloca memória dinamicamente, mas tem duas diferenças principais em relação ao `malloc`:
 1. **Zera a memória alocada** (preenche com `0`).
@@ -520,14 +520,14 @@ int main() {
     return 0;
 }
 ```
-### 🚨 Cuidados:
+###  Cuidados:
 1. **Mais seguro que `malloc`** porque inicializa a memória com zero.
 2. **Pode ser mais lento** do que `malloc`, pois faz a inicialização dos bytes.
 3. **Também deve ser liberado com `free`**.
 
 ---
 
-## 🔹 `free()` – Liberando Memória
+##  `free()` – Liberando Memória
 
 A função `free` é usada para liberar a memória alocada por `malloc` ou `calloc`, evitando vazamento de memória.
 
@@ -553,7 +553,7 @@ int main() {
     return 0;
 }
 ```
-### 🚨 Cuidados:
+###  Cuidados:
 1. **Após `free(ptr)`, o ponteiro ainda pode conter o endereço antigo**, então é comum definir `ptr = NULL` para evitar acesso acidental:
    ```c
    free(ptr);
@@ -572,16 +572,112 @@ int main() {
 
 ---
 
-## 🔹 Comparação Entre `malloc` e `calloc`
+##  Comparação Entre `malloc` e `calloc`
 
 | Função  | Inicializa Memória? | Parâmetros | Melhor para |
 |---------|--------------------|------------|-------------|
 | `malloc` | ❌ Não | `malloc(tamanho)` | Alocar memória rapidamente sem necessidade de inicialização. |
-| `calloc` | ✅ Sim (com zeros) | `calloc(n, tamanho)` | Alocar memória inicializada com zero. |
+| `calloc` |  Sim (com zeros) | `calloc(n, tamanho)` | Alocar memória inicializada com zero. |
+
+---
+#  `realloc()` – Realocação Dinâmica de Memória em C
+
+A função `realloc` (reallocation) permite **ajustar dinamicamente** o tamanho de um bloco de memória previamente alocado com `malloc` ou `calloc`. Isso é útil quando precisamos expandir ou reduzir o espaço ocupado sem perder os dados já armazenados.
 
 ---
 
-## 🔹 Resumo e Boas Práticas
+##  Sintaxe:
+```c
+void *realloc(void *ptr, size_t novo_tamanho);
+```
+- `ptr`: Ponteiro para o bloco de memória previamente alocado.
+- `novo_tamanho`: Novo tamanho, em bytes, que o bloco deve ter.
+- Retorna um ponteiro para o novo bloco de memória ou `NULL` se a realocação falhar.
+
+---
+
+##  Características do `realloc`
+- **Se `ptr` for `NULL`**, `realloc` age como `malloc(novo_tamanho)`.
+- **Se `novo_tamanho` for 0**, `realloc` age como `free(ptr)`.
+- **Se a realocação falhar**, retorna `NULL`, mas **o bloco original não é alterado**.
+- **Os dados originais são preservados**, mas podem ser movidos para uma nova posição na memória.
+
+---
+
+## 🔍 Exemplo: Aumentando um Array Dinâmico
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int main() {
+    int *arr = (int *) malloc(2 * sizeof(int));
+    if (arr == NULL) {
+        printf("Falha na alocação inicial.\n");
+        return 1;
+    }
+
+    arr[0] = 10;
+    arr[1] = 20;
+
+    // Redimensionando o array para armazenar mais 3 elementos
+    arr = (int *) realloc(arr, 5 * sizeof(int));
+    if (arr == NULL) {
+        printf("Falha na realocação de memória.\n");
+        return 1;
+    }
+
+    arr[2] = 30;
+    arr[3] = 40;
+    arr[4] = 50;
+
+    for (int i = 0; i < 5; i++)
+        printf("%d ", arr[i]);
+
+    free(arr);
+    return 0;
+}
+```
+ **Se `realloc` precisar mover os dados**, ele automaticamente copia o conteúdo para um novo bloco.
+
+---
+
+## ⚠️ Cuidados com `realloc`
+
+### 1️⃣ **Falha na realocação**
+```c
+int *novo_ptr = (int *) realloc(ptr, novo_tamanho);
+if (novo_ptr == NULL) {
+    // ERRO: `ptr` ainda aponta para o bloco original, evite sobrescrevê-lo
+}
+```
+ **Solução segura:**
+```c
+int *temp = (int *) realloc(ptr, novo_tamanho);
+if (temp != NULL) {
+    ptr = temp;
+} else {
+    printf("Falha na realocação.\n");
+}
+```
+---
+
+### 2️⃣ **Redução do tamanho**
+Se `realloc` reduzir o tamanho, os dados excedentes podem ser perdidos.
+
+```c
+ptr = (int *) realloc(ptr, 2 * sizeof(int)); 
+```
+ **Garanta que os dados importantes ainda sejam acessíveis antes de reduzir.**
+
+---
+
+##  Conclusão
+- `realloc` é útil para **crescimento dinâmico de estruturas** sem perder os dados já armazenados.
+- Sempre **verifique se o retorno não é `NULL`** antes de sobrescrever o ponteiro original.
+- Use `realloc(NULL, size)` para alocar nova memória e `realloc(ptr, 0)` para liberar.
+
+
+##  Resumo e Boas Práticas
 
 1. **Use `malloc` se não precisar de inicialização.**
 2. **Use `calloc` se precisar que os valores iniciem em zero.**
