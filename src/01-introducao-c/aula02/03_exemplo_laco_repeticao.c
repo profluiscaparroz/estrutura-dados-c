@@ -149,7 +149,7 @@ int main(void) {
     printf("%lu", sizeof(idades[0]));
     printf("%lu", sizeof(idades) / sizeof(idades[0]));
     size_t tamanho = sizeof(idades) / sizeof(idades[0]);
-    for (int i = 0; i < tamanho; i++)
+    for (size_t i = 0; i <= tamanho; i++)
     {
         ehMaiorDeIdade(idades[i]);
     }
