@@ -1302,7 +1302,7 @@ int main() {
 ---
 
 ## **Explicação Passo a Passo**
-### **1️⃣ Representação da Imagem como Matriz**
+### **Representação da Imagem como Matriz**
 A imagem é carregada em uma **matriz de pixels** no formato **RGB**, onde cada pixel é representado por **três valores (R, G, B)**.  
 
 Podemos imaginar a imagem como uma **tabela bidimensional**:
@@ -1319,7 +1319,7 @@ Cada posição da matriz contém **três números** que representam os valores *
 
 ---
 
-### **2️⃣ Percorrendo a Matriz e Aplicando o Filtro**
+### **Percorrendo a Matriz e Aplicando o Filtro**
 Para converter a imagem para **tons de cinza**, percorremos cada pixel e aplicamos a média dos três valores RGB:
 
 ```c
@@ -1329,12 +1329,12 @@ Isso substitui os valores RGB pelo mesmo número, resultando em um tom de cinza.
 
 ---
 
-### **3️⃣ Salvando a Nova Imagem**
+### **Salvando a Nova Imagem**
 Após modificar os valores na matriz, salvamos a nova imagem usando **libjpeg**.
 
 ---
 
-## **💻 Como Compilar e Rodar**
+## **Como Compilar e Rodar**
 Salve o código como `filtro_imagem.c` e compile com `gcc` (incluindo a libjpeg):
 
 ```bash
@@ -1350,7 +1350,6 @@ Isso criará um novo arquivo chamado **`imagem_cinza.jpg`**, que será a versão
 
 ---
 
-## ** Conclusão**
 - **Imagens podem ser representadas como matrizes bidimensionais**.
 - **Cada pixel pode ser acessado e modificado percorrendo essa matriz**.
 - **Usamos um filtro de cinza como exemplo de manipulação de imagem**.
@@ -1360,10 +1359,10 @@ Para rodar o código de manipulação de imagem em **Windows**, você precisa in
 
 ---
 
-## ** Passo 1: Instalar o MinGW e a libjpeg**
+## **Passo 1: Instalar o MinGW e a libjpeg**
 No Windows, o **GCC** pode ser usado através do **MinGW-w64**. Você também precisa da **libjpeg-turbo**, que é uma versão otimizada da **libjpeg**.
 
-### **1️⃣ Instalar MinGW-w64**
+### **1️ Instalar MinGW-w64**
 Se ainda não tem o **GCC** instalado no Windows, siga estes passos:
 
 1. Baixe o instalador do **MinGW-w64**:  
@@ -1371,7 +1370,7 @@ Se ainda não tem o **GCC** instalado no Windows, siga estes passos:
 2. Escolha a versão **"UCRT"** (Universal C Runtime).
 3. Instale e configure as variáveis de ambiente do Windows para incluir o caminho `C:\mingw-w64\bin`.
 
-### **2️⃣ Instalar libjpeg-turbo**
+### **2️ Instalar libjpeg-turbo**
 Agora, baixe e instale a biblioteca **libjpeg-turbo**:
 
 1. Vá para 👉 [https://libjpeg-turbo.org/](https://libjpeg-turbo.org/Downloads)
@@ -1380,7 +1379,7 @@ Agora, baixe e instale a biblioteca **libjpeg-turbo**:
 
 ---
 
-## ** Passo 2: Configurar o GCC para usar a libjpeg**
+## **Passo 2: Configurar o GCC para usar a libjpeg**
 Agora você precisa configurar o compilador para encontrar a **libjpeg**.
 
 1. Adicione o caminho dos arquivos **de inclusão** (`.h`) e **de biblioteca** (`.a`) ao seu compilador.  
@@ -1394,7 +1393,7 @@ Agora você precisa configurar o compilador para encontrar a **libjpeg**.
 
 ---
 
-## **💻 Compilando e Rodando**
+## **Compilando e Rodando**
 Agora que tudo está configurado, compile o código no terminal (CMD ou PowerShell):
 
 ```bash
@@ -1606,7 +1605,7 @@ Para rodar:
 
 
 
-## ** Dicas e Solução de Problemas**
+## **Dicas e Solução de Problemas**
 Se tiver problemas:
 1. Verifique se **libjpeg-turbo** está instalada corretamente.
 2. Confirme que o **GCC** está no `PATH` (`gcc --version` deve funcionar no terminal).
@@ -1801,21 +1800,21 @@ image = cv2.imread(image_path)
 ### **2️ Aplicação de Filtros**
 Agora, aplicamos **diferentes filtros de processamento de imagens** para transformar a imagem original.  
 
-#### ** Filtro 1: Borramento Gaussiano (Gaussian Blur)**
+#### **Filtro 1: Borramento Gaussiano (Gaussian Blur)**
 ```python
 blur_image = cv2.GaussianBlur(image, (5, 5), 0)
 ```
 - **Reduz o ruído** e **suaviza** a imagem.
 - O `(5,5)` define o tamanho da matriz usada para calcular o desfoque.
 
-#### ** Filtro 2: Suavização Média (Média Móvel)**
+#### **Filtro 2: Suavização Média (Média Móvel)**
 ```python
 average_image = cv2.blur(image, (5, 5))
 ```
 - Cada pixel é substituído pela **média** dos pixels vizinhos.
 - Mais simples que o Gaussian Blur, mas pode causar **perda de detalhes**.
 
-#### ** Filtro 3: Realce de Bordas (Sharpening)**
+#### **Filtro 3: Realce de Bordas (Sharpening)**
 ```python
 sharpen_kernel = np.array([[ 0, -1,  0],
                             [-1,  5, -1],
@@ -1825,7 +1824,7 @@ sharpen_image = cv2.filter2D(image, -1, sharpen_kernel)
 - Usa **uma matriz (kernel)** que enfatiza diferenças de cor para **destacar os detalhes da imagem**.
 - Muito utilizado para **realçar imagens desfocadas**.
 
-#### ** Filtro 4: Detecção de Bordas (Sobel)**
+#### **Filtro 4: Detecção de Bordas (Sobel)**
 ```python
 sobelx = cv2.Sobel(image, cv2.CV_64F, 1, 0, ksize=5)  # Bordas horizontais
 sobely = cv2.Sobel(image, cv2.CV_64F, 0, 1, ksize=5)  # Bordas verticais
@@ -1834,14 +1833,14 @@ sobel_image = cv2.magnitude(sobelx, sobely)
 - O operador **Sobel** detecta bordas na direção horizontal (`sobelx`) e vertical (`sobely`).
 - A magnitude das bordas é calculada para destacar as diferenças.
 
-#### ** Filtro 5: Detecção de Contornos (Canny)**
+#### **Filtro 5: Detecção de Contornos (Canny)**
 ```python
 edges_image = cv2.Canny(image, 100, 200)
 ```
 - **Identifica bordas nítidas** com base em gradientes de intensidade.
 - `100` e `200` são os **limiares para detectar bordas** (ajustáveis para mais precisão).
 
-#### ** Filtro 6: Relevo (Emboss)**
+#### **Filtro 6: Relevo (Emboss)**
 ```python
 emboss_kernel = np.array([[-2, -1, 0],
                            [-1,  1, 1],
@@ -1851,7 +1850,7 @@ emboss_image = cv2.filter2D(image, -1, emboss_kernel)
 - Realça **texturas e formas**, criando um **efeito de relevo**.
 - Amplamente usado em **edição de fotos e arte digital**.
 
-#### ** Filtro 7: Detecção de Bordas Laplaciano**
+#### **Filtro 7: Detecção de Bordas Laplaciano**
 ```python
 laplacian_image = cv2.Laplacian(image, cv2.CV_64F)
 ```
