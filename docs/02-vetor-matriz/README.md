@@ -72,18 +72,57 @@ Os vetores permitem diversas operações fundamentais:
 ### **4.1 Percorrer um Vetor**
 Percorrer um vetor é uma das operações mais comuns e consiste em passar pelos elementos das matriz. Podemos **usar qualquer estrutura de repetição**. Abaixo usamos um loop `for` para percorrer todos os elementos do vetor:
 ```c
+#include <stdlib.h>
 #include <stdio.h>
 
-int main() {
-    int numeros[5] = {1, 2, 3, 4, 5};
-
-    for (int i = 0; i < 5; i++) {
-        printf("%d ", numeros[i]);
+// Função para procurar um item em um vetor
+// Parâmetros:
+// - vetor: ponteiro para o vetor de inteiros
+// - tamanho: número de elementos no vetor
+// - item: valor a ser procurado no vetor
+// Retorna:
+// - A posição do item no vetor, se encontrado
+// - -1, se o item não for encontrado
+int procurarItem(int *vetor, int tamanho, int item) {
+    // Itera sobre os elementos do vetor
+    for (int i = 0; i < tamanho; i++) {
+        if (vetor[i] == item) { // Verifica se o elemento atual é igual ao item procurado
+            return i; // Retorna a posição do item encontrado
+        }
     }
-    
-    return 0;
+    return -1; // Retorna -1 se o item não for encontrado
+}
+
+int main() {
+    // Declaração e inicialização do vetor
+    int vetor[] = {1, 2, 3, 4, 5};
+    int tamanho = 5; // Tamanho do vetor
+    int item = 3; // Item a ser procurado
+
+    // Chama a função procurarItem e armazena a posição do item
+    int posicao = procurarItem(vetor, tamanho, item);
+
+    // Verifica se o item foi encontrado
+    if (posicao != -1) {
+        // Exibe a posição do item encontrado
+        printf("O item %d foi encontrado na posicao %d\n", item, posicao);
+    } else {
+        // Exibe mensagem caso o item não seja encontrado
+        printf("O item %d nao foi encontrado\n", item);
+    }
+
+    return 0; // Retorna 0 indicando que o programa foi executado com sucesso
 }
 ```
+
+#### Explicacao do código 
+
+O código apresentado implementa uma função chamada procurarItem que busca um item específico em um vetor de inteiros e retorna sua posição, além de um programa principal que demonstra o uso dessa função. A lógica é simples e eficiente para vetores pequenos, utilizando uma busca linear para localizar o item desejado.
+
+A função **procurarItem** recebe três parâmetros: **um ponteiro para o vetor (int *vetor), o tamanho do vetor (int tamanho) e o item a ser procurado (int item)**. Ela utiliza um laço for para iterar sobre os elementos do vetor, comparando cada elemento com o item fornecido. Se o item for encontrado, a função retorna imediatamente a posição do elemento no vetor. Caso o laço termine sem encontrar o item, a função retorna -1, indicando que o item não está presente no vetor.
+
+No programa principal (main), um vetor de inteiros é inicializado com cinco elementos, e o tamanho do vetor é armazenado em uma variável separada. O item a ser procurado é definido como 3. A função **procurarItem** é chamada, e sua saída (a posição do item no vetor ou -1) é armazenada na variável posicao. Em seguida, o programa verifica o valor de posicao. Se for diferente de -1, uma mensagem é exibida indicando que o item foi encontrado, junto com sua posição no vetor. Caso contrário, uma mensagem informa que o item não foi encontrado.
+
 
 ### **4.2 Inserção de Elementos**
 A inserção em um vetor estático só pode ser feita **substituindo valores existentes** ou **realocando memória** em um vetor dinâmico.
@@ -93,48 +132,302 @@ Para adicionar um elemento no final de um vetor dinâmico:
 #include <stdio.h>
 #include <stdlib.h>
 
-int main() {
-    int capacidade = 2, tamanho = 0;
-    int *vetor = (int *)malloc(capacidade * sizeof(int));
+// Função para inserir um item em um vetor, utilizando ponteiros para manipular o tamanho do vetor
+int inserirItem(int *vetor, int *tamanho, int posicao, int item) {
+    // Verifica se a posição é válida
+    if (posicao < 0 || posicao > *tamanho) {
+        return -1; // Retorna -1 se a posição for inválida
+    }
+    // Realoca o vetor para acomodar o novo item
+    vetor = (int *)realloc(vetor, (*tamanho + 1) * sizeof(int));
+    // Desloca os elementos para abrir espaço para o novo item
+    for (int i = *tamanho; i > posicao; i--) {
+        vetor[i] = vetor[i - 1];
+    }
+    vetor[posicao] = item; // Insere o novo item na posição desejada
+    (*tamanho)++; // Incrementa o tamanho do vetor
+    return posicao; // Retorna a posição do item inserido
+}
 
-    for (int i = 0; i < 5; i++) {
-        if (tamanho == capacidade) {
-            capacidade *= 2; // Dobra a capacidade
-            vetor = (int *)realloc(vetor, capacidade * sizeof(int));
+// Função para inserir um item em um vetor, sem utilizar ponteiros para o tamanho
+int inserirItemSemPonteiros(int vetor[], int tamanho, int posicao, int item) {
+    // Verifica se a posição é válida
+    if (posicao < 0 || posicao > tamanho) {
+        return -1; // Retorna -1 se a posição for inválida
+    }
+    // Desloca os elementos para abrir espaço para o novo item
+    for (int i = tamanho; i > posicao; i--) {
+        vetor[i] = vetor[i - 1];
+    }
+    vetor[posicao] = item; // Insere o novo item na posição desejada
+    return posicao; // Retorna a posição do item inserido
+}
+
+int main() {
+    // Declaração e inicialização do vetor
+    int *vetor = (int *)malloc(5 * sizeof(int));
+    vetor[0] = 1;
+    vetor[1] = 2;
+    vetor[2] = 4;
+    vetor[3] = 5;
+    int tamanho = 4; // Tamanho inicial do vetor
+    int posicao = 2; // Posição para inserir o novo item
+    int item = 3; // Item a ser inserido
+
+    // Chama a função inserirItem e armazena a posição do item inserido
+    int posicaoInserida = inserirItem(vetor, &tamanho, posicao, item);
+
+    // Verifica se o item foi inserido
+    if (posicaoInserida != -1) {
+        printf("O item %d foi inserido na posicao %d\n", item, posicaoInserida);
+        // Imprime o vetor atualizado
+        for (int i = 0; i < tamanho; i++) {
+            printf("%d ", vetor[i]);
         }
-        vetor[tamanho++] = i * 10;
+    } else {
+        printf("Posicao invalida para insercao\n");
     }
 
-    free(vetor); // Libera memória alocada
-    return 0;
+    free(vetor); // Libera a memória alocada para o vetor
+
+    return 0; // Retorna 0 indicando que o programa foi executado com sucesso
 }
+// Output: O item 3 foi inserido na posicao 2
 ```
+
+O código apresentado implementa duas funções para inserir um item em um vetor, além de um programa principal que demonstra o uso dessas funções. A lógica principal envolve verificar a validade da posição de inserção, deslocar os elementos do vetor para abrir espaço e, no caso da primeira função, realocar a memória do vetor dinamicamente.
+
+#### **Função `inserirItem`**
+Essa função insere um item em um vetor utilizando ponteiros para manipular o tamanho do vetor. Ela recebe como parâmetros:
+- `int *vetor`: Ponteiro para o vetor.
+- `int *tamanho`: Ponteiro para o tamanho do vetor.
+- `int posicao`: Posição onde o item será inserido.
+- `int item`: O valor do item a ser inserido.
+
+**Passos da função:**
+1. **Validação da posição:** Verifica se a posição fornecida é válida (entre `0` e o tamanho atual do vetor). Caso contrário, retorna `-1`.
+2. **Realocação de memória:** Usa a função `realloc` para aumentar o tamanho do vetor em uma unidade, permitindo a inserção de um novo elemento.
+3. **Deslocamento dos elementos:** Move os elementos do vetor, a partir da posição de inserção, uma posição à frente para abrir espaço para o novo item.
+4. **Inserção do item:** Insere o novo item na posição especificada.
+5. **Atualização do tamanho:** Incrementa o tamanho do vetor.
+6. **Retorno:** Retorna a posição onde o item foi inserido.
+
+#### **Função `inserirItemSemPonteiros`**
+Essa função é semelhante à anterior, mas não utiliza ponteiros para o tamanho do vetor. Ela trabalha com uma cópia do tamanho passado como argumento, o que significa que o tamanho do vetor original não será atualizado fora do escopo da função. Além disso, não realiza a realocação de memória, assumindo que o vetor já possui espaço suficiente para o novo item.
+
+**Passos da função:**
+1. **Validação da posição:** Verifica se a posição fornecida é válida.
+2. **Deslocamento dos elementos:** Move os elementos do vetor para abrir espaço.
+3. **Inserção do item:** Insere o item na posição especificada.
+4. **Retorno:** Retorna a posição onde o item foi inserido.
+
+#### **Função `main`**
+O programa principal demonstra o uso da função `inserirItem`. Ele realiza as seguintes operações:
+1. **Declaração e inicialização do vetor:** Um vetor dinâmico é alocado com espaço para 5 elementos, e os primeiros 4 elementos são inicializados.
+2. **Definição do tamanho, posição e item:** O tamanho inicial do vetor é definido como `4`, a posição de inserção como `2` e o item a ser inserido como `3`.
+3. **Chamada da função `inserirItem`:** A função é chamada para inserir o item no vetor, e a posição retornada é armazenada em `posicaoInserida`.
+4. **Verificação do resultado:** Se a posição retornada for válida, o programa exibe uma mensagem indicando o sucesso da operação e imprime o vetor atualizado. Caso contrário, exibe uma mensagem de erro.
+5. **Liberação de memória:** A memória alocada para o vetor é liberada com `free`.
+
+#### **Saída esperada**
+Se o programa for executado corretamente, a saída será:
+```
+O item 3 foi inserido na posicao 2
+1 2 3 4 5
+```
+
+#### **Considerações**
+- A função `inserirItem` é mais robusta, pois manipula dinamicamente o tamanho do vetor, enquanto a função `inserirItemSemPonteiros` assume que o vetor já possui espaço suficiente.
+- O uso de `realloc` na função `inserirItem` permite que o vetor cresça dinamicamente, mas é importante verificar se a realocação foi bem-sucedida para evitar problemas de memória.
+- O programa principal demonstra um caso de uso simples, mas pode ser adaptado para cenários mais complexos.
 
 ### **4.3 Remoção de Elementos**
 A remoção de um elemento requer o deslocamento dos elementos à direita:
 ```c
+#include <stdlib.h>
 #include <stdio.h>
 
-void removerElemento(int vetor[], int *tamanho, int indice) {
-    for (int i = indice; i < *tamanho - 1; i++) {
-        vetor[i] = vetor[i + 1];
+// Função para deletar um item de um vetor, utilizando ponteiros para manipular o tamanho do vetor
+int deletarItem(int *vetor, int *tamanho, int item) {
+    int posicao = -1; // Variável para armazenar a posição do item a ser removido
+    // Busca pelo item no vetor
+    for (int i = 0; i < *tamanho; i++) {
+        if (vetor[i] == item) { // Verifica se o item atual é o que deve ser removido
+            posicao = i; // Armazena a posição do item
+            break; // Interrompe o laço ao encontrar o item
+        }
     }
-    (*tamanho)--;
+    // Se o item foi encontrado
+    if (posicao != -1) {
+        // Desloca os elementos subsequentes para preencher o espaço do item removido
+        for (int i = posicao; i < *tamanho - 1; i++) {
+            vetor[i] = vetor[i + 1];
+        }
+        (*tamanho)--; // Decrementa o tamanho do vetor
+    }
+    return posicao; // Retorna a posição do item removido ou -1 se não encontrado
+}
+
+// Função para deletar um item de um vetor, sem utilizar ponteiros para o tamanho
+int deletarItemSemPonteiros(int vetor[], int tamanho, int item) {
+    int posicao = -1; // Variável para armazenar a posição do item a ser removido
+    // Busca pelo item no vetor
+    for (int i = 0; i < tamanho; i++) {
+        if (vetor[i] == item) { // Verifica se o item atual é o que deve ser removido
+            posicao = i; // Armazena a posição do item
+            break; // Interrompe o laço ao encontrar o item
+        }
+    }
+    // Se o item foi encontrado
+    if (posicao != -1) {
+        // Desloca os elementos subsequentes para preencher o espaço do item removido
+        for (int i = posicao; i < tamanho - 1; i++) {
+            vetor[i] = vetor[i + 1];
+        }
+    }
+    return posicao; // Retorna a posição do item removido ou -1 se não encontrado
 }
 
 int main() {
-    int vetor[5] = {10, 20, 30, 40, 50};
-    int tamanho = 5;
+    // Declaração e inicialização do vetor
+    int vetor[] = {1, 2, 3, 4, 5};
+    int tamanho = 5; // Tamanho inicial do vetor
+    int item = 3; // Item a ser removido
 
-    removerElemento(vetor, &tamanho, 2);
+    // Chama a função deletarItem e armazena a posição do item removido
+    int posicao = deletarItem(vetor, &tamanho, item);
 
+    // Verifica se o item foi encontrado e removido
+    if (posicao != -1) {
+        printf("O item %d foi deletado da posicao %d\n", item, posicao);
+        // Imprime o vetor atualizado
+        for (int i = 0; i < tamanho; i++) {
+            printf("%d ", vetor[i]);
+        }
+        printf("\n");
+    } else {
+        // Mensagem caso o item não seja encontrado
+        printf("O item %d nao foi encontrado\n", item);
+    }
+    return 0; // Retorna 0 indicando que o programa foi executado com sucesso
+}
+```
+### Explicação
+ 
+O código apresentado implementa duas funções para remover um item de um vetor em C, além de um programa principal que demonstra o uso dessas funções. A lógica principal envolve localizar o item no vetor, deslocar os elementos subsequentes para preencher o espaço deixado pelo item removido e, no caso da primeira função, atualizar o tamanho do vetor.
+
+A função deletarItem utiliza ponteiros para manipular diretamente o vetor e o tamanho do mesmo. Ela recebe como parâmetros um ponteiro para o vetor (int *vetor), um ponteiro para o tamanho do vetor (int *tamanho) e o item a ser removido. Primeiro, a função procura o item no vetor usando um laço for. Se o item for encontrado, sua posição é armazenada na variável posicao. Em seguida, os elementos do vetor a partir da posição do item são deslocados uma posição para a esquerda, sobrescrevendo o item removido. Por fim, o tamanho do vetor é decrementado usando o ponteiro *tamanho. A função retorna a posição do item removido ou -1 caso o item não seja encontrado.
+
+A segunda função, deletarItemSemPonteiros, é semelhante, mas não utiliza ponteiros para o tamanho do vetor. Em vez disso, ela trabalha com uma cópia do tamanho passado como argumento. Isso significa que, embora o item seja removido do vetor, o tamanho original do vetor na função chamadora não será atualizado. A lógica de busca e deslocamento dos elementos é idêntica à da primeira função, mas a ausência de manipulação direta do tamanho limita sua utilidade em cenários onde o tamanho precisa ser ajustado.
+
+No programa principal (main), um vetor de inteiros é inicializado com cinco elementos, e o tamanho do vetor é armazenado em uma variável separada. O item a ser removido é definido como 3. A função deletarItem é chamada, e sua saída (a posição do item removido) é armazenada na variável posicao. Se o item for encontrado e removido, o programa exibe uma mensagem indicando o sucesso da operação e imprime o vetor atualizado. Caso contrário, uma mensagem informa que o item não foi encontrado. O uso de printf permite visualizar o estado do vetor após a remoção.
+
+Essa implementação é eficiente para vetores pequenos, mas pode ser otimizada para cenários maiores, especialmente se a busca pelo item for frequente. Além disso, a função deletarItemSemPonteiros pode causar confusão, pois não reflete mudanças no tamanho do vetor fora de seu escopo.
+
+### **4.4 Reverter Vetor**
+
+#### **Código**
+
+```c
+#include <stdlib.h>
+#include <stdio.h>
+
+// Função para reverter um vetor
+void reverterVetor(int *vetor, int tamanho) {
+    // Itera sobre metade do vetor
+    for (int i = 0; i < tamanho / 2; i++) {
+        // Troca os elementos simétricos em relação ao centro do vetor
+        int temp = vetor[i];
+        vetor[i] = vetor[tamanho - i - 1];
+        vetor[tamanho - i - 1] = temp;
+    }
+}
+
+void reverterVetorSemPonteiros(int vetor[], int tamanho) {
+    // Itera sobre metade do vetor
+    for (int i = 0; i < tamanho / 2; i++) {
+        // Troca os elementos simétricos em relação ao centro do vetor
+        int temp = vetor[i];
+        vetor[i] = vetor[tamanho - i - 1];
+        vetor[tamanho - i - 1] = temp;
+    }
+}
+
+void reverterVetorComAuxiliar(int vetor[], int tamanhoVetor) {
+    int* vetorAuxiliar = (int*)malloc(tamanhoVetor * sizeof(int));
+    if(vetorAuxiliar == NULL) {
+        printf("Erro de alocacao de memoria\n");
+        return;
+    }
+    for (int i = 0; i < tamanhoVetor; i++) {
+        vetorAuxiliar[i] = vetor[tamanhoVetor - i - 1];
+    }
+}
+
+int main() {
+    // Declaração e inicialização do vetor
+    int vetor[] = {1, 2, 3, 4, 5};
+    int tamanho = 5; // Tamanho do vetor
+
+    // Chama a função reverterVetor
+    reverterVetor(vetor, tamanho);
+
+    // Imprime o vetor revertido
     for (int i = 0; i < tamanho; i++) {
         printf("%d ", vetor[i]);
     }
 
-    return 0;
+    return 0; // Retorna 0 indicando que o programa foi executado com sucesso
 }
+// Output: 5 4 3 2 1
 ```
+
+
+O código apresentado implementa duas funções para inserir um item em um vetor, além de um programa principal que demonstra o uso dessas funções. A lógica principal envolve verificar a validade da posição de inserção, deslocar os elementos do vetor para abrir espaço e, no caso da primeira função, realocar a memória do vetor dinamicamente.
+
+### **Função `inserirItem`**
+Essa função insere um item em um vetor utilizando ponteiros para manipular o tamanho do vetor. Ela recebe como parâmetros:
+- `int *vetor`: Ponteiro para o vetor.
+- `int *tamanho`: Ponteiro para o tamanho do vetor.
+- `int posicao`: Posição onde o item será inserido.
+- `int item`: O valor do item a ser inserido.
+
+**Passos da função:**
+1. **Validação da posição:** Verifica se a posição fornecida é válida (entre `0` e o tamanho atual do vetor). Caso contrário, retorna `-1`.
+2. **Realocação de memória:** Usa a função `realloc` para aumentar o tamanho do vetor em uma unidade, permitindo a inserção de um novo elemento.
+3. **Deslocamento dos elementos:** Move os elementos do vetor, a partir da posição de inserção, uma posição à frente para abrir espaço para o novo item.
+4. **Inserção do item:** Insere o novo item na posição especificada.
+5. **Atualização do tamanho:** Incrementa o tamanho do vetor.
+6. **Retorno:** Retorna a posição onde o item foi inserido.
+
+### **Função `inserirItemSemPonteiros`**
+Essa função é semelhante à anterior, mas não utiliza ponteiros para o tamanho do vetor. Ela trabalha com uma cópia do tamanho passado como argumento, o que significa que o tamanho do vetor original não será atualizado fora do escopo da função. Além disso, não realiza a realocação de memória, assumindo que o vetor já possui espaço suficiente para o novo item.
+
+**Passos da função:**
+1. **Validação da posição:** Verifica se a posição fornecida é válida.
+2. **Deslocamento dos elementos:** Move os elementos do vetor para abrir espaço.
+3. **Inserção do item:** Insere o item na posição especificada.
+4. **Retorno:** Retorna a posição onde o item foi inserido.
+
+### **Função `main`**
+O programa principal demonstra o uso da função `inserirItem`. Ele realiza as seguintes operações:
+1. **Declaração e inicialização do vetor:** Um vetor dinâmico é alocado com espaço para 5 elementos, e os primeiros 4 elementos são inicializados.
+2. **Definição do tamanho, posição e item:** O tamanho inicial do vetor é definido como `4`, a posição de inserção como `2` e o item a ser inserido como `3`.
+3. **Chamada da função `inserirItem`:** A função é chamada para inserir o item no vetor, e a posição retornada é armazenada em `posicaoInserida`.
+4. **Verificação do resultado:** Se a posição retornada for válida, o programa exibe uma mensagem indicando o sucesso da operação e imprime o vetor atualizado. Caso contrário, exibe uma mensagem de erro.
+5. **Liberação de memória:** A memória alocada para o vetor é liberada com `free`.
+
+### **Saída esperada**
+Se o programa for executado corretamente, a saída será:
+```
+O item 3 foi inserido na posicao 2
+1 2 3 4 5
+```
+
+### **Considerações**
+- A função `inserirItem` é mais robusta, pois manipula dinamicamente o tamanho do vetor, enquanto a função `inserirItemSemPonteiros` assume que o vetor já possui espaço suficiente.
+- O uso de `realloc` na função `inserirItem` permite que o vetor cresça dinamicamente, mas é importante verificar se a realocação foi bem-sucedida para evitar problemas de memória.
+- O programa principal demonstra um caso de uso simples, mas pode ser adaptado para cenários mais complexos.
 
 ## **5. Sintaxe para passar um vetor para uma função:**
 
