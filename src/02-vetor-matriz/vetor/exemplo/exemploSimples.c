@@ -5,7 +5,7 @@
 int main() {
     // 1. Declaração e Inicialização de um vetor
     int numeros[TAMANHO] = {10, 20, 30, 40, 50};  
-
+    
     // 2. Acesso aos elementos do vetor
     printf("Acessando elementos do vetor:\n");
     for (int i = 0; i < TAMANHO; i++) {

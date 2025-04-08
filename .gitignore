@@ -52,3 +52,5 @@ Mkfile.old
 dkms.conf
 src/.DS_Store
 */output/*
+*output*
+.vscode/tasks.json

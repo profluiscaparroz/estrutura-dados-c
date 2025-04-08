@@ -129,10 +129,10 @@ void exemploPonteiroVariaveis() {
 }
 
 int main(void) {
-  // exemploPonteiroVariaveis();
+  exemploPonteiroVariaveis();
   // exemploPonteiro();
   // apontaElementoArray();
-   exemploPonteiroFuncao();
+   // exemploPonteiroFuncao();
   // exemploPonteiroFuncaoRetorna();
   // exemploPonteiroDePonteiro();
   // exemploPonteiroDePonteiroDePonteiro();
