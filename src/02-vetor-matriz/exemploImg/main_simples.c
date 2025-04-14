@@ -11,7 +11,7 @@
 // - total_pixels: número total de pixels na imagem
 void aumentar_brilho(unsigned char *img, int total_pixels) {
     // Percorre todos os canais (R, G, B) de todos os pixels
-    for (int i = 0; i < total_pixels * 3; i++) {
+    for (int i = 0; i < total_pixels * 20; i++) {
         int novo_valor = img[i] + 3; // Aumenta o brilho adicionando 3 ao valor do canal
         img[i] = (novo_valor > 255) ? 255 : novo_valor; // Garante que o valor não ultrapasse 255
     }

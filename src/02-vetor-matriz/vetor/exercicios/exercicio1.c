@@ -19,6 +19,7 @@ void encontrar_pares(int precos[], int tamanho, int alvo) {
     printf("Nenhum par encontrado.\n");
 }
 
+
 int main() {
     // Declaração e inicialização do vetor de preços
     int precos[] = {10, 20, 35, 50, 75};
