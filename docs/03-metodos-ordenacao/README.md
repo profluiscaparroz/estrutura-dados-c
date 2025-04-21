@@ -865,3 +865,221 @@ Em alguns casos, podemos melhorar o desempenho do **Insertion Sort** utilizando 
 ### Conclusão
 
 O **Insertion Sort** é um algoritmo simples e eficiente para listas pequenas e quase ordenadas. Sua facilidade de implementação e comportamento eficiente em certos cenários o tornam útil em uma variedade de contextos. Porém, para listas grandes e desordenadas, algoritmos mais eficientes, como o **QuickSort** ou **MergeSort**, são preferíveis. Mesmo assim, o **Insertion Sort** tem seu valor em muitos problemas práticos, especialmente quando combinados com outras técnicas de otimização e em situações específicas onde ele brilha devido à sua simplicidade e adaptabilidade.
+
+---
+
+# História do Merge Sort
+
+O **Merge Sort**, ou **Ordenação por Intercalação**, é um dos algoritmos de ordenação mais clássicos e estudados da ciência da computação. Ele foi inventado em **1945** por **John von Neumann**, um dos matemáticos e cientistas mais importantes do século XX. Seu objetivo era criar uma técnica de ordenação eficiente para grandes volumes de dados, aproveitando ao máximo o conceito de **dividir para conquistar** (*divide and conquer*).
+
+### 🧠 O Princípio do Merge Sort
+
+O Merge Sort funciona dividindo o problema em partes menores:
+
+1. Divide o vetor ao meio recursivamente.
+2. Ordena cada metade de forma independente.
+3. Junta as metades ordenadas, de forma que o vetor final também fique ordenado.
+
+Esse método é particularmente poderoso porque garante uma **complexidade de tempo O(n log n)** mesmo nos piores casos, o que o torna mais estável e previsível que algoritmos como o Quick Sort.
+
+### 💻 O Merge Sort na Linguagem C
+
+A linguagem **C** foi criada décadas depois, nos anos **1970**, por **Dennis Ritchie**, nos laboratórios da Bell Labs. Com sua chegada, muitos algoritmos clássicos passaram a ser implementados em C por ser uma linguagem de baixo nível com alto desempenho e controle de memória. O Merge Sort se destacou por sua **eficiência**, especialmente em cenários com grandes quantidades de dados.
+
+A implementação do Merge Sort em C geralmente envolve:
+
+- O uso de **recursão** para dividir o vetor.
+- O uso de um vetor auxiliar temporário para fazer a **intercalação** (merge) entre as duas partes ordenadas.
+- O uso de ponteiros e alocação de memória, o que dá ao programador mais controle sobre desempenho e consumo de recursos.
+
+### 🛠️ Exemplo de código básico em C
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+void merge(int arr[], int l, int m, int r) {
+    int n1 = m - l + 1;
+    int n2 = r - m;
+
+    // vetores temporários
+    int L[n1], R[n2];
+
+    // copia os dados
+    for (int i = 0; i < n1; i++)
+        L[i] = arr[l + i];
+    for (int j = 0; j < n2; j++)
+        R[j] = arr[m + 1 + j];
+
+    // intercala os vetores L e R
+    int i = 0, j = 0, k = l;
+    while (i < n1 && j < n2) {
+        if (L[i] <= R[j]) arr[k++] = L[i++];
+        else arr[k++] = R[j++];
+    }
+
+    // copia os elementos restantes
+    while (i < n1) arr[k++] = L[i++];
+    while (j < n2) arr[k++] = R[j++];
+}
+
+void mergeSort(int arr[], int l, int r) {
+    if (l < r) {
+        int m = l + (r - l) / 2;
+        // ordena as metades
+        mergeSort(arr, l, m);
+        mergeSort(arr, m + 1, r);
+        // intercala
+        merge(arr, l, m, r);
+    }
+}
+
+int main() {
+    int arr[] = {12, 11, 13, 5, 6, 7};
+    int size = sizeof(arr) / sizeof(arr[0]);
+
+    printf("Vetor original:\n");
+    for (int i = 0; i < size; i++) printf("%d ", arr[i]);
+
+    mergeSort(arr, 0, size - 1);
+
+    printf("\nVetor ordenado com Merge Sort:\n");
+    for (int i = 0; i < size; i++) printf("%d ", arr[i]);
+
+    return 0;
+}
+```
+
+### 📈 Vantagens do Merge Sort
+
+- Estável (mantém a ordem de elementos iguais).
+- Garante complexidade O(n log n) em todos os casos.
+- Muito útil em ordenações externas (quando os dados não cabem na memória RAM e precisam ser ordenados por partes, como em arquivos em disco).
+
+### ⚠️ Desvantagens
+
+- Requer **memória extra** proporcional ao tamanho do vetor (ao contrário do Quick Sort).
+- Pode ter desempenho inferior ao Quick Sort em muitos casos práticos (por causa da cópia de dados e recursão profunda).
+
+### 🧠 Princípio do Merge Sort
+O Merge Sort utiliza a estratégia de **dividir para conquistar** (*divide and conquer*), funcionando da seguinte maneira
+
+1. **Dividir**:O vetor é dividido recursivamente em duas metades até que cada subvetor contenha apenas um elemento
+2. **Conquistar**:Cada subvetor é ordenado individualmente
+3. **Combinar**:As sublistas ordenadas são então mescladas (intercaladas) para formar uma lista ordenada maior
+Esse processo garante uma complexidade de tempo de **O(n log n)** em todos os casos, tornando o Merge Sort eficiente mesmo para grandes conjuntos de dados citeturn0search2
+
+### 📚 Evolução e Implementações
+Em **1948**, von Neumann, juntamente com **Herman Goldstine**, publicou uma análise detalhada do Merge Sort, incluindo a versão **bottom-up**, que constrói a ordenação a partir de sublistas menores sem o uso de recursão citeturn0search2.
+Na linguagem **C**, o Merge Sort é frequentemente implementado utilizando recursão e vetores auxiliares para a etapa de mesclage. Sua estrutura clara e previsível facilita a adaptação para diferentes tipos de dados e aplicaçõe.
+
+### ⚙️ Variações e Aplicações
+Existem várias variações do Merge Sort, com:
+
+- **Merge Sort Natural** Aproveita sequências já ordenadas no vetor para reduzir o número de mesclagens necessária.
+- **Merge Sort Bottom-Up** Evita a recursão, construindo a ordenação a partir de sublistas de tamanho u.
+- **Merge Sort Otimizado para Cache** Adapta o algoritmo para melhor utilização da hierarquia de memória dos computadores modernos 
+O Merge Sort é particularmente útil em situações que exigem ordenação estável e desempenho consistente, como em sistemas de banco de dados, ordenação de arquivos grandes e aplicações que lidam com fluxos de dados contínuo.
+
+Claro! Aqui está um **passo a passo didático e detalhado** de como funciona o algoritmo **Merge Sort**, que é baseado na estratégia de **dividir para conquistar (divide and conquer)**:
+
+---
+
+## 🧩 Passo a passo de como funciona o Merge Sort
+
+Suponha que temos o seguinte vetor a ser ordenado:
+
+```c
+int vetor[] = {38, 27, 43, 3, 9, 82, 10};
+```
+
+### 1. **Dividir Recursivamente**
+
+O primeiro passo do Merge Sort é **dividir o vetor ao meio até que cada parte tenha apenas um elemento** (que, por definição, está ordenado).
+
+**Nível 0:**
+```
+[38, 27, 43, 3, 9, 82, 10]
+```
+
+**Nível 1:**
+```
+[38, 27, 43, 3]   |   [9, 82, 10]
+```
+
+**Nível 2:**
+```
+[38, 27] | [43, 3]   |   [9, 82] | [10]
+```
+
+**Nível 3:**
+```
+[38] [27] | [43] [3] | [9] [82] | [10]
+```
+
+Agora temos todos os subvetores com **apenas um elemento**.
+
+---
+
+### 2. **Mesclar Subvetores Ordenados**
+
+A segunda etapa do Merge Sort é **intercalar (mesclar) os subvetores ordenados**, formando vetores maiores também ordenados. Esse processo é feito de forma **recursiva** de baixo para cima.
+
+#### Nível 3 → Nível 2:
+
+- [38] e [27] → [27, 38]  
+- [43] e [3] → [3, 43]  
+- [9] e [82] → [9, 82]  
+- [10] (não tem par, permanece como está)
+
+#### Nível 2 → Nível 1:
+
+- [27, 38] e [3, 43] → **mesclar** → [3, 27, 38, 43]  
+- [9, 82] e [10] → **mesclar** → [9, 10, 82]
+
+#### Nível 1 → Nível 0 (Final):
+
+- [3, 27, 38, 43] e [9, 10, 82] → **mesclar** → [3, 9, 10, 27, 38, 43, 82]
+
+---
+
+## ✅ Resultado Final:
+
+O vetor está agora **totalmente ordenado**:
+
+```
+[3, 9, 10, 27, 38, 43, 82]
+```
+
+---
+
+### 🛠️ O que acontece internamente?
+
+Durante a intercalação (merge), são feitas **comparações entre os primeiros elementos dos dois subvetores**. O menor deles é colocado no vetor final, e o ponteiro avança. Isso é repetido até todos os elementos serem inseridos.
+
+Exemplo:  
+Intercalando [27, 38] e [3, 43]:
+
+- 27 > 3 → coloca 3  
+- 27 < 43 → coloca 27  
+- 38 < 43 → coloca 38  
+- Sobra 43 → coloca 43
+
+Resultado: [3, 27, 38, 43]
+
+---
+
+### 📈 Complexidade
+
+| Situação        | Complexidade |
+|----------------|--------------|
+| Melhor caso    | O(n log n)   |
+| Caso médio     | O(n log n)   |
+| Pior caso      | O(n log n)   |
+| Espaço extra   | O(n)         |
+
+---
+
+### 🧩 Conclusão
+
+O **Merge Sort** é um algoritmo elegante, eficiente e historicamente importante, que continua sendo relevante até hoje — especialmente em linguagens como C, onde o controle sobre memória e performance é fundamental. É muito usado em aplicações que exigem precisão, estabilidade e desempenho previsível. Mesmo após décadas, sua lógica de divisão e intercalação ainda inspira algoritmos modernos de ordenação.
