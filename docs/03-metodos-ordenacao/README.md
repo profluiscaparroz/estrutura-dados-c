@@ -1083,3 +1083,249 @@ Resultado: [3, 27, 38, 43]
 ### 🧩 Conclusão
 
 O **Merge Sort** é um algoritmo elegante, eficiente e historicamente importante, que continua sendo relevante até hoje — especialmente em linguagens como C, onde o controle sobre memória e performance é fundamental. É muito usado em aplicações que exigem precisão, estabilidade e desempenho previsível. Mesmo após décadas, sua lógica de divisão e intercalação ainda inspira algoritmos modernos de ordenação.
+
+
+---
+
+## 📚 História do Quicksort
+
+O **Quicksort** foi criado por **Tony Hoare** em **1960**, enquanto ele trabalhava na tradução automática de idiomas russos para o inglês, na União Soviética. Na época, ele precisava de um método eficiente para classificar palavras de um dicionário — e os algoritmos existentes eram lentos para essa tarefa.
+
+> “Eu inventei o Quicksort em 1960, durante meu primeiro ano como estudante de pós-graduação em Moscou. Estava tentando traduzir frases russas para o inglês, e precisava de uma maneira eficiente de ordenar palavras.”  
+> — *C.A.R. Hoare*
+
+Seu trabalho foi publicado oficialmente em 1961 no artigo **“Quicksort”** no *The Computer Journal*. O Quicksort rapidamente se destacou como um dos algoritmos de ordenação mais eficientes para uso geral e é amplamente adotado até hoje.
+
+---
+
+## 🧠 Como funciona o Quicksort
+
+O Quicksort é um algoritmo do tipo **"divide and conquer" (dividir para conquistar)**. Ele divide o problema em partes menores que são resolvidas recursivamente. Aqui está o passo a passo:
+
+### 🪓 1. Escolher um *pivô*
+
+Escolhe-se um elemento do vetor, chamado **pivô**. Pode ser o primeiro, o último, o do meio ou até escolhido aleatoriamente (dependendo da implementação).
+
+### 🔄 2. Particionar o vetor
+
+Reorganize os elementos do vetor de forma que:
+
+- Todos os elementos **menores que o pivô** fiquem à esquerda.
+- Todos os elementos **maiores que o pivô** fiquem à direita.
+
+O pivô, então, fica na **posição correta** do vetor ordenado.
+
+### 🔁 3. Recursão
+
+Repita o processo **recursivamente** para os subvetores à esquerda e à direita do pivô.
+
+---
+
+## 📌 Exemplo passo a passo
+
+Vamos ordenar:  
+```
+[10, 80, 30, 90, 40, 50, 70]
+```
+
+1. Escolhe-se o último elemento como pivô: `70`
+2. Reorganiza os elementos em torno do pivô:
+   ```
+   [10, 30, 40, 50, 70, 90, 80]
+   ```
+   Agora `70` está na posição certa.
+3. Aplica-se Quicksort recursivamente em:
+   - [10, 30, 40, 50]
+   - [90, 80]
+4. Após a recursão, o vetor será:
+   ```
+   [10, 30, 40, 50, 70, 80, 90]
+   ```
+
+---
+
+## ⚙️ Implementação básica em C
+
+```c
+#include <stdio.h>
+
+void trocar(int *a, int *b) {
+    int t = *a;
+    *a = *b;
+    *b = t;
+}
+
+int particionar(int vetor[], int baixo, int alto) {
+    int pivô = vetor[alto];
+    int i = (baixo - 1);
+
+    for (int j = baixo; j < alto; j++) {
+        if (vetor[j] < pivô) {
+            i++;
+            trocar(&vetor[i], &vetor[j]);
+        }
+    }
+    trocar(&vetor[i + 1], &vetor[alto]);
+    return (i + 1);
+}
+
+void quicksort(int vetor[], int baixo, int alto) {
+    if (baixo < alto) {
+        int pi = particionar(vetor, baixo, alto);
+        quicksort(vetor, baixo, pi - 1);
+        quicksort(vetor, pi + 1, alto);
+    }
+}
+
+void imprimir(int vetor[], int tamanho) {
+    for (int i = 0; i < tamanho; i++)
+        printf("%d ", vetor[i]);
+    printf("\n");
+}
+
+int main() {
+    int vetor[] = {10, 80, 30, 90, 40, 50, 70};
+    int tamanho = sizeof(vetor) / sizeof(vetor[0]);
+
+    printf("Vetor original:\n");
+    imprimir(vetor, tamanho);
+
+    quicksort(vetor, 0, tamanho - 1);
+
+    printf("Vetor ordenado:\n");
+    imprimir(vetor, tamanho);
+    return 0;
+}
+```
+
+---
+
+## 📊 Complexidade
+
+| Situação         | Tempo       |
+|------------------|-------------|
+| Melhor caso      | O(n log n)  |
+| Caso médio       | O(n log n)  |
+| Pior caso        | O(n²)       |
+
+*O pior caso ocorre quando o pivô é sempre o menor ou maior elemento (lista já ordenada). Para evitar isso, usam-se versões como o **randomized quicksort**.*
+
+---
+
+## ✅ Vantagens
+
+- Muito rápido para dados grandes.
+- Usa pouca memória (não precisa de vetor auxiliar como o Merge Sort).
+- É **in-place** (ordenamento ocorre dentro do próprio vetor).
+
+---
+
+## ⚠️ Desvantagens
+
+- Não é estável (elementos iguais podem mudar de posição relativa).
+- No pior caso, pode ter desempenho quadrático.
+- Requer atenção com recursão e escolha do pivô.
+
+---
+
+## 🧪 Curiosidade
+
+O Quicksort é o **algoritmo de ordenação padrão** utilizado em muitas bibliotecas padrão (como em `qsort()` na linguagem C).
+
+---
+
+Claro! Vamos aprofundar mais sobre o **Quicksort**, abordando:
+
+1. 📖 **Motivação e contexto histórico**  
+2. 🔬 **Como o algoritmo trabalha internamente (com animação textual)**  
+3. 🎯 **Técnicas de escolha de pivô**  
+4. ⚖️ **Comparação com outros algoritmos de ordenação**  
+5. 🧪 **Variações do Quicksort**  
+6. 🛠️ **Casos de uso no mundo real**
+
+---
+
+## 📖 1. Motivação e contexto histórico
+
+Como mencionado, o **Quicksort foi criado por Sir Charles Antony Richard Hoare** em 1960, quando ele tinha apenas 26 anos. Enquanto trabalhava em um projeto de tradução automática de línguas, deparou-se com a necessidade de organizar grandes listas de palavras rapidamente.
+
+Na época, o método mais usado era o **Merge Sort**, que, embora eficiente, exigia muita memória extra. Hoare queria algo **mais simples, mais rápido e mais econômico em memória**, especialmente para computadores da época.
+
+O Quicksort, então, surgiu como uma solução elegante e extremamente eficiente, sendo considerado **um dos algoritmos mais influentes da ciência da computação**.
+
+---
+
+## 🔬 2. Como o algoritmo trabalha internamente (com animação textual)
+
+Vamos ilustrar a execução do Quicksort com uma simulação textual simples.
+
+### Exemplo:  
+Vetor: `[4, 7, 1, 3, 9, 2]`
+
+1. **Escolhe pivô**: `2`
+2. Particiona:
+   - Elementos menores que 2 → `[1]`
+   - Elementos maiores que 2 → `[4, 7, 3, 9]`
+3. Junta:
+   - `[1] + [2] + [4, 7, 3, 9]`
+4. Repete o processo com os lados recursivamente...
+
+Visual:
+```
+[4, 7, 1, 3, 9, 2]
+          ^
+         Pivô
+
+Menores que 2: [1]
+Maiores que 2: [4, 7, 3, 9]
+
+Agora, aplicamos Quicksort recursivamente para os dois lados.
+```
+
+---
+
+## 🎯 3. Técnicas de escolha de pivô
+
+A eficiência do Quicksort depende **fortemente** da escolha do pivô. Algumas estratégias comuns são:
+
+- **Primeiro elemento**  
+- **Último elemento**  
+- **Elemento central (meio do vetor)**  
+- **Mediana de três**: a mediana entre o primeiro, o do meio e o último elemento (reduz o risco do pior caso).
+- **Aleatório**: escolher o pivô aleatoriamente (usado em versões otimizadas).
+
+✅ **Melhor escolha de pivô = balanceamento entre as partições**.
+
+---
+
+## ⚖️ 4. Comparação com outros algoritmos
+
+| Algoritmo     | Melhor Caso | Médio Caso | Pior Caso | Estável | In-place |
+|---------------|-------------|------------|-----------|---------|----------|
+| **Quicksort** | O(n log n)  | O(n log n) | O(n²)     | ❌      | ✅        |
+| Merge Sort    | O(n log n)  | O(n log n) | O(n log n)| ✅      | ❌ (usa memória extra) |
+| Heap Sort     | O(n log n)  | O(n log n) | O(n log n)| ❌      | ✅        |
+| Insertion Sort| O(n)        | O(n²)      | O(n²)     | ✅      | ✅        |
+
+---
+
+## 🧪 5. Variações do Quicksort
+
+### a. **Randomized Quicksort**  
+Escolhe o pivô aleatoriamente. Reduz a chance de cair no pior caso (O(n²)).
+
+### b. **Dual-Pivot Quicksort**  
+Usa dois pivôs para dividir o vetor em três partes. Foi adotado pela Oracle no `Java 7` como padrão do método `Arrays.sort()`.
+
+### c. **Iterative Quicksort**  
+Versão sem recursão, usando pilha manual. Útil para evitar *stack overflow* em vetores muito grandes.
+
+---
+
+## 🛠️ 6. Casos de uso no mundo real
+
+- **Bibliotecas padrão**: C (qsort), Java, Python (em parte do `Timsort`).
+- **Sistemas embarcados e tempo real**, por sua eficiência in-place.
+- **Jogos, bancos de dados, sistemas operacionais**: ordenação rápida de dados em memória.
+
+---
