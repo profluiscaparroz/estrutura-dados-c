@@ -43,6 +43,27 @@ void printArray(int arr[], int size) {
     printf("\n");
 }
 
+/**
+ * Algoritmo QuickSort
+ *
+ * O QuickSort é um algoritmo de ordenação eficiente que utiliza a técnica de divisão e conquista.
+ * Ele seleciona um elemento como pivô e particiona o array em torno desse pivô, de forma que os
+ * elementos menores que o pivô fiquem à esquerda e os maiores à direita. O processo é repetido
+ * recursivamente para as sublistas resultantes.
+ *
+ * Complexidade:
+ * - Melhor caso: O(n log n)
+ * - Caso médio: O(n log n)
+ * - Pior caso: O(n^2) (ocorre quando o array já está ordenado ou quase ordenado)
+ * - Complexidade espacial: O(log n) (para a pilha de chamadas recursivas)
+ *
+ * Vantagens:
+ * - Rápido para listas grandes.
+ * - Ordenação in-place (não requer espaço adicional significativo).
+ *
+ * Desvantagens:
+ * - Não é estável (pode alterar a ordem relativa de elementos iguais).
+ */
 // Exemplo de uso do algoritmo QuickSort
 int main() {
     int arr[] = {10, 7, 8, 9, 1, 5};
