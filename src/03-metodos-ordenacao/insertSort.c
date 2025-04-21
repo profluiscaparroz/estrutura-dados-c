@@ -26,6 +26,36 @@ void printArray(int arr[], int n) {
     printf("\n");
 }
 
+/**
+ * Algoritmo InsertSort:
+ * 
+ * O InsertSort é um algoritmo de ordenação que funciona de maneira semelhante 
+ * à forma como organizamos cartas em um jogo. Ele constrói a lista ordenada 
+ * gradualmente, um elemento por vez, movendo cada elemento para sua posição 
+ * correta em relação aos elementos já ordenados.
+ * 
+ * Passos do algoritmo:
+ * 1. Percorre o array a partir do segundo elemento (índice 1).
+ * 2. Para cada elemento, compara-o com os elementos anteriores (da direita para a esquerda).
+ * 3. Move os elementos maiores que o elemento atual uma posição para a direita.
+ * 4. Insere o elemento atual na posição correta.
+ * 
+ * Complexidade:
+ * - Melhor caso (array já ordenado): O(n)
+ * - Pior caso (array em ordem inversa): O(n^2)
+ * - Caso médio: O(n^2)
+ * 
+ * Este algoritmo é eficiente para listas pequenas ou quase ordenadas, mas 
+ * não é recomendado para listas grandes devido à sua complexidade quadrática 
+ * no pior caso.
+ * 
+ * Vantagens:
+ * - Simples de implementar.
+ * - Estável (não altera a ordem relativa de elementos iguais).
+ * 
+ * Desvantagens:
+ * - Ineficiente para grandes conjuntos de dados.
+ */
 // Função principal
 int main() {
     int arr[] = {12, 11, 13, 5, 6};
