@@ -625,3 +625,243 @@ O **Selection Sort** é um algoritmo simples, mas ineficiente para listas grande
 Apesar de sua simplicidade, o **Selection Sort** não é eficiente para listas grandes. Em termos de eficiência, algoritmos como **MergeSort** ou **QuickSort** são mais adequados para listas de tamanho maior, pois possuem complexidade O(n log n), que é muito melhor que O(n²) para grandes volumes de dados.
 
 O algoritmo, no entanto, pode ser útil em situações onde a simplicidade do código é mais importante que a eficiência, ou em listas pequenas, onde a diferença de desempenho não é tão significativa.
+
+
+# Insertion Sort
+
+O **Insertion Sort** é um algoritmo de ordenação simples e intuitivo, muito utilizado para ordenar listas pequenas ou listas que já estão quase ordenadas. A ideia do algoritmo é **inserir** um elemento em sua posição correta em um vetor já parcialmente ordenado.
+
+O algoritmo percorre o vetor da esquerda para a direita e, a cada iteração, ele **pega o próximo elemento** da parte não ordenada e o coloca na posição correta, movendo os elementos maiores para a direita. Esse processo é repetido até que o vetor esteja completamente ordenado.
+
+### Como Funciona o Algoritmo?
+
+Suponha que temos o seguinte vetor desordenado:
+
+```
+[64, 25, 12, 22, 11]
+```
+
+Vamos ver como o algoritmo **Insertion Sort** funciona para ordenar esse vetor.
+
+### Passo 1: Primeira iteração
+
+- Começamos com o segundo elemento (índice 1), que é **25**.
+- Comparamos **25** com o primeiro elemento (**64**). Como **25** é menor que **64**, deslocamos **64** para a direita.
+- Colocamos **25** na posição onde **64** estava.
+- Agora, o vetor fica assim:
+
+```
+[25, 64, 12, 22, 11]
+```
+
+### Passo 2: Segunda iteração
+
+- Agora, vamos para o terceiro elemento (índice 2), que é **12**.
+- Comparamos **12** com o elemento à sua esquerda (**64**). Como **12** é menor que **64**, deslocamos **64** para a direita.
+- Em seguida, comparamos **12** com **25**. Como **12** é menor que **25**, deslocamos **25** para a direita.
+- Colocamos **12** na posição onde **25** estava.
+- Agora, o vetor fica assim:
+
+```
+[12, 25, 64, 22, 11]
+```
+
+### Passo 3: Terceira iteração
+
+- O próximo elemento é **22** (índice 3).
+- Comparamos **22** com **64**. Como **22** é menor que **64**, deslocamos **64** para a direita.
+- Em seguida, comparamos **22** com **25**. Como **22** é menor que **25**, deslocamos **25** para a direita.
+- Colocamos **22** na posição onde **25** estava.
+- Agora, o vetor fica assim:
+
+```
+[12, 22, 25, 64, 11]
+```
+
+### Passo 4: Quarta iteração
+
+- O próximo elemento é **11** (índice 4).
+- Comparamos **11** com **64**. Como **11** é menor que **64**, deslocamos **64** para a direita.
+- Em seguida, comparamos **11** com **25**. Como **11** é menor que **25**, deslocamos **25** para a direita.
+- Comparamos **11** com **22**. Como **11** é menor que **22**, deslocamos **22** para a direita.
+- Comparamos **11** com **12**. Como **11** é menor que **12**, deslocamos **12** para a direita.
+- Colocamos **11** na posição onde **12** estava.
+- Agora, o vetor fica assim:
+
+```
+[11, 12, 22, 25, 64]
+```
+
+### O vetor final ordenado é:
+
+```
+[11, 12, 22, 25, 64]
+```
+
+---
+
+### Implementação do Insertion Sort em C
+
+Aqui está a implementação do **Insertion Sort** em C:
+
+```c
+#include <stdio.h>
+
+// Função para realizar o Insertion Sort
+void insertionSort(int arr[], int n) {
+    int i, key, j;
+
+    // Começamos com o segundo elemento (índice 1)
+    for (i = 1; i < n; i++) {
+        key = arr[i];  // O elemento a ser inserido na parte ordenada
+        j = i - 1;
+
+        // Move os elementos da parte ordenada que são maiores que 'key'
+        // para uma posição à frente
+        while (j >= 0 && arr[j] > key) {
+            arr[j + 1] = arr[j];
+            j = j - 1;
+        }
+
+        // Coloca o 'key' na posição correta
+        arr[j + 1] = key;
+    }
+}
+
+// Função para imprimir o vetor
+void printArray(int arr[], int size) {
+    for (int i = 0; i < size; i++) {
+        printf("%d ", arr[i]);
+    }
+    printf("\n");
+}
+
+int main() {
+    // Vetor de exemplo
+    int arr[] = {64, 25, 12, 22, 11};
+    int n = sizeof(arr) / sizeof(arr[0]);
+
+    // Imprimir o vetor original
+    printf("Vetor original: \n");
+    printArray(arr, n);
+
+    // Chamar a função de ordenação
+    insertionSort(arr, n);
+
+    // Imprimir o vetor ordenado
+    printf("Vetor ordenado: \n");
+    printArray(arr, n);
+
+    return 0;
+}
+```
+
+### Explicação do Código
+
+1. **Função `insertionSort`**:
+   - A função recebe dois parâmetros: o vetor de números (`arr[]`) e o tamanho do vetor (`n`).
+   - O laço externo (`for i`) percorre todos os elementos do vetor a partir do segundo elemento.
+   - Dentro do laço, o **key** é o elemento a ser inserido na parte ordenada. O laço interno (`while`) compara o **key** com os elementos da parte ordenada e move os maiores para a direita.
+   - Quando a posição correta é encontrada, o **key** é inserido ali.
+
+2. **Função `printArray`**:
+   - Esta função imprime os elementos do vetor na tela antes e depois da ordenação.
+
+3. **Função `main`**:
+   - Cria um vetor de números desordenados e chama a função `insertionSort` para ordenar o vetor.
+   - Após a ordenação, o vetor é impresso na tela.
+
+### Complexidade
+
+- **Tempo**: O algoritmo tem complexidade **O(n²)** no pior e no caso médio, porque ele precisa comparar e mover elementos para inserir o **key** na posição correta. No melhor caso (quando o vetor já está ordenado), a complexidade é **O(n)**, pois o algoritmo apenas percorre o vetor sem precisar mover elementos.
+- **Espaço**: O algoritmo é *inplace*, o que significa que ele usa apenas espaço adicional para variáveis temporárias. Sua complexidade de espaço é **O(1)**.
+
+### Quando Usar o Insertion Sort?
+
+- O **Insertion Sort** é eficiente para **listas pequenas** ou para **listas já parcialmente ordenadas**.
+- Para listas grandes, o **Insertion Sort** pode ser ineficiente em comparação com outros algoritmos como **QuickSort** ou **MergeSort**.
+
+---
+
+### Como o Insertion Sort Funciona na Prática
+
+O **Insertion Sort** funciona de maneira parecida com o processo que usamos para organizar cartas em mãos. Imagine que você tem várias cartas e está organizando-as em ordem crescente ou decrescente. Comece com a segunda carta, compare com a primeira e insira a segunda carta na posição correta. Depois, passe para a terceira carta e insira-a nas posições corretas em relação às outras já ordenadas. Esse processo continua até que todas as cartas estejam ordenadas.
+
+O algoritmo realiza essas **inserções** de forma progressiva, pegando um elemento por vez e o colocando na posição correta dentro da sublista ordenada.
+
+### Visualizando o Processo
+
+Vamos continuar com o vetor:
+
+```
+[64, 25, 12, 22, 11]
+```
+
+O algoritmo começa com o segundo elemento, que é **25**, e o coloca na posição correta em relação ao **64**.
+
+1. **Iteração 1 (i = 1)**:
+    - O primeiro elemento ordenado é **64**.
+    - **25** é comparado com **64**. Como **25** é menor que **64**, **64** é movido para a direita.
+    - **25** é colocado na posição inicial.
+    - Vetor após a iteração: **[25, 64, 12, 22, 11]**
+
+2. **Iteração 2 (i = 2)**:
+    - **12** é comparado com **64**. Como **12** é menor que **64**, **64** é movido para a direita.
+    - **12** é comparado com **25**. Como **12** é menor que **25**, **25** também é movido para a direita.
+    - **12** é colocado na posição inicial.
+    - Vetor após a iteração: **[12, 25, 64, 22, 11]**
+
+3. **Iteração 3 (i = 3)**:
+    - **22** é comparado com **64**. Como **22** é menor que **64**, **64** é movido para a direita.
+    - **22** é comparado com **25**. Como **22** é menor que **25**, **25** também é movido para a direita.
+    - **22** é colocado na posição correta.
+    - Vetor após a iteração: **[12, 22, 25, 64, 11]**
+
+4. **Iteração 4 (i = 4)**:
+    - **11** é comparado com **64**. Como **11** é menor que **64**, **64** é movido para a direita.
+    - **11** é comparado com **25**. Como **11** é menor que **25**, **25** também é movido para a direita.
+    - **11** é comparado com **22**. Como **11** é menor que **22**, **22** também é movido para a direita.
+    - **11** é comparado com **12**. Como **11** é menor que **12**, **12** é movido para a direita.
+    - **11** é colocado na posição inicial.
+    - Vetor após a iteração: **[11, 12, 22, 25, 64]**
+
+### Vantagens do Insertion Sort
+
+1. **Simplicidade**: O **Insertion Sort** é fácil de entender e implementar. Sua lógica é intuitiva e o código é simples.
+2. **Eficiência em pequenas listas**: Para vetores pequenos ou quase ordenados, o **Insertion Sort** pode ser muito eficiente. Ele é um dos melhores algoritmos para ordenar listas que já estão quase ordenadas, porque no melhor caso ele executa em **O(n)**.
+3. **Estável**: O algoritmo mantém a ordem relativa dos elementos iguais. Ou seja, se dois elementos são iguais, sua ordem relativa não é alterada. Isso pode ser útil em alguns contextos.
+4. **Inplace**: O **Insertion Sort** não usa espaço extra para a ordenação, exceto pela variável temporária usada durante a troca dos elementos. A complexidade espacial é **O(1)**.
+5. **Funciona bem em dados parcialmente ordenados**: Quando a lista já está quase ordenada, o **Insertion Sort** é muito rápido.
+
+### Desvantagens do Insertion Sort
+
+1. **Ineficiente para grandes listas**: A principal desvantagem do **Insertion Sort** é que sua complexidade no pior caso é **O(n²)**, o que o torna ineficiente quando lidamos com grandes quantidades de dados. Para listas grandes, o **Insertion Sort** pode ser significativamente mais lento do que algoritmos como **QuickSort**, **MergeSort** ou **HeapSort**.
+2. **Comparações e movimentações**: Mesmo que os dados não precisem ser completamente rearranjados, o algoritmo faz muitas comparações e movimentações. Isso pode resultar em um custo computacional elevado, especialmente em listas grandes.
+3. **Não é adaptativo em todos os cenários**: Embora seja adaptativo em listas quase ordenadas, o **Insertion Sort** não se adapta a listas inversamente ordenadas e ainda precisará fazer **O(n²)** comparações e movimentações.
+
+### Complexidade
+
+1. **Tempo**:
+    - **Melhor caso**: **O(n)** (quando a lista já está ordenada ou quase ordenada). Neste caso, o algoritmo só precisa percorrer a lista uma vez, sem fazer trocas.
+    - **Pior caso**: **O(n²)** (quando a lista está ordenada em ordem inversa). Nesse caso, o algoritmo fará o maior número possível de trocas e comparações.
+    - **Caso médio**: **O(n²)**, pois o número de comparações e trocas é aproximadamente o mesmo em média.
+
+2. **Espaço**: O **Insertion Sort** é **inplace**, ou seja, ele não precisa de memória extra além da que já é utilizada para o vetor a ser ordenado. Portanto, sua complexidade de espaço é **O(1)**.
+
+### Quando Usar o Insertion Sort?
+
+Apesar de sua complexidade quadrática no pior caso, o **Insertion Sort** pode ser uma excelente escolha em alguns cenários:
+
+- **Listas pequenas**: Quando o número de elementos é pequeno (menos de 10 ou 20 elementos), o **Insertion Sort** pode ser mais eficiente devido à sua simplicidade e baixo custo computacional para listas pequenas.
+- **Listas quase ordenadas**: Quando a lista já está quase ordenada, o **Insertion Sort** pode ser extremamente rápido, já que ele só precisa realizar um número muito pequeno de comparações.
+- **Algoritmos híbridos**: O **Insertion Sort** é frequentemente usado em algoritmos híbridos como o **Timsort** (usado no Python) e o **IntroSort** (usado no C++), onde é utilizado para ordenar sublistas pequenas após o uso de algoritmos mais rápidos como o **QuickSort** em listas grandes.
+
+### Implementações Avançadas
+
+Em alguns casos, podemos melhorar o desempenho do **Insertion Sort** utilizando uma busca binária para encontrar a posição onde o **key** deve ser inserido. Isso reduz o número de comparações feitas, mas a movimentação dos elementos ainda será linear. A complexidade de tempo ainda seria **O(n²)**, mas as comparações seriam feitas de forma mais eficiente.
+
+---
+
+### Conclusão
+
+O **Insertion Sort** é um algoritmo simples e eficiente para listas pequenas e quase ordenadas. Sua facilidade de implementação e comportamento eficiente em certos cenários o tornam útil em uma variedade de contextos. Porém, para listas grandes e desordenadas, algoritmos mais eficientes, como o **QuickSort** ou **MergeSort**, são preferíveis. Mesmo assim, o **Insertion Sort** tem seu valor em muitos problemas práticos, especialmente quando combinados com outras técnicas de otimização e em situações específicas onde ele brilha devido à sua simplicidade e adaptabilidade.
