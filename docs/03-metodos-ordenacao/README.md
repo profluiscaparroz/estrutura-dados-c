@@ -285,3 +285,343 @@ O Bubble Sort é fácil de entender e implementar, mas não é eficiente para li
 - Sedgewick, R., & Wayne, K. (2011). *Algorithms* (4th ed.). Addison-Wesley.
 - Gronlund, A., & Pettie, S. (2010). *Sorting and Searching Algorithms: A Cookbook*. Journal of Algorithms and Computation.
 - IBM Corporation. (1956). *IBM 101 Sorting Machine Manual*.
+- 
+
+# Selection sort
+
+O **Selection Sort** é outro algoritmo de ordenação simples, mas com um desempenho ruim em listas grandes devido à sua complexidade de tempo. A ideia central desse algoritmo é encontrar o menor (ou maior) elemento em cada passagem e colocá-lo na posição correta de forma iterativa.
+
+### Explicação do Algoritmo
+
+O Selection Sort funciona dividindo o vetor em duas partes: a parte ordenada e a parte não ordenada. A cada iteração, o algoritmo encontra o menor (ou maior) elemento da parte não ordenada e o troca com o primeiro elemento não ordenado. Esse processo é repetido até que todos os elementos estejam ordenados.
+
+A cada passada, o algoritmo percorre a parte não ordenada da lista, encontra o valor mínimo e coloca esse valor na posição correta. Após cada iteração, o tamanho da parte ordenada aumenta, e a parte não ordenada diminui.
+
+### Passos do Algoritmo
+1. **Iterar sobre o vetor**: Comece a partir do primeiro elemento e percorra a lista.
+2. **Encontrar o menor elemento**: Dentro do loop, busque o menor elemento na parte não ordenada da lista.
+3. **Trocar o menor elemento com o primeiro não ordenado**: Após encontrar o menor elemento, troque-o com o primeiro elemento da parte não ordenada.
+4. **Repetir**: Repita esse processo até que todos os elementos estejam ordenados.
+
+### Exemplo de Implementação em C
+
+```c
+#include <stdio.h>
+
+void selectionSort(int arr[], int n) {
+    int i, j, minIndex, temp;
+
+    // Loop para percorrer o vetor
+    for (i = 0; i < n - 1; i++) {
+        // Assume que o primeiro elemento não ordenado é o menor
+        minIndex = i;
+
+        // Encontrar o menor elemento na parte não ordenada
+        for (j = i + 1; j < n; j++) {
+            if (arr[j] < arr[minIndex]) {
+                minIndex = j;
+            }
+        }
+
+        // Trocar o menor elemento encontrado com o primeiro não ordenado
+        if (minIndex != i) {
+            temp = arr[i];
+            arr[i] = arr[minIndex];
+            arr[minIndex] = temp;
+        }
+    }
+}
+
+void printArray(int arr[], int size) {
+    for (int i = 0; i < size; i++) {
+        printf("%d ", arr[i]);
+    }
+    printf("\n");
+}
+
+int main() {
+    int arr[] = {64, 25, 12, 22, 11};
+    int n = sizeof(arr) / sizeof(arr[0]);
+
+    printf("Vetor original: \n");
+    printArray(arr, n);
+
+    selectionSort(arr, n);
+
+    printf("Vetor ordenado: \n");
+    printArray(arr, n);
+
+    return 0;
+}
+```
+
+### Explicação do Código
+
+1. **Função `selectionSort`**: Essa função implementa o algoritmo de ordenação. Ela recebe o vetor `arr[]` e seu tamanho `n` como parâmetros.
+   - **Laço Externo**: O laço externo (em `i`) percorre o vetor e indica a posição do primeiro elemento não ordenado.
+   - **Laço Interno**: O laço interno (em `j`) percorre a parte não ordenada e encontra o menor elemento.
+   - **Troca**: Quando o menor elemento é encontrado, ele é trocado com o elemento na posição `i`.
+
+2. **Função `printArray`**: Essa função é usada para imprimir o vetor antes e depois da ordenação.
+
+### Complexidade do Algoritmo
+- **Pior Caso (O(n²))**: A complexidade no pior caso ocorre quando o vetor está completamente desordenado. O algoritmo ainda precisa percorrer todas as comparações para encontrar o menor elemento a cada iteração.
+- **Melhor Caso (O(n²))**: Mesmo se o vetor estiver ordenado, o Selection Sort ainda faz o mesmo número de comparações, pois ele não faz verificações para ver se a lista já está ordenada.
+- **Caso Médio (O(n²))**: Em média, o número de comparações também será quadrático, já que o algoritmo sempre faz um número fixo de comparações em cada passagem.
+
+### Características do Selection Sort
+
+- **Inplace**: O algoritmo faz a ordenação diretamente no vetor, sem a necessidade de estruturas de dados auxiliares.
+- **Não Estável**: O Selection Sort não é estável, ou seja, a ordem relativa de elementos com valores iguais pode ser alterada. Por exemplo, se dois elementos com o valor 10 estão no vetor, eles podem trocar de lugar durante o processo de ordenação.
+- **Simplicidade**: O Selection Sort é simples de entender e implementar, mas sua complexidade quadrática o torna impraticável para listas grandes.
+
+### Teoria do Selection Sort
+
+O **Selection Sort** é um algoritmo de ordenação simples e intuitivo que segue uma abordagem de **busca e troca**. O principal objetivo do algoritmo é ordenar uma lista ou vetor de elementos, trocando elementos ao longo do processo. Ele divide a lista em duas partes: uma parte ordenada e outra não ordenada. Inicialmente, a parte ordenada é vazia, e a parte não ordenada contém todos os elementos.
+
+#### Como Funciona o Algoritmo:
+1. **Inicialização**: O algoritmo começa com a parte não ordenada contendo todos os elementos da lista.
+2. **Busca do Menor Elemento**: Em cada iteração, o algoritmo encontra o menor (ou maior) elemento da parte não ordenada.
+3. **Troca de Posições**: Depois de encontrar o menor (ou maior) elemento, ele é trocado com o primeiro elemento da parte não ordenada.
+4. **Repetição**: Esse processo é repetido, movendo a fronteira entre a parte ordenada e a parte não ordenada. Cada iteração coloca um novo elemento na parte ordenada, até que todos os elementos estejam ordenados.
+
+### Passo a Passo do Algoritmo
+
+Vamos detalhar um pouco mais sobre como o Selection Sort opera em cada iteração. Imagine que temos o seguinte vetor de números desordenados:
+
+```
+[64, 25, 12, 22, 11]
+```
+
+#### Passo 1 (Primeira iteração):
+- O algoritmo começa com o índice 0 (o primeiro elemento, 64).
+- Ele busca o menor elemento na parte não ordenada (de índice 0 a 4). Nesse caso, o menor elemento é 11.
+- O algoritmo troca o 64 com o 11.
+- Agora o vetor fica assim: `[11, 25, 12, 22, 64]`.
+
+#### Passo 2 (Segunda iteração):
+- O algoritmo começa com o índice 1 (o elemento 25).
+- Ele busca o menor elemento na parte não ordenada (de índice 1 a 4). O menor elemento é 12.
+- O algoritmo troca o 25 com o 12.
+- Agora o vetor fica assim: `[11, 12, 25, 22, 64]`.
+
+#### Passo 3 (Terceira iteração):
+- O algoritmo começa com o índice 2 (o elemento 25).
+- Ele busca o menor elemento na parte não ordenada (de índice 2 a 4). O menor elemento é 22.
+- O algoritmo troca o 25 com o 22.
+- Agora o vetor fica assim: `[11, 12, 22, 25, 64]`.
+
+#### Passo 4 (Quarta iteração):
+- O algoritmo começa com o índice 3 (o elemento 25).
+- Ele busca o menor elemento na parte não ordenada (de índice 3 a 4). O menor elemento é 25 (ele já está na posição correta).
+- Como não há necessidade de troca, o vetor permanece o mesmo.
+
+#### Passo 5 (Última iteração):
+- Agora, apenas o elemento 64 está na parte não ordenada, e ele já está em sua posição correta. O algoritmo termina a ordenação.
+
+O vetor final ordenado é:
+```
+[11, 12, 22, 25, 64]
+```
+
+### Características do Selection Sort
+
+- **Inplace**: O algoritmo é considerado *inplace* (em lugar), o que significa que ele não utiliza memória adicional significativa além da memória usada pelo vetor original. Isso o torna eficiente em termos de espaço.
+- **Não Estável**: O Selection Sort não é um algoritmo estável. Isso significa que ele pode mudar a ordem relativa de elementos com valores iguais. Por exemplo, se o vetor contiver dois elementos com o mesmo valor, o algoritmo pode trocar esses elementos, alterando a ordem deles. 
+- **Comparações e Trocas**: Em cada iteração do algoritmo, há duas operações principais: comparar os elementos e trocá-los. Mesmo que o vetor já esteja parcialmente ordenado, o algoritmo fará todas as comparações e verificações de troca, o que pode ser ineficiente.
+
+### Vantagens do Selection Sort
+
+1. **Simplicidade**: O Selection Sort é simples de entender e implementar, o que o torna útil para fins educacionais e para pequenos problemas.
+2. **Pouca Memória**: Como é um algoritmo *inplace*, o Selection Sort não requer espaço adicional significativo, além da memória usada pelo vetor original.
+3. **Previsibilidade**: O algoritmo tem um comportamento bastante previsível, já que ele sempre faz o mesmo número de comparações e trocas, independentemente da ordenação inicial do vetor.
+
+### Desvantagens do Selection Sort
+
+1. **Desempenho Ruim para Listas Grandes**: O Selection Sort tem uma complexidade de tempo de O(n²), o que significa que seu desempenho se degrada significativamente à medida que o tamanho da lista aumenta. Para listas grandes, seu uso é geralmente evitado em favor de algoritmos mais eficientes como **QuickSort** ou **MergeSort**.
+2. **Não Estável**: Como o Selection Sort pode alterar a ordem relativa de elementos iguais, ele não é adequado para aplicações que exigem estabilidade na ordenação.
+
+### Complexidade do Algoritmo
+
+#### Complexidade de Tempo:
+- **Melhor Caso (O(n²))**: Mesmo que o vetor já esteja ordenado, o algoritmo ainda realiza todas as comparações. Ele sempre percorre todo o vetor, buscando o menor elemento e trocando-o.
+- **Pior Caso (O(n²))**: No pior cenário, quando o vetor está completamente desordenado, o algoritmo realiza o máximo de comparações e trocas possíveis.
+- **Caso Médio (O(n²))**: A média de comparações e trocas também é quadrática.
+
+#### Complexidade de Espaço:
+- **Espaço (O(1))**: O Selection Sort é um algoritmo *inplace*, o que significa que ele não requer espaço extra além do vetor de entrada. Ele apenas usa uma quantidade constante de espaço adicional para as variáveis temporárias (como a variável `minIndex` e `temp` no código).
+
+### Comparação com Outros Algoritmos de Ordenação
+
+O **Selection Sort** é geralmente comparado a outros algoritmos de ordenação simples, como o **Bubble Sort** e o **Insertion Sort**:
+
+- **Bubble Sort**: Ambos os algoritmos têm complexidade O(n²), mas o **Bubble Sort** geralmente faz mais trocas do que o **Selection Sort**, pois ele troca os elementos durante as comparações. O **Selection Sort**, por outro lado, realiza menos trocas, mas ainda realiza O(n²) comparações.
+- **Insertion Sort**: O **Insertion Sort** pode ser mais eficiente do que o **Selection Sort** em listas parcialmente ordenadas, pois ele pode fazer menos comparações e trocas em cenários favoráveis. No entanto, seu pior caso também é O(n²), como o **Selection Sort**.
+
+### O que é o Selection Sort?
+
+O **Selection Sort** é um algoritmo de ordenação que funciona da seguinte maneira:
+
+1. Ele começa com o primeiro elemento da lista e encontra o menor elemento entre os elementos restantes.
+2. Esse menor elemento é trocado com o primeiro elemento.
+3. A partir daí, ele passa para o segundo elemento e repete o processo de encontrar o menor elemento nos elementos seguintes, trocando-o com o segundo.
+4. Isso se repete até que todos os elementos estejam ordenados.
+
+### Como funciona o algoritmo?
+
+Vamos dar uma olhada no exemplo abaixo:
+
+Suponha que temos o seguinte vetor de números desordenados:
+
+```
+[64, 25, 12, 22, 11]
+```
+
+Agora, vamos passar pelo algoritmo **Selection Sort** passo a passo.
+
+### Passo 1: **Início da Primeira Iteração**
+
+1. O algoritmo começa com o primeiro elemento da lista (índice 0, que é 64).
+2. Ele encontra o menor elemento entre os elementos da lista a partir do índice 0 até o final (o restante da lista). No caso, o menor elemento é **11**.
+3. O algoritmo troca o **11** com o primeiro elemento, **64**.
+4. Agora o vetor fica assim:
+
+```
+[11, 25, 12, 22, 64]
+```
+
+### Passo 2: **Segunda Iteração**
+
+1. Agora, o algoritmo começa a segunda iteração. A parte ordenada já tem o elemento **11**, e a parte não ordenada começa com o elemento **25** (índice 1).
+2. Ele encontra o menor elemento entre os elementos a partir do índice 1 até o final. O menor elemento é **12**.
+3. O algoritmo troca o **12** com o **25**.
+4. Agora o vetor fica assim:
+
+```
+[11, 12, 25, 22, 64]
+```
+
+### Passo 3: **Terceira Iteração**
+
+1. O algoritmo começa a terceira iteração com o índice 2, ou seja, com o elemento **25**.
+2. Ele encontra o menor elemento entre os elementos restantes, de índice 2 até o final. O menor elemento é **22**.
+3. O algoritmo troca o **22** com o **25**.
+4. Agora o vetor fica assim:
+
+```
+[11, 12, 22, 25, 64]
+```
+
+### Passo 4: **Quarta Iteração**
+
+1. O algoritmo começa a quarta iteração com o índice 3, ou seja, com o elemento **25**.
+2. Ele encontra que o menor elemento entre **25** e **64** é **25** (não há necessidade de troca).
+3. O vetor permanece assim:
+
+```
+[11, 12, 22, 25, 64]
+```
+
+### Passo 5: **Última Iteração**
+
+Agora, o vetor tem apenas o **64** restante, e ele já está em sua posição correta. O algoritmo termina porque todos os elementos estão ordenados.
+
+### O vetor final ordenado é:
+
+```
+[11, 12, 22, 25, 64]
+```
+
+---
+
+### Implementação do Selection Sort em C
+
+Aqui está o código em **C** que implementa o algoritmo **Selection Sort**:
+
+```c
+#include <stdio.h>
+
+// Função para realizar o Selection Sort
+void selectionSort(int arr[], int n) {
+    int i, j, minIndex, temp;
+
+    // Percorrer todo o vetor
+    for (i = 0; i < n - 1; i++) {
+        // Assumir que o primeiro elemento não ordenado é o menor
+        minIndex = i;
+
+        // Encontrar o menor elemento na parte não ordenada do vetor
+        for (j = i + 1; j < n; j++) {
+            if (arr[j] < arr[minIndex]) {
+                minIndex = j;
+            }
+        }
+
+        // Trocar o menor elemento encontrado com o primeiro não ordenado
+        if (minIndex != i) {
+            temp = arr[i];
+            arr[i] = arr[minIndex];
+            arr[minIndex] = temp;
+        }
+    }
+}
+
+// Função para imprimir o vetor
+void printArray(int arr[], int size) {
+    for (int i = 0; i < size; i++) {
+        printf("%d ", arr[i]);
+    }
+    printf("\n");
+}
+
+int main() {
+    // Vetor de exemplo
+    int arr[] = {64, 25, 12, 22, 11};
+    int n = sizeof(arr) / sizeof(arr[0]);
+
+    // Imprimir o vetor original
+    printf("Vetor original: \n");
+    printArray(arr, n);
+
+    // Chamar a função de ordenação
+    selectionSort(arr, n);
+
+    // Imprimir o vetor ordenado
+    printf("Vetor ordenado: \n");
+    printArray(arr, n);
+
+    return 0;
+}
+```
+
+### Explicação do Código
+
+1. **Função `selectionSort`**:
+   - A função recebe dois parâmetros: o vetor de números (`arr[]`) e o tamanho do vetor (`n`).
+   - O primeiro laço (`for i`) percorre cada posição do vetor.
+   - O segundo laço (`for j`) encontra o menor elemento da parte não ordenada do vetor.
+   - Se o menor elemento encontrado não for o elemento que está na posição `i`, ele é trocado.
+
+2. **Função `printArray`**:
+   - Esta função é usada para imprimir o vetor na tela antes e depois da ordenação.
+
+3. **Função `main`**:
+   - Cria um vetor de números desordenados e chama a função `selectionSort` para ordenar o vetor.
+   - Após a ordenação, o vetor é impresso na tela.
+
+### Complexidade
+
+- **Tempo**: O algoritmo realiza O(n²) comparações no pior caso, melhor caso e caso médio, pois ele percorre o vetor várias vezes para encontrar o menor elemento a cada iteração.
+- **Espaço**: O algoritmo é *inplace*, ou seja, ele usa apenas espaço adicional para variáveis temporárias. Assim, sua complexidade de espaço é **O(1)**.
+
+---
+
+### Resumo
+
+O **Selection Sort** é um algoritmo simples, mas ineficiente para listas grandes devido à sua complexidade O(n²). Ele funciona encontrando o menor elemento da parte não ordenada da lista e trocando-o com o primeiro elemento não ordenado a cada iteração. Mesmo sendo simples e intuitivo, para listas maiores, outros algoritmos como **QuickSort** ou **MergeSort** são mais eficientes.
+
+### Considerações
+
+Apesar de sua simplicidade, o **Selection Sort** não é eficiente para listas grandes. Em termos de eficiência, algoritmos como **MergeSort** ou **QuickSort** são mais adequados para listas de tamanho maior, pois possuem complexidade O(n log n), que é muito melhor que O(n²) para grandes volumes de dados.
+
+O algoritmo, no entanto, pode ser útil em situações onde a simplicidade do código é mais importante que a eficiência, ou em listas pequenas, onde a diferença de desempenho não é tão significativa.
