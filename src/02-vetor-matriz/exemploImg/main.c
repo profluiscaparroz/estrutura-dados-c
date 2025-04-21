@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+
 void aplicar_grayscale(unsigned char *img, int width, int height, int channels) {
     for (int i = 0; i < width * height * channels; i += channels) {
         unsigned char r = img[i];
