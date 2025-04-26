@@ -83,5 +83,6 @@ int main() {
     printf("Removido: %d\n", dequeueFront(deque)); // Remove do início
     displayDeque(deque); // Exibe a fila novamente
 
+    destroyDeque(deque); // Libera a memória alocada para a fila
     return 0; // Finaliza o programa
 }
