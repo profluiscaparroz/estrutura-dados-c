@@ -643,3 +643,375 @@ Sua simplicidade e eficiência fazem delas uma ferramenta essencial para estrutu
 ---
 
 # Filas
+
+
+## Introdução
+
+O conceito de fila não nasceu diretamente com a Ciência da Computação. Ele surgiu inicialmente na matemática aplicada, especialmente na análise de sistemas de espera no final do século XIX e início do XX.
+
+O matemático dinamarquês Agner Krarup Erlang (1878–1929) é considerado o "pai" da teoria das filas. Ele desenvolveu fórmulas para calcular a capacidade de centrais telefônicas, preocupando-se com o número de chamadas simultâneas e tempos de espera.   
+
+Depois disso, nos anos 50–60, a teoria se popularizou com o desenvolvimento de sistemas computacionais e redes.
+
+Na Ciência da Computação moderna, filas começaram a ser tratadas como uma estrutura de dados padrão na década de 1960, quando linguagens como ALGOL e C começaram a precisar de mecanismos organizados para controle de fluxos de dados.
+
+Em Ciência da Computação, **fila** é uma estrutura de dados abstrata que armazena uma sequência de elementos, seguindo a **ordem de chegada** para o processamento. A principal regra da fila é:
+
+> **FIFO** – *First In, First Out* (o primeiro a entrar é o primeiro a sair).
+
+Ou seja, o primeiro elemento inserido na fila será o primeiro a ser removido.
+
+**Exemplos da vida real:**
+- Uma fila no supermercado: quem chega primeiro, é atendido primeiro.
+- Impressão de documentos: o primeiro documento enviado é o primeiro a ser impresso.
+
+---
+
+### Filas e Teoria dos Grafos
+
+Filas são absolutamente essenciais em vários **algoritmos de grafos**, especialmente:
+
+### Busca em Largura (BFS)
+
+Em BFS, queremos explorar todos os nós de um grafo em **camadas** — primeiro os vizinhos imediatos, depois os vizinhos dos vizinhos, e assim por diante.  
+Aqui:
+
+- Inicializamos uma **fila** com o nó de partida.
+- Em cada passo, removemos o primeiro nó da fila (**dequeue**), visitamos seus vizinhos e **enfileiramos** (**enqueue**) todos os vizinhos ainda não visitados.
+
+Formalmente, o funcionamento da BFS depende da fila para garantir que **a menor distância** (em número de arestas) seja preservada.
+
+**BFS tem complexidade**:
+$
+O(V + E)
+$
+onde $V$ é o número de vértices e $E$ é o número de arestas.
+
+---
+
+### Modelagem Probabilística: Generalizações
+
+Além do modelo $M/M/1$ que mencionei antes, há outros sistemas importantes:
+
+| Modelo | Descrição |
+|:---|:---|
+| $M/M/c$ | Vários servidores (c > 1), chegadas e atendimentos markovianos. |
+| $M/D/1$ | Chegadas markovianas, serviço com tempo **determinístico**. |
+| $M/G/1$ | Chegadas markovianas, serviço com **qualquer distribuição** geral. |
+| $G/G/1$ | Tanto chegada quanto serviço com distribuições gerais. |
+
+Por exemplo, $G/G/1$ é muito mais complexo, pois precisamos de métodos numéricos ou simulações para obter tempos médios, variância, etc.
+
+---
+
+### Filas em Computação Paralela e Concorrente
+
+Em ambientes de **alta concorrência** ou **sistemas paralelos**, as filas precisam ser:
+
+- **Thread-safe**: múltiplas threads acessando sem conflitos.
+- **Lock-free**: onde tentamos evitar bloqueios para minimizar o overhead.
+
+Exemplo:  
+**Michael & Scott Queue** (1996) — uma fila lock-free baseada em listas ligadas com ponteiros atômicos (CAS - Compare And Swap).
+
+O desafio é garantir que as operações de `enqueue` e `dequeue` sejam feitas de forma **atômica**, mesmo com múltiplos threads ou processos agindo simultaneamente.
+
+Esses conceitos são essenciais, por exemplo, em sistemas de processamento de pacotes em redes de alta velocidade, onde filas precisam ser super eficientes.
+
+---
+
+### Análise Assintótica em Filas Grandes
+
+Quando o número de clientes/elementos cresce para o infinito, usamos **teoria assintótica**:
+
+- Analisamos o **tempo de espera** médio e a **taxa de perda**.
+- Consideramos **colapso** (quando a utilização $\rho$ se aproxima de 1) e surgem fenômenos como **fila infinita** ou **descarte de elementos**.
+
+Exemplo:  
+Se $\rho \to 1$, o tempo de espera médio tende a crescer de forma não linear:
+
+$
+W_q \propto \frac{1}{1-\rho}
+$
+
+ou seja, basta uma **pequena sobrecarga** para fazer o sistema colapsar.
+
+---
+
+### Filas e Autômatos
+
+Você pode também ver filas como uma "memória estruturada" de alguns tipos de **autômatos**:
+
+- Um **Autômato de Pilha** usa uma **pilha** (estrutura LIFO) para memória auxiliar.
+- Um **Autômato de Fila** usa uma **fila** (estrutura FIFO) para memória auxiliar.
+
+Esses autômatos são mais poderosos do que autômatos finitos tradicionais, pois conseguem reconhecer linguagens mais complexas (até algumas linguagens que pilhas sozinhas não conseguiriam).
+
+Na prática, isso se aproxima de sistemas que processam **fluxos ordenados** (como processamento de mensagens em tempo real).
+
+---
+
+### Operações Fundamentais em uma Fila
+
+As operações básicas são:
+
+- **enqueue(x)**: adiciona o elemento `x` no final da fila.
+- **dequeue()**: remove e retorna o elemento que está no início da fila.
+- **peek()** ou **front()**: retorna o elemento do início da fila sem removê-lo.
+- **isEmpty()**: verifica se a fila está vazia.
+
+Existem também variações:
+- **size()**: retorna o número de elementos na fila.
+- **isFull()**: usada em filas com capacidade limitada.
+
+---
+
+## Representação Matemática da Fila
+
+Formalmente, podemos modelar uma fila como um **par ordenado** $(F, R)$, onde:
+
+- $F$ (frente, front) é o índice ou posição do primeiro elemento.
+- $R$ (retaguarda, rear) é o índice ou posição do último elemento.
+
+Se pensarmos em um vetor $Q$ que armazena os elementos:
+
+- `enqueue(x)`: $R \leftarrow R + 1$, $Q[R] \leftarrow x$
+- `dequeue()`: retorna $Q[F]$ e $F \leftarrow F + 1$
+
+Em implementações mais sofisticadas (como filas circulares), os índices $F$ e $R$ são tratados **modularmente**:
+$
+\text{novo índice} = (\text{índice atual} + 1) \mod \text{capacidade}
+$
+para evitar estouro de memória e aproveitar melhor o espaço.
+
+---
+
+# 🔵 Tipos de Filas
+
+Existem **variações** da estrutura básica de fila:
+
+| Tipo | Descrição |
+|:---|:---|
+| **Fila simples** | Segue estritamente o FIFO. |
+| **Fila circular** | O último elemento se conecta ao primeiro, formando um ciclo. Evita desperdício de espaço. |
+| **Fila dupla (Deque)** | Permite inserção e remoção em ambas as extremidades. |
+| **Fila de prioridade** | Cada elemento tem uma prioridade, e o dequeuing retira o elemento de maior prioridade. |
+| **Fila assíncrona** | Permite comunicação entre processos de maneira segura, muito usada em sistemas concorrentes. |
+
+---
+
+# 🔵 Complexidade de Tempo das Operações
+
+| Operação | Tempo (fila com array) | Tempo (fila com lista ligada) |
+|:---|:---|:---|
+| enqueue | $O(1)$ | $O(1)$ |
+| dequeue | $O(1)$ | $O(1)$ |
+| peek | $O(1)$ | $O(1)$ |
+
+Tanto em vetor como em lista ligada, as operações principais são $O(1)$ — **tempo constante**.
+
+**Obs:** se a fila for implementada com redimensionamento dinâmico de array (como listas dinâmicas), o `enqueue` pode ter **tempo amortizado**.
+
+---
+
+# 🔵 Aplicações de Filas
+
+As filas aparecem em muitos algoritmos e sistemas, como:
+
+- **Sistemas de impressão** (gerenciamento de tarefas)
+- **Rede de computadores** (pacotes de dados aguardam em filas)
+- **Sistemas operacionais** (escalonamento de processos)
+- **BFS (Busca em Largura em grafos)** — usa fila para visitar vértices na ordem correta.
+- **Simulações** (modelagem de supermercados, aeroportos etc.)
+- **Sistemas de mensagens** (RabbitMQ, Kafka, SQS)
+
+---
+
+# 🔵 Modelagem Matemática de Filas: Teoria das Filas
+
+Quando se fala de filas em **sistemas reais**, especialmente em computação distribuída, redes e engenharia, entra a chamada **Teoria das Filas**.
+
+**Teoria das Filas** é um ramo da matemática aplicada que estuda o comportamento de filas.
+
+### Modelo Básico: Sistema M/M/1
+
+O modelo mais básico é o **M/M/1**:
+
+- **M** (Markoviano): chegada dos clientes é um processo de Poisson (taxa $\lambda$).
+- **M** (Markoviano): tempo de atendimento é exponencial (taxa $\mu$).
+- **1**: há apenas um servidor.
+
+**Características:**
+- Tempo entre chegadas é distribuído exponencialmente.
+- Tempo de atendimento também é distribuído exponencialmente.
+
+As métricas principais são:
+
+- **Taxa de chegada**: $\lambda$ (clientes por unidade de tempo)
+- **Taxa de serviço**: $\mu$ (clientes atendidos por unidade de tempo)
+
+### Fórmulas Importantes:
+
+1. **Utilização do sistema**:
+$
+\rho = \frac{\lambda}{\mu}
+$
+($\rho$ deve ser menor que 1 para o sistema ser estável.)
+
+2. **Número médio de clientes na fila**:
+$
+L_q = \frac{\rho^2}{1 - \rho}
+$
+
+3. **Tempo médio de espera na fila**:
+$
+W_q = \frac{L_q}{\lambda} = \frac{\rho}{\mu(1-\rho)}
+$
+
+4. **Número médio de clientes no sistema** (fila + sendo atendidos):
+$
+L = \frac{\rho}{1 - \rho}
+$
+
+5. **Tempo médio no sistema**:
+$
+W = \frac{1}{\mu - \lambda}
+$
+
+Essas fórmulas ajudam a dimensionar sistemas de TI, centrais de atendimento, servidores web, etc.
+
+---
+
+# 🔵 Fila vs. Outras Estruturas de Dados
+
+| Estrutura | Regra de Retirada |
+|:---|:---|
+| Fila (Queue) | Primeiro a entrar, primeiro a sair (FIFO). |
+| Pilha (Stack) | Último a entrar, primeiro a sair (LIFO). |
+| Lista ligada | Não necessariamente segue regras de inserção/remoção — depende da implementação. |
+
+---
+
+# 🔵 Considerações Avançadas
+
+Em filas aplicadas a **concorrência** (threads e processos simultâneos):
+
+- Existem **filas thread-safe** que usam mecanismos de **lock** ou **lock-free** (ex: usando operações atômicas).
+- **Filas de múltiplos produtores e múltiplos consumidores** (MPMC queues) são usadas em alto desempenho, onde várias threads colocam e retiram dados da fila.
+
+Em **sistemas distribuídos**:
+
+- Filas podem ser persistidas (armazenadas em disco) e tolerantes a falhas.
+- Filas distribuídas suportam consistência e garantem ordenação de mensagens, dependendo do modelo (ex: AWS SQS vs Apache Kafka).
+
+---
+
+# 🧠 Resumo Final
+
+- **Fila é uma estrutura de dados FIFO**.
+- **Operações principais**: enqueue, dequeue, peek.
+- **Complexidade**: $O(1)$ para todas as operações principais.
+- **Variações**: fila circular, deque, fila de prioridade.
+- **Teoria das filas**: modela comportamento de sistemas em espera com fórmulas matemáticas.
+- **Aplicações reais**: em redes, sistemas operacionais, algoritmos de grafos, sistemas de mensagens e mais.
+
+---
+
+### Exemplo de implementação pilha em C
+```C
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX 100 // Define o tamanho máximo da pilha
+
+// Estrutura para representar a pilha
+typedef struct {
+    int itens[MAX]; // Array para armazenar os elementos da pilha
+    int topo;       // Índice do topo da pilha
+} Pilha;
+
+// Função para inicializar a pilha
+void inicializarPilha(Pilha *p) {
+    p->topo = -1; // Define o topo como -1, indicando que a pilha está vazia
+}
+
+// Função para verificar se a pilha está cheia
+int estaCheia(Pilha *p) {
+    return p->topo == MAX - 1; // Retorna 1 (true) se o topo atingir o limite máximo
+}
+
+// Função para verificar se a pilha está vazia
+int estaVazia(Pilha *p) {
+    return p->topo == -1; // Retorna 1 (true) se o topo for -1
+}
+
+// Função para empilhar (push) um elemento
+void empilhar(Pilha *p, int valor) {
+    if (estaCheia(p)) {
+        printf("Erro: Pilha cheia!\n");
+        return;
+    }
+    p->itens[++p->topo] = valor; // Incrementa o topo e adiciona o valor
+}
+
+// Função para desempilhar (pop) um elemento
+int desempilhar(Pilha *p) {
+    if (estaVazia(p)) {
+        printf("Erro: Pilha vazia!\n");
+        return -1; // Retorna -1 para indicar erro
+    }
+    return p->itens[p->topo--]; // Retorna o elemento do topo e decrementa o índice
+}
+
+// Função para exibir os elementos da pilha
+void exibirPilha(Pilha *p) {
+    if (estaVazia(p)) {
+        printf("Pilha vazia!\n");
+        return;
+    }
+    printf("Elementos da pilha: ");
+    for (int i = 0; i <= p->topo; i++) {
+        printf("%d ", p->itens[i]);
+    }
+    printf("\n");
+}
+
+// Função principal para demonstrar o uso da pilha
+int main() {
+    Pilha p;
+    inicializarPilha(&p);
+
+    empilhar(&p, 10);
+    empilhar(&p, 20);
+    empilhar(&p, 30);
+
+    exibirPilha(&p);
+
+    printf("Desempilhando: %d\n", desempilhar(&p));
+    printf("Desempilhando: %d\n", desempilhar(&p));
+
+    exibirPilha(&p);
+
+    return 0;
+}
+```
+
+### Reflexão Conceitual
+
+O que é realmente uma fila, no sentido profundo?
+
+- **Uma fila é a manifestação de ordem temporal** — ela é a maneira como os sistemas garantem que a sequência de eventos seja respeitada.
+- **É uma abstração da causalidade**: o que acontece antes, precisa ser processado antes.
+
+Sem a estrutura de fila, muitos algoritmos fundamentais e sistemas reais simplesmente não conseguiriam manter a coerência.
+
+---
+
+### Conclusão Profunda
+
+| Aspecto | Essência |
+|:---|:---|
+| Definição prática | FIFO: estrutura que respeita a ordem de chegada. |
+| Definição teórica | Par ordenado (F, R) sobre um vetor ou estrutura ligada. |
+| Definição matemática | Sistema de eventos discretos, geralmente modelado por processos de Poisson. |
+| Definição filosófica | Representação do fluxo causal de eventos. |
