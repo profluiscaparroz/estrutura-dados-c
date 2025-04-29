@@ -1,5 +1,29 @@
 #include <stdio.h>
 
+// Função genérica para busca linear usando void*
+int buscaLinearGenerica(void *array, size_t tamanho, size_t tamanhoElemento, void *elemento, int (*compara)(const void *, const void *)) {
+    char *ptr = (char *)array;
+    for (size_t i = 0; i < tamanho; i++) {
+        if (compara(ptr, elemento) == 0) {
+            return i; // Retorna o índice onde o elemento foi encontrado
+        }
+        ptr += tamanhoElemento; // Avança para o próximo elemento
+    }
+    return -1; // Retorna -1 se o elemento não foi encontrado
+}
+
+// Função para busca linear usando ponteiros
+int buscaLinearPonteiros(int *inicio, int *fim, int elemento) {
+    int *ptr = inicio;
+    while (ptr != fim) {
+        if (*ptr == elemento) {
+            return ptr - inicio; // Retorna o índice relativo ao início
+        }
+        ptr++;
+    }
+    return -1; // Retorna -1 se o elemento não foi encontrado
+}
+
 // Função para busca linear em um vetor
 int buscaLinearVetor(int vetor[], int tamanho, int elemento) {
     for (int i = 0; i < tamanho; i++) {
@@ -11,7 +35,13 @@ int buscaLinearVetor(int vetor[], int tamanho, int elemento) {
 }
 
 // Função para busca linear em uma matriz
-int buscaLinearMatriz(int linhas, int colunas, int matriz[linhas][colunas], int elemento, int *linha, int *coluna) {
+int buscaLinearMatriz(
+    int linhas, 
+    int colunas, 
+    int matriz[linhas][colunas], 
+    int elemento, 
+    int *linha, 
+    int *coluna) {
     for (int i = 0; i < linhas; i++) {
         for (int j = 0; j < colunas; j++) {
             if (matriz[i][j] == elemento) {
