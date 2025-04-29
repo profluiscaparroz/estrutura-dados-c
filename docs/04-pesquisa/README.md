@@ -166,9 +166,6 @@ A busca é uma das operações mais importantes e frequentes da computação. En
 Seja em um simples vetor ou em um banco de dados distribuído, **pesquisar de forma eficiente** é o que permite que sistemas modernos sejam rápidos, responsivos e inteligentes.
 
 ---
-Claro! Vamos fazer uma explicação aprofundada sobre **busca linear** e **busca binária**, com foco especial em **formulação matemática**, **comparações teóricas**, **custos assintóticos**, **complexidade em tempo e espaço**, **limitações práticas**, e até **análise de melhor, pior e caso médio**. Também vamos pontuar aspectos específicos de como isso se relaciona com a linguagem C (como alocação, ponteiros e vetores).
-
----
 
 ## 🔍 1. BUSCA LINEAR (ou SEQUENCIAL)
 
