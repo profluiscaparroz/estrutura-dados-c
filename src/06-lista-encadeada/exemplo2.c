@@ -3,43 +3,43 @@
 
 // Estrutura para um nó da lista duplamente encadeada
 typedef struct Node {
-    int data; // Dado armazenado no nó
-    struct Node* prev; // Ponteiro para o nó anterior
-    struct Node* next; // Ponteiro para o próximo nó
+    int dado; // Dado armazenado no nó
+    struct Node* anterior; // Ponteiro para o nó anterior
+    struct Node* proximo; // Ponteiro para o próximo nó
 } Node;
 
 // Função para criar um novo nó
-Node* criarNo(int data) {
+Node* criarNo(int dado) {
     Node* novoNo = (Node*)malloc(sizeof(Node)); // Aloca memória para o nó
-    novoNo->data = data; // Atribui o dado ao nó
-    novoNo->prev = NULL; // Inicializa o ponteiro para o nó anterior como NULL
-    novoNo->next = NULL; // Inicializa o ponteiro para o próximo nó como NULL
+    novoNo->dado = dado; // Atribui o dado ao nó
+    novoNo->anterior = NULL; // Inicializa o ponteiro para o nó anterior como NULL
+    novoNo->proximo = NULL; // Inicializa o ponteiro para o próximo nó como NULL
     return novoNo; // Retorna o novo nó
 }
 
 // Função para inserir um nó no início da lista
-void inserirInicio(Node** head, int data) {
-    Node* novoNo = criarNo(data); // Cria um novo nó
-    novoNo->next = *head; // Faz o próximo do novo nó apontar para o antigo primeiro nó
+void inserirInicio(Node** head, int dado) {
+    Node* novoNo = criarNo(dado); // Cria um novo nó
+    novoNo->proximo = *head; // Faz o próximo do novo nó apontar para o antigo primeiro nó
     if (*head != NULL) {
-        (*head)->prev = novoNo; // Atualiza o ponteiro anterior do antigo primeiro nó
+        (*head)->anterior = novoNo; // Atualiza o ponteiro anterior do antigo primeiro nó
     }
     *head = novoNo; // Atualiza o ponteiro da cabeça para o novo nó
 }
 
 // Função para inserir um nó no final da lista
-void inserirFim(Node** head, int data) {
-    Node* novoNo = criarNo(data); // Cria um novo nó
+void inserirFim(Node** head, int dado) {
+    Node* novoNo = criarNo(dado); // Cria um novo nó
     if (*head == NULL) {
         *head = novoNo; // Se a lista estiver vazia, o novo nó será a cabeça
         return;
     }
     Node* temp = *head; // Ponteiro temporário para percorrer a lista
-    while (temp->next != NULL) {
-        temp = temp->next; // Avança até o último nó
+    while (temp->proximo != NULL) {
+        temp = temp->proximo; // Avança até o último nó
     }
-    temp->next = novoNo; // Faz o próximo do último nó apontar para o novo nó
-    novoNo->prev = temp; // Faz o anterior do novo nó apontar para o último nó
+    temp->proximo = novoNo; // Faz o próximo do último nó apontar para o novo nó
+    novoNo->anterior = temp; // Faz o anterior do novo nó apontar para o último nó
 }
 
 // Função para imprimir a lista do início ao fim
@@ -47,8 +47,8 @@ void imprimirLista(Node* head) {
     Node* temp = head; // Ponteiro temporário para percorrer a lista
     printf("Lista (início ao fim): ");
     while (temp != NULL) {
-        printf("%d ", temp->data); // Imprime o dado do nó atual
-        temp = temp->next; // Avança para o próximo nó
+        printf("%d ", temp->dado); // Imprime o dado do nó atual
+        temp = temp->proximo; // Avança para o próximo nó
     }
     printf("\n");
 }
@@ -57,13 +57,13 @@ void imprimirLista(Node* head) {
 void imprimirListaReversa(Node* head) {
     if (head == NULL) return; // Se a lista estiver vazia, não faz nada
     Node* temp = head;
-    while (temp->next != NULL) {
-        temp = temp->next; // Avança até o último nó
+    while (temp->proximo != NULL) {
+        temp = temp->proximo; // Avança até o último nó
     }
     printf("Lista (fim ao início): ");
     while (temp != NULL) {
-        printf("%d ", temp->data); // Imprime o dado do nó atual
-        temp = temp->prev; // Retrocede para o nó anterior
+        printf("%d ", temp->dado); // Imprime o dado do nó atual
+        temp = temp->anterior; // Retrocede para o nó anterior
     }
     printf("\n");
 }

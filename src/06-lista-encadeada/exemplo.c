@@ -3,51 +3,51 @@
 #define SIZE 100
 #define NULL_PTR -1
 
-int data[SIZE];        // Armazena os dados
-int next[SIZE];        // Simula os ponteiros
-int head = NULL_PTR;   // Início da lista
-int free_list = 0;     // Próximo índice livre
+int dado[SIZE];        // Armazena os dados
+int proximo[SIZE];        // Simula os ponteiros
+int inicio = NULL_PTR;   // Início da lista
+int lista_livre = 0;     // Próximo índice livre
 
 // Inicializa os "ponteiros" livres
-void init_list() {
+void inicia_lista() {
     for (int i = 0; i < SIZE - 1; i++) {
-        next[i] = i + 1;
+        proximo[i] = i + 1;
     }
-    next[SIZE - 1] = NULL_PTR;
+    proximo[SIZE - 1] = NULL_PTR;
 }
 
 // Insere no início
-void insert(int value) {
-    if (free_list == NULL_PTR) {
+void insere(int valor) {
+    if (lista_livre == NULL_PTR) {
         printf("Lista cheia!\n");
         return;
     }
-    int new_node = free_list;
-    free_list = next[free_list];
+    int novo_no = lista_livre;
+    lista_livre = proximo[lista_livre];
 
-    data[new_node] = value;
-    next[new_node] = head;
-    head = new_node;
+    dado[novo_no] = valor;
+    proximo[novo_no] = inicio;
+    inicio = novo_no;
 }
 
 // Imprime lista
-void print_list() {
-    int current = head;
+void exibir_lista() {
+    int current = inicio;
     while (current != NULL_PTR) {
-        printf("%d -> ", data[current]);
-        current = next[current];
+        printf("%d -> ", dado[current]);
+        current = proximo[current];
     }
     printf("NULL\n");
 }
 
 int main() {
-    init_list();
+    inicia_lista();
 
-    insert(10);
-    insert(20);
-    insert(30);
+    insere(10);
+    insere(20);
+    insere(30);
 
-    print_list();  // Saída esperada: 30 -> 20 -> 10 -> NULL
+    exibir_lista();  // Saída esperada: 30 -> 20 -> 10 -> NULL
 
     return 0;
 }
