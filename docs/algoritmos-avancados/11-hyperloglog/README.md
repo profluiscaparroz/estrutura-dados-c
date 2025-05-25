@@ -277,6 +277,148 @@ O HyperLogLog é amplamente usado em diversos sistemas que precisam estimar gran
 | Nuvem e Telemetria  | Eventos únicos em logs distribuídos     | Escalabilidade e economia de recursos |
 
 
+# Projeto FastAPI + Redis HyperLogLog + Docker
+
+### 1. Estrutura básica do projeto
+
+```
+hyperloglog-project/
+│
+├── app/
+│   ├── main.py
+│   └── requirements.txt
+│
+├── Dockerfile
+├── docker-compose.yml
+└── README.md
+```
+
+---
+
+### 2. Código FastAPI (`app/main.py`)
+
+```python
+from fastapi import FastAPI, HTTPException
+from pydantic import BaseModel
+import redis.asyncio as redis
+
+app = FastAPI()
+r = redis.Redis(host='redis', port=6379, db=0)
+
+HLL_KEY = "hyperloglog:hll"
+
+class Item(BaseModel):
+    element: str
+
+@app.post("/add/")
+async def add_element(item: Item):
+    added = await r.pfadd(HLL_KEY, item.element)
+    return {"added": bool(added)}
+
+@app.get("/count/")
+async def get_count():
+    count = await r.pfcount(HLL_KEY)
+    return {"estimated_unique_count": count}
+
+@app.post("/reset/")
+async def reset():
+    await r.delete(HLL_KEY)
+    return {"status": "reset done"}
+```
+
+---
+
+### 3. Dependências (`app/requirements.txt`)
+
+```
+fastapi
+uvicorn[standard]
+redis[async]
+```
+
+---
+
+### 4. Dockerfile para FastAPI
+
+```Dockerfile
+FROM python:3.11-slim
+
+WORKDIR /app
+
+COPY app/requirements.txt .
+
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY app/ .
+
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+```
+
+---
+
+### 5. docker-compose.yml (Redis + FastAPI)
+
+```yaml
+version: '3.8'
+
+services:
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+
+  api:
+    build: .
+    depends_on:
+      - redis
+    ports:
+      - "8000:8000"
+```
+
+---
+
+### 6. Como usar
+
+* Para rodar tudo junto (no mesmo diretório do docker-compose.yml):
+
+```bash
+docker-compose up --build
+```
+
+* O FastAPI estará disponível em:
+  `http://localhost:8000`
+
+---
+
+### 7. Testando a API
+
+* Adicionar elemento:
+
+```bash
+curl -X POST "http://localhost:8000/add/" -H "Content-Type: application/json" -d '{"element":"usuario123"}'
+```
+
+* Obter contagem estimada:
+
+```bash
+curl "http://localhost:8000/count/"
+```
+
+* Resetar HyperLogLog:
+
+```bash
+curl -X POST "http://localhost:8000/reset/"
+```
+
+---
+
+### 8. Explicações
+
+* O Redis gerencia internamente o HyperLogLog, você não precisa se preocupar com detalhes de implementação.
+* A API é simples, você pode ampliar para suportar conjuntos diferentes, métricas mais complexas, autenticação, etc.
+* O uso do `redis.asyncio` é para aproveitar a natureza assíncrona do FastAPI e melhorar desempenho.
+
+
 ---
 
 ## Referências
