@@ -325,7 +325,6 @@ Para desenvolvedores que desejam implementar colaboração em tempo real em apli
 * Projete a arquitetura cloud considerando escalabilidade, tolerância a falhas e segurança.
 * Avalie se OT é a melhor opção para seu tipo de dado; em alguns casos, CRDTs podem ser mais adequados.
 
-
 ---
 
 # Implementação OT simplificada: Python e C
