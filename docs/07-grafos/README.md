@@ -129,4 +129,49 @@ Grafo (V, E)
 
 ---
 
+### 🔍 **Algoritmo de Dijkstra**
 
+O algoritmo de Dijkstra é usado para encontrar o caminho mais curto de um vértice de origem para todos os outros vértices em um grafo ponderado com pesos não negativos. Ele é amplamente utilizado em sistemas de roteamento e navegação.
+
+#### **Funcionamento**
+1. **Inicialização**:
+   - Defina a distância do vértice de origem como `0` e de todos os outros vértices como infinito (`∞`).
+   - Use uma fila de prioridade (geralmente implementada como uma heap) para armazenar os vértices com base em suas distâncias mínimas.
+
+2. **Processamento**:
+   - Extraia o vértice com a menor distância da fila de prioridade.
+   - Para cada vizinho do vértice extraído, calcule a distância total até ele passando pelo vértice atual.
+   - Se a nova distância calculada for menor que a distância armazenada, atualize-a e insira o vizinho na fila de prioridade.
+
+3. **Finalização**:
+   - Repita o processo até que todos os vértices tenham sido processados ou a fila de prioridade esteja vazia.
+
+#### **Complexidade**
+- **Tempo**:
+  - O(n + m log n), onde `n` é o número de vértices e `m` é o número de arestas, assumindo o uso de uma fila de prioridade eficiente.
+- **Espaço**:
+  - O(n), para armazenar as distâncias e o estado dos vértices.
+
+#### **Exemplo**
+Considere o seguinte grafo:
+
+```
+    (A)
+   1/ \4
+   /   \
+  (B)--3--(C)
+```
+
+- Origem: `A`
+- Passos:
+  1. Inicialize: `dist(A)=0`, `dist(B)=∞`, `dist(C)=∞`.
+  2. Atualize as distâncias dos vizinhos de `A`: `dist(B)=1`, `dist(C)=4`.
+  3. Extraia `B` e atualize `dist(C)` via `B`: `dist(C)=4`.
+  4. Finalize: `dist(A)=0`, `dist(B)=1`, `dist(C)=4`.
+
+#### **Aplicações**
+- Sistemas de navegação GPS.
+- Redes de computadores para encontrar rotas ótimas.
+- Planejamento de rotas em jogos.
+
+--- 
