@@ -1,16 +1,12 @@
-Claro, Luis! A seguir está uma explicação **teórica, sólida e focada em ciência da computação** sobre **grafos**, abordando suas definições formais, aplicações, propriedades e representações computacionais.
-
----
-
 ## 📚 **Grafos na Ciência da Computação** — Teoria Formal
 
 ### ✅ **Definição Formal**
 
 Na matemática e ciência da computação, um **grafo** é definido como:
 
-$$
+$
 G = (V, E)
-$$
+$
 
 Onde:
 
@@ -25,17 +21,17 @@ Onde:
 
 As arestas não têm direção:
 
-$$
+$
 E = \{ \{u, v\} \mid u, v \in V \}
-$$
+$
 
 #### 2. **Grafo direcionado (ou dígrafo)**
 
 Cada aresta aponta de um vértice para outro:
 
-$$
+$
 E = \{ (u, v) \mid u, v \in V \}
-$$
+$
 
 #### 3. **Multigrafo**
 
