@@ -480,6 +480,375 @@ $
 
 ---
 
+## 💻 Implementações Práticas em C
+
+### 🔍 Busca Linear - Implementação Completa
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+// Busca linear básica
+int buscaLinear(int vetor[], int tamanho, int elemento) {
+    for (int i = 0; i < tamanho; i++) {
+        if (vetor[i] == elemento) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+// Busca linear com sentinela (otimizada)
+int buscaLinearSentinela(int vetor[], int tamanho, int elemento) {
+    int backup = vetor[tamanho - 1];  // Salva o último elemento
+    vetor[tamanho - 1] = elemento;    // Coloca sentinela
+    
+    int i = 0;
+    while (vetor[i] != elemento) {
+        i++;
+    }
+    
+    vetor[tamanho - 1] = backup;      // Restaura o último elemento
+    
+    return (i < tamanho - 1 || backup == elemento) ? i : -1;
+}
+
+// Busca que retorna todas as ocorrências
+int* buscaLinearTodasOcorrencias(int vetor[], int tamanho, int elemento, int* numOcorrencias) {
+    int* indices = (int*)malloc(tamanho * sizeof(int));
+    *numOcorrencias = 0;
+    
+    for (int i = 0; i < tamanho; i++) {
+        if (vetor[i] == elemento) {
+            indices[*numOcorrencias] = i;
+            (*numOcorrencias)++;
+        }
+    }
+    
+    if (*numOcorrencias == 0) {
+        free(indices);
+        return NULL;
+    }
+    
+    // Redimensiona o array para economizar memória
+    indices = (int*)realloc(indices, (*numOcorrencias) * sizeof(int));
+    return indices;
+}
+
+int main() {
+    int vetor[] = {64, 34, 25, 12, 22, 11, 90, 25, 25};
+    int tamanho = sizeof(vetor) / sizeof(vetor[0]);
+    int buscar = 25;
+    
+    // Teste busca linear básica
+    int resultado = buscaLinear(vetor, tamanho, buscar);
+    printf("Busca Linear: ");
+    if (resultado != -1) {
+        printf("Elemento %d encontrado no índice %d\n", buscar, resultado);
+    } else {
+        printf("Elemento %d não encontrado\n", buscar);
+    }
+    
+    // Teste busca com sentinela
+    resultado = buscaLinearSentinela(vetor, tamanho, buscar);
+    printf("Busca com Sentinela: ");
+    if (resultado != -1) {
+        printf("Elemento %d encontrado no índice %d\n", buscar, resultado);
+    } else {
+        printf("Elemento %d não encontrado\n", buscar);
+    }
+    
+    // Teste busca de todas as ocorrências
+    int numOcorrencias;
+    int* indices = buscaLinearTodasOcorrencias(vetor, tamanho, buscar, &numOcorrencias);
+    
+    if (indices != NULL) {
+        printf("Elemento %d encontrado %d vezes nos índices: ", buscar, numOcorrencias);
+        for (int i = 0; i < numOcorrencias; i++) {
+            printf("%d ", indices[i]);
+        }
+        printf("\n");
+        free(indices);
+    } else {
+        printf("Elemento %d não encontrado em nenhuma posição\n", buscar);
+    }
+    
+    return 0;
+}
+```
+
+### 🎯 Busca Binária - Implementações Diversas
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+// Busca binária iterativa clássica
+int buscaBinaria(int vetor[], int tamanho, int elemento) {
+    int esquerda = 0;
+    int direita = tamanho - 1;
+    
+    while (esquerda <= direita) {
+        int meio = esquerda + (direita - esquerda) / 2;  // Evita overflow
+        
+        if (vetor[meio] == elemento) {
+            return meio;
+        }
+        
+        if (vetor[meio] < elemento) {
+            esquerda = meio + 1;
+        } else {
+            direita = meio - 1;
+        }
+    }
+    
+    return -1;
+}
+
+// Busca binária recursiva
+int buscaBinariaRecursiva(int vetor[], int esquerda, int direita, int elemento) {
+    if (esquerda > direita) {
+        return -1;
+    }
+    
+    int meio = esquerda + (direita - esquerda) / 2;
+    
+    if (vetor[meio] == elemento) {
+        return meio;
+    }
+    
+    if (vetor[meio] > elemento) {
+        return buscaBinariaRecursiva(vetor, esquerda, meio - 1, elemento);
+    }
+    
+    return buscaBinariaRecursiva(vetor, meio + 1, direita, elemento);
+}
+
+// Busca binária - primeira ocorrência
+int buscaBinariaPrimeiraOcorrencia(int vetor[], int tamanho, int elemento) {
+    int esquerda = 0;
+    int direita = tamanho - 1;
+    int resultado = -1;
+    
+    while (esquerda <= direita) {
+        int meio = esquerda + (direita - esquerda) / 2;
+        
+        if (vetor[meio] == elemento) {
+            resultado = meio;
+            direita = meio - 1;  // Continue buscando à esquerda
+        } else if (vetor[meio] < elemento) {
+            esquerda = meio + 1;
+        } else {
+            direita = meio - 1;
+        }
+    }
+    
+    return resultado;
+}
+
+// Busca binária - última ocorrência
+int buscaBinariaUltimaOcorrencia(int vetor[], int tamanho, int elemento) {
+    int esquerda = 0;
+    int direita = tamanho - 1;
+    int resultado = -1;
+    
+    while (esquerda <= direita) {
+        int meio = esquerda + (direita - esquerda) / 2;
+        
+        if (vetor[meio] == elemento) {
+            resultado = meio;
+            esquerda = meio + 1;  // Continue buscando à direita
+        } else if (vetor[meio] < elemento) {
+            esquerda = meio + 1;
+        } else {
+            direita = meio - 1;
+        }
+    }
+    
+    return resultado;
+}
+
+// Busca binária - posição de inserção (lower bound)
+int buscaBinariaLowerBound(int vetor[], int tamanho, int elemento) {
+    int esquerda = 0;
+    int direita = tamanho;
+    
+    while (esquerda < direita) {
+        int meio = esquerda + (direita - esquerda) / 2;
+        
+        if (vetor[meio] < elemento) {
+            esquerda = meio + 1;
+        } else {
+            direita = meio;
+        }
+    }
+    
+    return esquerda;
+}
+
+int main() {
+    int vetor[] = {1, 2, 4, 4, 4, 5, 6, 8, 9};
+    int tamanho = sizeof(vetor) / sizeof(vetor[0]);
+    int buscar = 4;
+    
+    printf("Vetor: ");
+    for (int i = 0; i < tamanho; i++) {
+        printf("%d ", vetor[i]);
+    }
+    printf("\nBuscando elemento: %d\n\n", buscar);
+    
+    // Busca binária normal
+    int pos = buscaBinaria(vetor, tamanho, buscar);
+    printf("Busca binária normal: %s\n", 
+           pos != -1 ? "Encontrado na posição" : "Não encontrado");
+    if (pos != -1) printf("Posição: %d\n", pos);
+    
+    // Busca recursiva
+    pos = buscaBinariaRecursiva(vetor, 0, tamanho - 1, buscar);
+    printf("Busca binária recursiva: %s\n", 
+           pos != -1 ? "Encontrado na posição" : "Não encontrado");
+    if (pos != -1) printf("Posição: %d\n", pos);
+    
+    // Primeira ocorrência
+    pos = buscaBinariaPrimeiraOcorrencia(vetor, tamanho, buscar);
+    printf("Primeira ocorrência: %s\n", 
+           pos != -1 ? "Encontrado na posição" : "Não encontrado");
+    if (pos != -1) printf("Posição: %d\n", pos);
+    
+    // Última ocorrência
+    pos = buscaBinariaUltimaOcorrencia(vetor, tamanho, buscar);
+    printf("Última ocorrência: %s\n", 
+           pos != -1 ? "Encontrado na posição" : "Não encontrado");
+    if (pos != -1) printf("Posição: %d\n", pos);
+    
+    // Lower bound
+    pos = buscaBinariaLowerBound(vetor, tamanho, buscar);
+    printf("Lower bound (posição de inserção): %d\n", pos);
+    
+    return 0;
+}
+```
+
+### 🌟 Busca Interpolada - Implementação
+
+```c
+#include <stdio.h>
+
+// Busca interpolada - para dados uniformemente distribuídos
+int buscaInterpolada(int vetor[], int tamanho, int elemento) {
+    int esquerda = 0;
+    int direita = tamanho - 1;
+    
+    while (esquerda <= direita && elemento >= vetor[esquerda] && elemento <= vetor[direita]) {
+        // Se há apenas um elemento
+        if (esquerda == direita) {
+            return (vetor[esquerda] == elemento) ? esquerda : -1;
+        }
+        
+        // Fórmula de interpolação
+        int pos = esquerda + ((double)(elemento - vetor[esquerda]) * 
+                              (direita - esquerda)) / (vetor[direita] - vetor[esquerda]);
+        
+        if (vetor[pos] == elemento) {
+            return pos;
+        }
+        
+        if (vetor[pos] < elemento) {
+            esquerda = pos + 1;
+        } else {
+            direita = pos - 1;
+        }
+    }
+    
+    return -1;
+}
+
+int main() {
+    // Vetor com distribuição uniforme
+    int vetor[] = {10, 20, 30, 40, 50, 60, 70, 80, 90, 100};
+    int tamanho = sizeof(vetor) / sizeof(vetor[0]);
+    int buscar = 70;
+    
+    printf("Vetor: ");
+    for (int i = 0; i < tamanho; i++) {
+        printf("%d ", vetor[i]);
+    }
+    printf("\n");
+    
+    int resultado = buscaInterpolada(vetor, tamanho, buscar);
+    
+    if (resultado != -1) {
+        printf("Elemento %d encontrado na posição %d usando busca interpolada\n", 
+               buscar, resultado);
+    } else {
+        printf("Elemento %d não encontrado\n", buscar);
+    }
+    
+    return 0;
+}
+```
+
+### 📊 Comparação de Performance
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+// Função para medir tempo de execução
+double medirTempo(clock_t inicio, clock_t fim) {
+    return ((double)(fim - inicio)) / CLOCKS_PER_SEC;
+}
+
+// Função para gerar vetor ordenado
+int* gerarVetorOrdenado(int tamanho) {
+    int* vetor = (int*)malloc(tamanho * sizeof(int));
+    for (int i = 0; i < tamanho; i++) {
+        vetor[i] = i * 2;  // Números pares de 0 a 2*(tamanho-1)
+    }
+    return vetor;
+}
+
+int main() {
+    const int TAMANHO = 1000000;
+    int* vetor = gerarVetorOrdenado(TAMANHO);
+    int buscar = TAMANHO - 10;  // Elemento próximo ao final
+    
+    printf("Comparação de Performance - Vetor com %d elementos\n", TAMANHO);
+    printf("Buscando elemento: %d\n\n", buscar);
+    
+    // Teste Busca Linear
+    clock_t inicio = clock();
+    int resultado_linear = buscaLinear(vetor, TAMANHO, buscar);
+    clock_t fim = clock();
+    printf("Busca Linear: %s em %.6f segundos\n",
+           resultado_linear != -1 ? "Encontrado" : "Não encontrado",
+           medirTempo(inicio, fim));
+    
+    // Teste Busca Binária
+    inicio = clock();
+    int resultado_binaria = buscaBinaria(vetor, TAMANHO, buscar);
+    fim = clock();
+    printf("Busca Binária: %s em %.6f segundos\n",
+           resultado_binaria != -1 ? "Encontrado" : "Não encontrado",
+           medirTempo(inicio, fim));
+    
+    // Teste Busca Interpolada
+    inicio = clock();
+    int resultado_interpolada = buscaInterpolada(vetor, TAMANHO, buscar);
+    fim = clock();
+    printf("Busca Interpolada: %s em %.6f segundos\n",
+           resultado_interpolada != -1 ? "Encontrado" : "Não encontrado",
+           medirTempo(inicio, fim));
+    
+    free(vetor);
+    return 0;
+}
+```
+
+---
+
 ## OTIMIZAÇÕES PARA BUSCA LINEAR — EM DETALHES
 
 ---

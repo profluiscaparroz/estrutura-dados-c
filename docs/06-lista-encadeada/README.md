@@ -230,4 +230,622 @@ Como destacam Cormen et al. (2009) em *Introduction to Algorithms*:
 
 Assim, dominar as listas encadeadas é um passo essencial para qualquer programador que deseje escrever código eficiente e bem estruturado em C.
 
-Gostaria que eu incluísse também diagramas ilustrativos ou códigos de exemplo mais completos?
+---
+
+## 💻 Implementações Práticas em C
+
+### 🔗 Lista Encadeada Simples - Implementação Completa
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+// Definição da estrutura do nó
+typedef struct Node {
+    int data;
+    struct Node* next;
+} Node;
+
+// Estrutura da lista para manter informações adicionais
+typedef struct LinkedList {
+    Node* head;
+    int size;
+} LinkedList;
+
+// Inicializar a lista
+LinkedList* criarLista() {
+    LinkedList* lista = (LinkedList*)malloc(sizeof(LinkedList));
+    if (lista) {
+        lista->head = NULL;
+        lista->size = 0;
+    }
+    return lista;
+}
+
+// Inserir no início da lista
+void inserirInicio(LinkedList* lista, int valor) {
+    Node* novoNo = (Node*)malloc(sizeof(Node));
+    if (!novoNo) {
+        printf("Erro na alocação de memória\n");
+        return;
+    }
+    
+    novoNo->data = valor;
+    novoNo->next = lista->head;
+    lista->head = novoNo;
+    lista->size++;
+}
+
+// Inserir no final da lista
+void inserirFim(LinkedList* lista, int valor) {
+    Node* novoNo = (Node*)malloc(sizeof(Node));
+    if (!novoNo) {
+        printf("Erro na alocação de memória\n");
+        return;
+    }
+    
+    novoNo->data = valor;
+    novoNo->next = NULL;
+    
+    if (lista->head == NULL) {
+        lista->head = novoNo;
+    } else {
+        Node* temp = lista->head;
+        while (temp->next != NULL) {
+            temp = temp->next;
+        }
+        temp->next = novoNo;
+    }
+    lista->size++;
+}
+
+// Inserir em posição específica
+void inserirPosicao(LinkedList* lista, int valor, int posicao) {
+    if (posicao < 0 || posicao > lista->size) {
+        printf("Posição inválida\n");
+        return;
+    }
+    
+    if (posicao == 0) {
+        inserirInicio(lista, valor);
+        return;
+    }
+    
+    Node* novoNo = (Node*)malloc(sizeof(Node));
+    if (!novoNo) {
+        printf("Erro na alocação de memória\n");
+        return;
+    }
+    
+    novoNo->data = valor;
+    
+    Node* temp = lista->head;
+    for (int i = 0; i < posicao - 1; i++) {
+        temp = temp->next;
+    }
+    
+    novoNo->next = temp->next;
+    temp->next = novoNo;
+    lista->size++;
+}
+
+// Buscar elemento na lista
+int buscar(LinkedList* lista, int valor) {
+    Node* temp = lista->head;
+    int posicao = 0;
+    
+    while (temp != NULL) {
+        if (temp->data == valor) {
+            return posicao;
+        }
+        temp = temp->next;
+        posicao++;
+    }
+    
+    return -1; // Não encontrado
+}
+
+// Remover do início
+int removerInicio(LinkedList* lista) {
+    if (lista->head == NULL) {
+        printf("Lista vazia\n");
+        return -1;
+    }
+    
+    Node* temp = lista->head;
+    int valor = temp->data;
+    lista->head = temp->next;
+    free(temp);
+    lista->size--;
+    
+    return valor;
+}
+
+// Remover do final
+int removerFim(LinkedList* lista) {
+    if (lista->head == NULL) {
+        printf("Lista vazia\n");
+        return -1;
+    }
+    
+    if (lista->head->next == NULL) {
+        int valor = lista->head->data;
+        free(lista->head);
+        lista->head = NULL;
+        lista->size--;
+        return valor;
+    }
+    
+    Node* temp = lista->head;
+    while (temp->next->next != NULL) {
+        temp = temp->next;
+    }
+    
+    int valor = temp->next->data;
+    free(temp->next);
+    temp->next = NULL;
+    lista->size--;
+    
+    return valor;
+}
+
+// Remover por valor
+int removerValor(LinkedList* lista, int valor) {
+    if (lista->head == NULL) {
+        return 0; // Lista vazia
+    }
+    
+    // Se for o primeiro elemento
+    if (lista->head->data == valor) {
+        Node* temp = lista->head;
+        lista->head = temp->next;
+        free(temp);
+        lista->size--;
+        return 1;
+    }
+    
+    Node* temp = lista->head;
+    while (temp->next != NULL && temp->next->data != valor) {
+        temp = temp->next;
+    }
+    
+    if (temp->next == NULL) {
+        return 0; // Não encontrado
+    }
+    
+    Node* noParaRemover = temp->next;
+    temp->next = noParaRemover->next;
+    free(noParaRemover);
+    lista->size--;
+    return 1;
+}
+
+// Imprimir a lista
+void imprimirLista(LinkedList* lista) {
+    printf("Lista (%d elementos): ", lista->size);
+    Node* temp = lista->head;
+    while (temp != NULL) {
+        printf("%d -> ", temp->data);
+        temp = temp->next;
+    }
+    printf("NULL\n");
+}
+
+// Liberar toda a lista
+void liberarLista(LinkedList* lista) {
+    Node* temp = lista->head;
+    while (temp != NULL) {
+        Node* proximo = temp->next;
+        free(temp);
+        temp = proximo;
+    }
+    free(lista);
+}
+
+int main() {
+    LinkedList* lista = criarLista();
+    
+    printf("=== Demonstração de Lista Encadeada Simples ===\n\n");
+    
+    // Inserções
+    printf("Inserindo elementos...\n");
+    inserirInicio(lista, 10);
+    inserirInicio(lista, 5);
+    inserirFim(lista, 20);
+    inserirFim(lista, 25);
+    inserirPosicao(lista, 15, 2);
+    
+    imprimirLista(lista);
+    
+    // Busca
+    printf("\nBuscando elementos:\n");
+    int pos = buscar(lista, 15);
+    printf("Elemento 15 encontrado na posição: %d\n", pos);
+    
+    pos = buscar(lista, 100);
+    printf("Elemento 100 encontrado na posição: %d\n", pos);
+    
+    // Remoções
+    printf("\nRemovendo elementos:\n");
+    printf("Removido do início: %d\n", removerInicio(lista));
+    imprimirLista(lista);
+    
+    printf("Removido do fim: %d\n", removerFim(lista));
+    imprimirLista(lista);
+    
+    printf("Removendo valor 15: %s\n", removerValor(lista, 15) ? "Sucesso" : "Falhou");
+    imprimirLista(lista);
+    
+    liberarLista(lista);
+    return 0;
+}
+```
+
+### 🔄 Lista Duplamente Encadeada - Implementação
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+// Estrutura do nó para lista duplamente encadeada
+typedef struct DNode {
+    int data;
+    struct DNode* next;
+    struct DNode* prev;
+} DNode;
+
+// Estrutura da lista duplamente encadeada
+typedef struct DoublyLinkedList {
+    DNode* head;
+    DNode* tail;
+    int size;
+} DoublyLinkedList;
+
+// Criar lista duplamente encadeada
+DoublyLinkedList* criarListaDupla() {
+    DoublyLinkedList* lista = (DoublyLinkedList*)malloc(sizeof(DoublyLinkedList));
+    if (lista) {
+        lista->head = NULL;
+        lista->tail = NULL;
+        lista->size = 0;
+    }
+    return lista;
+}
+
+// Inserir no início
+void inserirInicioDupla(DoublyLinkedList* lista, int valor) {
+    DNode* novoNo = (DNode*)malloc(sizeof(DNode));
+    if (!novoNo) {
+        printf("Erro na alocação de memória\n");
+        return;
+    }
+    
+    novoNo->data = valor;
+    novoNo->prev = NULL;
+    novoNo->next = lista->head;
+    
+    if (lista->head != NULL) {
+        lista->head->prev = novoNo;
+    } else {
+        lista->tail = novoNo; // Lista estava vazia
+    }
+    
+    lista->head = novoNo;
+    lista->size++;
+}
+
+// Inserir no final
+void inserirFimDupla(DoublyLinkedList* lista, int valor) {
+    DNode* novoNo = (DNode*)malloc(sizeof(DNode));
+    if (!novoNo) {
+        printf("Erro na alocação de memória\n");
+        return;
+    }
+    
+    novoNo->data = valor;
+    novoNo->next = NULL;
+    novoNo->prev = lista->tail;
+    
+    if (lista->tail != NULL) {
+        lista->tail->next = novoNo;
+    } else {
+        lista->head = novoNo; // Lista estava vazia
+    }
+    
+    lista->tail = novoNo;
+    lista->size++;
+}
+
+// Imprimir da esquerda para direita
+void imprimirEsquerdaDireita(DoublyLinkedList* lista) {
+    printf("Esquerda -> Direita: ");
+    DNode* temp = lista->head;
+    while (temp != NULL) {
+        printf("%d <-> ", temp->data);
+        temp = temp->next;
+    }
+    printf("NULL\n");
+}
+
+// Imprimir da direita para esquerda
+void imprimirDireitaEsquerda(DoublyLinkedList* lista) {
+    printf("Direita -> Esquerda: ");
+    DNode* temp = lista->tail;
+    while (temp != NULL) {
+        printf("%d <-> ", temp->data);
+        temp = temp->prev;
+    }
+    printf("NULL\n");
+}
+
+// Remover do início
+int removerInicioDupla(DoublyLinkedList* lista) {
+    if (lista->head == NULL) {
+        printf("Lista vazia\n");
+        return -1;
+    }
+    
+    DNode* temp = lista->head;
+    int valor = temp->data;
+    
+    lista->head = temp->next;
+    if (lista->head != NULL) {
+        lista->head->prev = NULL;
+    } else {
+        lista->tail = NULL; // Lista ficou vazia
+    }
+    
+    free(temp);
+    lista->size--;
+    return valor;
+}
+
+// Remover do final
+int removerFimDupla(DoublyLinkedList* lista) {
+    if (lista->tail == NULL) {
+        printf("Lista vazia\n");
+        return -1;
+    }
+    
+    DNode* temp = lista->tail;
+    int valor = temp->data;
+    
+    lista->tail = temp->prev;
+    if (lista->tail != NULL) {
+        lista->tail->next = NULL;
+    } else {
+        lista->head = NULL; // Lista ficou vazia
+    }
+    
+    free(temp);
+    lista->size--;
+    return valor;
+}
+
+// Liberar lista duplamente encadeada
+void liberarListaDupla(DoublyLinkedList* lista) {
+    DNode* temp = lista->head;
+    while (temp != NULL) {
+        DNode* proximo = temp->next;
+        free(temp);
+        temp = proximo;
+    }
+    free(lista);
+}
+
+int main() {
+    DoublyLinkedList* lista = criarListaDupla();
+    
+    printf("=== Demonstração de Lista Duplamente Encadeada ===\n\n");
+    
+    // Inserções
+    inserirInicioDupla(lista, 10);
+    inserirInicioDupla(lista, 5);
+    inserirFimDupla(lista, 20);
+    inserirFimDupla(lista, 25);
+    
+    printf("Lista após inserções (%d elementos):\n", lista->size);
+    imprimirEsquerdaDireita(lista);
+    imprimirDireitaEsquerda(lista);
+    
+    // Remoções
+    printf("\nRemoções:\n");
+    printf("Removido do início: %d\n", removerInicioDupla(lista));
+    printf("Removido do fim: %d\n", removerFimDupla(lista));
+    
+    printf("\nLista após remoções:\n");
+    imprimirEsquerdaDireita(lista);
+    imprimirDireitaEsquerda(lista);
+    
+    liberarListaDupla(lista);
+    return 0;
+}
+```
+
+### 🔄 Lista Circular - Implementação
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+// Estrutura do nó para lista circular
+typedef struct CNode {
+    int data;
+    struct CNode* next;
+} CNode;
+
+// Estrutura da lista circular
+typedef struct CircularList {
+    CNode* last; // Ponteiro para o último elemento (facilita inserções)
+    int size;
+} CircularList;
+
+// Criar lista circular
+CircularList* criarListaCircular() {
+    CircularList* lista = (CircularList*)malloc(sizeof(CircularList));
+    if (lista) {
+        lista->last = NULL;
+        lista->size = 0;
+    }
+    return lista;
+}
+
+// Inserir na lista circular
+void inserirCircular(CircularList* lista, int valor) {
+    CNode* novoNo = (CNode*)malloc(sizeof(CNode));
+    if (!novoNo) {
+        printf("Erro na alocação de memória\n");
+        return;
+    }
+    
+    novoNo->data = valor;
+    
+    if (lista->last == NULL) {
+        // Primeiro elemento
+        novoNo->next = novoNo; // Aponta para si mesmo
+        lista->last = novoNo;
+    } else {
+        novoNo->next = lista->last->next; // Novo nó aponta para o primeiro
+        lista->last->next = novoNo;       // Último aponta para o novo nó
+        lista->last = novoNo;             // Atualiza o último
+    }
+    
+    lista->size++;
+}
+
+// Imprimir lista circular (com limite para evitar loop infinito)
+void imprimirCircular(CircularList* lista) {
+    if (lista->last == NULL) {
+        printf("Lista circular vazia\n");
+        return;
+    }
+    
+    printf("Lista circular (%d elementos): ", lista->size);
+    CNode* temp = lista->last->next; // Começar do primeiro elemento
+    
+    do {
+        printf("%d -> ", temp->data);
+        temp = temp->next;
+    } while (temp != lista->last->next);
+    
+    printf("(circular)\n");
+}
+
+// Buscar na lista circular
+int buscarCircular(CircularList* lista, int valor) {
+    if (lista->last == NULL) {
+        return -1;
+    }
+    
+    CNode* temp = lista->last->next;
+    int posicao = 0;
+    
+    do {
+        if (temp->data == valor) {
+            return posicao;
+        }
+        temp = temp->next;
+        posicao++;
+    } while (temp != lista->last->next);
+    
+    return -1;
+}
+
+// Remover da lista circular
+int removerCircular(CircularList* lista, int valor) {
+    if (lista->last == NULL) {
+        return 0;
+    }
+    
+    CNode* temp = lista->last->next;
+    CNode* prev = lista->last;
+    
+    // Se há apenas um elemento
+    if (temp == lista->last && temp->data == valor) {
+        free(temp);
+        lista->last = NULL;
+        lista->size--;
+        return 1;
+    }
+    
+    do {
+        if (temp->data == valor) {
+            prev->next = temp->next;
+            if (temp == lista->last) {
+                lista->last = prev;
+            }
+            free(temp);
+            lista->size--;
+            return 1;
+        }
+        prev = temp;
+        temp = temp->next;
+    } while (temp != lista->last->next);
+    
+    return 0;
+}
+
+// Liberar lista circular
+void liberarListaCircular(CircularList* lista) {
+    if (lista->last == NULL) {
+        free(lista);
+        return;
+    }
+    
+    CNode* temp = lista->last->next;
+    CNode* first = temp;
+    
+    do {
+        CNode* proximo = temp->next;
+        free(temp);
+        temp = proximo;
+    } while (temp != first);
+    
+    free(lista);
+}
+
+int main() {
+    CircularList* lista = criarListaCircular();
+    
+    printf("=== Demonstração de Lista Circular ===\n\n");
+    
+    // Inserções
+    inserirCircular(lista, 10);
+    inserirCircular(lista, 20);
+    inserirCircular(lista, 30);
+    inserirCircular(lista, 40);
+    
+    imprimirCircular(lista);
+    
+    // Busca
+    printf("\nBusca:\n");
+    int pos = buscarCircular(lista, 20);
+    printf("Elemento 20 encontrado na posição: %d\n", pos);
+    
+    // Remoção
+    printf("\nRemoção:\n");
+    printf("Removendo 30: %s\n", removerCircular(lista, 30) ? "Sucesso" : "Falhou");
+    imprimirCircular(lista);
+    
+    liberarListaCircular(lista);
+    return 0;
+}
+```
+
+---
+
+### Conclusão
+
+As listas encadeadas são um exemplo clássico de estrutura de dados dinâmica. Sua implementação em C é ao mesmo tempo um ótimo exercício de compreensão de ponteiros, gerenciamento de memória e modularização de código. Apesar de seu custo em termos de acesso sequencial e uso de memória extra, sua flexibilidade compensa em muitos contextos.
+
+Como destacam Cormen et al. (2009) em *Introduction to Algorithms*:
+
+> "Linked lists are among the simplest and most powerful data structures. Their elegance lies in their dynamic structure and the ease with which elements can be inserted and deleted."
+
+Assim, dominar as listas encadeadas é um passo essencial para qualquer programador que deseje escrever código eficiente e bem estruturado em C.
+
+**Principais pontos para lembrar:**
+- **Gerenciamento de memória** é crucial - sempre use `free()` adequadamente
+- **Validação de ponteiros** evita erros de segmentação
+- **Escolha do tipo** depende das operações mais frequentes em sua aplicação
+- **Performance** varia significativamente entre diferentes operações
