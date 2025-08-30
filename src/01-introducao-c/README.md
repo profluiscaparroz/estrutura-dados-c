@@ -1,19 +1,31 @@
-# Notas de aula estrutura de dados (Fundamentos em C)
+# Fundamentos da Linguagem C para Estrutura de Dados
 
-## Sumario
+## 📚 Visão Geral
 
-- [Tipos de dados e tipagem](#tipos-de-dados-e-tipagem)
-- [Variáveis](#variáveis)
-- [Conversão Explicíta](#conversão-explícita-casting)
-- [Struct](#struct)
+Este material aborda os conceitos fundamentais da linguagem C necessários para o estudo de estruturas de dados. A linguagem C é uma excelente escolha para aprender estruturas de dados devido à sua proximidade com o hardware e controle direto sobre a memória.
+
+## 📋 Sumário
+
+### 🔧 Fundamentos Básicos
+- [Tipos de Dados e Tipagem](#tipos-de-dados-e-tipagem)
+- [Variáveis e Escopo](#variáveis)
+- [Conversão de Tipos](#conversão-de-tipos-em-c)
+
+### 🏗️ Estruturas de Dados Básicas
+- [Estruturas (struct)](#struct)
 - [Constantes](#constantes)
-- [Booleanos](#booleano)
-- [Variáveis estáticas](#variáveis-estáticas)
-- [Estruturas de Controle de Fluxo](#estruturas-condicionais)
-- [Laços de repetição](#laços-de-repetição)
-- [Estrutura de saltos](#estruturas-de-saltos-na-programação-em-c)
 - [Ponteiros](#ponteiros-em-c)
-- [String](#string-em-c)
+- [Strings](#string-em-c)
+
+### 🎯 Controle de Fluxo
+- [Estruturas Condicionais](#estruturas-de-controle-de-fluxo-e-laços-de-repetição-em-c)
+- [Laços de Repetição](#laços-de-repetição)
+- [Estruturas de Salto](#estruturas-de-saltos-na-programação-em-c)
+
+### 🧮 Recursos Avançados
+- [Operadores](#operadores-em-c)
+- [Variáveis Estáticas](#variáveis-estáticas)
+- [Tipos Booleanos](#booleano)
 
 ---
 
@@ -220,6 +232,32 @@ int main() {
 ```
 
 A tipagem em C é fundamental para garantir que os dados sejam manipulados corretamente e de forma eficiente. Compreender os tipos de dados, a conversão de tipos e o uso de ponteiros permite que você aproveite o máximo da linguagem, criando programas robustos e com desempenho otimizado.
+
+### 🤔 Questões para Reflexão
+
+1. **Conceitual**: Por que a linguagem C utiliza tipagem estática em vez de tipagem dinâmica? Quais são as vantagens e desvantagens?
+
+2. **Prática**: Qual seria o resultado do seguinte código? Explique por quê.
+   ```c
+   int a = 5;
+   float b = 2.5;
+   int resultado = a + b;
+   printf("%d", resultado);
+   ```
+
+3. **Análise**: Compare o uso de memória entre os tipos `short`, `int`, `long` e `long long`. Em que situações você escolheria cada um?
+
+4. **Aplicação**: Crie um exemplo prático onde o uso de `unsigned` seria mais apropriado que `signed`.
+
+5. **Debugging**: Identifique os problemas no código abaixo:
+   ```c
+   float x = 3.14159265359;
+   char letra = 65;
+   int *ptr;
+   printf("%d", *ptr);
+   ```
+
+---
 
 ## Variáveis
 
