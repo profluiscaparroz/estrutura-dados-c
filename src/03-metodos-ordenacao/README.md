@@ -281,6 +281,40 @@ int n = 9;
 - Robert Sedgewick. *Algorithms in C*
 - Thomas H. Cormen et al. *Introduction to Algorithms* (CLRS)
 
+## 🤔 Questões para Reflexão
+
+1. **Estabilidade**: Por que a estabilidade é importante em algoritmos de ordenação? Dê um exemplo prático onde isso seria relevante.
+
+2. **Complexidade**: Explique por que Quick Sort tem complexidade O(n²) no pior caso, mas ainda é considerado um dos melhores algoritmos na prática.
+
+3. **Escolha de Algoritmo**: Para um array de 1 milhão de elementos já parcialmente ordenado, qual algoritmo você escolheria e por quê?
+
+4. **Otimização**: Como o Bubble Sort otimizado consegue atingir O(n) no melhor caso?
+
+5. **Aplicação**: Em que situações específicas você usaria Insertion Sort em vez de Quick Sort?
+
+## 📋 Exercícios Práticos
+
+### Nível Básico
+1. Implemente uma versão do Bubble Sort que conte o número de trocas realizadas
+2. Modifique o Selection Sort para encontrar simultaneamente o maior e menor elemento
+3. Crie uma versão do Insertion Sort que ordene em ordem decrescente
+
+### Nível Intermediário
+4. Implemente uma versão híbrida que use Insertion Sort para subarrays pequenos (< 10 elementos) e Quick Sort para arrays maiores
+5. Desenvolva uma função que determine automaticamente o melhor algoritmo baseado no tamanho e características do array
+6. Crie um Merge Sort iterativo (bottom-up) em vez da versão recursiva
+
+### Nível Avançado
+7. Implemente o algoritmo Introsort (Quick Sort com fallback para Heap Sort)
+8. Desenvolva uma versão paralela do Merge Sort usando threads
+9. Crie um algoritmo de ordenação adaptativo que detecte padrões nos dados
+
+### Desafios
+10. Implemente Radix Sort para números negativos
+11. Desenvolva um algoritmo de ordenação externo para arquivos que não cabem na memória
+12. Crie um visualizador em tempo real dos algoritmos de ordenação
+
 ## 🔧 Próximas Implementações
 
 - [ ] Radix Sort (ordenação por dígitos)

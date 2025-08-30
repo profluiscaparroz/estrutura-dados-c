@@ -144,22 +144,40 @@ valgrind --tool=cachegrind ./exemplo
 
 ---
 
-## **🎓 Questões Acadêmicas Destacadas**
+## **🤔 Questões para Reflexão**
 
-### **Análise Teórica**
-- **Complexidade temporal:** Por que busca é O(n) mas acesso é O(1)?
-- **Localidade de cache:** Como o padrão de acesso afeta performance?
-- **Trade-offs de design:** Quando usar vetores vs listas ligadas?
+### **Conceituais**
+1. **Análise de Complexidade**: Por que o acesso a um elemento de array é O(1) enquanto a busca linear é O(n)? Explique a diferença fundamental.
 
-### **Problemas Práticos**
-- **Algoritmo de Kadane:** Encontrar maior subarray em O(n)
-- **Busca em matriz ordenada:** Algoritmo em O(m+n)
-- **Otimização de cache:** Blocking/tiling para matrizes grandes
+2. **Localidade de Cache**: Como o padrão de acesso à memória (row-major vs column-major) afeta a performance em operações matriciais?
 
-### **Aplicações Reais**
-- **Machine Learning:** Como matrizes são usadas em redes neurais?
-- **Processamento de Imagem:** Por que filtros são operações matriciais?
-- **Computação Científica:** Simulações usando grades matriciais
+3. **Trade-offs de Design**: Em quais situações você escolheria vetores em vez de listas ligadas? Considere memória, performance e complexidade.
+
+### **Práticas**
+4. **Algoritmo de Kadane**: Explique como o algoritmo de Kadane consegue encontrar o maior subarray em apenas uma passada O(n).
+
+5. **Busca em Matriz Ordenada**: Descreva o algoritmo que busca um elemento em uma matriz ordenada (linhas e colunas) em O(m+n).
+
+6. **Alocação de Memória**: Qual a diferença prática entre `int arr[100]` e `int* arr = malloc(100 * sizeof(int))`?
+
+### **Aplicações**
+7. **Machine Learning**: Como matrizes são fundamentais em redes neurais? Dê exemplos de operações matriciais específicas.
+
+8. **Processamento de Imagem**: Por que filtros de imagem são implementados como operações matriciais (convolução)?
+
+9. **Otimização**: Explique a técnica de "blocking/tiling" para multiplicação de matrizes grandes e seu benefício para cache.
+
+### **Debugging**
+10. **Problemas Comuns**: Identifique e corrija os erros no código abaixo:
+    ```c
+    int* criarArray(int tamanho) {
+        int arr[tamanho];
+        for(int i = 0; i <= tamanho; i++) {
+            arr[i] = i;
+        }
+        return arr;
+    }
+    ```
 
 ---
 

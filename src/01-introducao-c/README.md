@@ -395,6 +395,20 @@ printf("%d\n", a);  // Imprime 15
 
 Variáveis em C são essenciais para armazenar e manipular dados durante a execução do programa. Compreender os tipos, escopos e como usá-las corretamente é fundamental para escrever programas eficientes e corretos.
 
+### 🤔 Questões para Reflexão - Variáveis
+
+1. **Escopo**: Qual a diferença prática entre uma variável local e uma variável global? Dê exemplos de quando usar cada uma.
+
+2. **Inicialização**: O que acontece se você tentar usar uma variável local sem inicializá-la? Como isso difere para variáveis globais?
+
+3. **Tipos de Dados**: Por que usar `double` em vez de `float` para cálculos matemáticos precisos? Qual o custo dessa escolha?
+
+4. **Arrays**: Explique por que `int arr[5]` e `int* arr = malloc(5 * sizeof(int))` têm comportamentos diferentes ao sair de escopo.
+
+5. **Ponteiros**: No exemplo com ponteiros, o que aconteceria se você fizesse `int *ptr; printf("%d", *ptr);` sem inicializar ptr?
+
+---
+
 ## Conversão de Tipos em C
 
 A **conversão de tipos** em C refere-se ao processo de transformar um dado de um tipo para outro. Esse processo pode ocorrer de forma **implícita** ou **explícita** e desempenha um papel fundamental na manipulação eficiente de variáveis e operações matemáticas. Segundo Kernighan e Ritchie (1988), a conversão de tipos é essencial para evitar perda de dados e garantir que operações entre diferentes tipos sejam realizadas corretamente.
@@ -1536,6 +1550,20 @@ Neste exemplo, quando `i` é igual a 2, o comando `continue` faz com que o laço
 
 Os laços de repetição são uma das ferramentas mais poderosas da programação em C. Eles permitem a execução repetitiva de blocos de código com base em uma condição, ajudando a resolver problemas que envolvem iteração, como processamento de listas, arrays, ou qualquer situação em que uma tarefa precise ser repetida múltiplas vezes. Conhecer os três tipos de laços (`for`, `while`, `do-while`) e como usá-los de maneira eficaz é essencial para qualquer programador.
 
+### 🤔 Questões para Reflexão - Controle de Fluxo
+
+1. **Escolha de Estruturas**: Em que situações você usaria `switch` em vez de múltiplos `if-else`? Quais são as limitações do `switch`?
+
+2. **Loops**: Explique a diferença prática entre `while` e `do-while`. Dê um exemplo onde `do-while` seria mais apropriado.
+
+3. **Performance**: Por que o loop `for` é geralmente preferido para iterações com contador conhecido em comparação ao `while`?
+
+4. **Break vs Continue**: No exemplo com `break` e `continue`, o que aconteceria se trocássemos as posições desses comandos?
+
+5. **Loops Aninhados**: Como você otimizaria loops aninhados para processar uma matriz grande? Considere cache e localidade de memória.
+
+---
+
 ## Estruturas de Saltos na Programação em C
 
 As **estruturas de saltos** são mecanismos utilizados para alterar o fluxo normal de execução de um programa, permitindo que ele continue de um ponto diferente no código. Essas estruturas são essenciais para a implementação de controle de fluxo avançado e são amplamente utilizadas em linguagens de programação para manipulação eficiente de loops e tomadas de decisão. Segundo Aho, Hopcroft e Ullman (1983), o controle eficiente do fluxo de execução é crucial para a otimização de algoritmos.
@@ -1790,6 +1818,20 @@ int main() {
 Neste exemplo, a memória para um inteiro é alocada dinamicamente e o valor `30` é armazenado nessa posição de memória.
 
 Ponteiros são uma parte fundamental da linguagem C, permitindo manipulação direta de memória, otimização de desempenho e interação com funções de alocação dinâmica. No entanto, o uso de ponteiros exige cuidados, especialmente no que diz respeito ao gerenciamento de memória e ao acesso a locais inválidos, para evitar erros como falhas de segmentação.
+
+### 🤔 Questões para Reflexão - Ponteiros
+
+1. **Conceitual**: Por que ponteiros são considerados uma das características mais poderosas e perigosas de C?
+
+2. **Aritmética**: Se `int* ptr` aponta para o endereço 1000, para onde apontará `ptr + 1`? E se fosse `double* ptr`?
+
+3. **Dupla Indireção**: Explique quando e por que você usaria um ponteiro para ponteiro (`int**`).
+
+4. **Gerenciamento de Memória**: Quais são as consequências de não chamar `free()` após `malloc()`? E de chamar `free()` duas vezes?
+
+5. **Arrays vs Ponteiros**: Qual a diferença entre `char str[] = "hello"` e `char* str = "hello"`?
+
+---
 
 ## String em C
 
