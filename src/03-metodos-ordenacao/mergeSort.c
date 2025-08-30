@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 
 // Função para mesclar dois subarrays em ordem crescente
 void merge(int arr[], int left, int mid, int right) {
@@ -6,7 +7,16 @@ void merge(int arr[], int left, int mid, int right) {
     int n2 = right - mid;    // Tamanho do subarray direito
 
     // Arrays temporários para armazenar os subarrays
-    int L[n1], R[n2];
+    int *L = (int*)malloc(n1 * sizeof(int));
+    int *R = (int*)malloc(n2 * sizeof(int));
+    
+    // Verificação de alocação de memória
+    if (L == NULL || R == NULL) {
+        printf("Erro na alocação de memória\n");
+        if (L) free(L);
+        if (R) free(R);
+        return;
+    }
 
     // Copia os dados para os arrays temporários
     for (int i = 0; i < n1; i++)
@@ -42,6 +52,10 @@ void merge(int arr[], int left, int mid, int right) {
         j++;
         k++;
     }
+    
+    // Libera a memória alocada
+    free(L);
+    free(R);
 }
 
 // Função recursiva para dividir o array e ordenar as partes
