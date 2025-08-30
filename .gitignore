@@ -54,3 +54,11 @@ src/.DS_Store
 */output/*
 *output*
 .vscode/tasks.json
+
+# Compiled examples (executables without extension)
+src/*/exemploSimples
+src/*/exemploAvancado*
+src/*/aplicacoesPraticas
+src/*/errosComuns
+src/*/*/exemploSimples
+src/*/*/exemploAvancado*
