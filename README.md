@@ -198,3 +198,11 @@ Além dos repositórios de código, existem diversas ferramentas para ajudar a v
    - [edX - Data Structures Fundamentals](https://www.edx.org/course/data-structures-fundamentals)
 
 ---
+
+## Veja também: Algoritmos em C
+
+Para implementações completas em C dos algoritmos de estruturas de dados com explicações passo a passo e análise de complexidade, consulte:
+
+- **[Algoritmos em C: Implementações e Explicações](docs/03-algoritmos/README.md)**
+
+---
