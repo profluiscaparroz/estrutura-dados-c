@@ -130,7 +130,175 @@ Desvantagens:
 
 ---
 
-## **PARTE III: PROBLEMAS PRÁTICOS**
+## **PARTE III: STRINGS E VETORES**
+
+### **Questão 11: Strings como Vetores de Caracteres**
+**Pergunta:** Explique como funcionam as strings em C como vetores de caracteres. Por que precisamos do caractere nulo '\0'?
+
+**Resposta:**
+Em C, **strings são arrays (vetores) de caracteres terminados pelo caractere nulo** (`\0`). Esta representação é fundamental pois:
+
+**Representação na Memória:**
+- Cada caractere ocupa 1 byte
+- O caractere `\0` marca o fim da string
+- Permite que funções saibam onde a string termina
+
+**Exemplo:**
+```c
+char nome[] = "Ana";
+// Memória: ['A']['n']['a']['\0']
+// Índices:   0    1    2    3
+```
+
+**Por que o '\0' é necessário:**
+- **Determina o fim:** Sem ele, funções como `printf` não saberiam onde parar
+- **Compatibilidade:** Padrão estabelecido desde a criação do C
+- **Eficiência:** Evita armazenar o tamanho separadamente
+
+### **Questão 12: Manipulação Manual vs Biblioteca**
+**Pergunta:** Compare as vantagens e desvantagens de implementar funções de string manualmente versus usar `<string.h>`.
+
+**Resposta:**
+
+**Implementação Manual:**
+Vantagens:
+- Controle total sobre o comportamento
+- Entendimento profundo dos algoritmos
+- Possibilidade de otimizações específicas
+- Não depende de bibliotecas externas
+
+Desvantagens:
+- Maior tempo de desenvolvimento
+- Maior probabilidade de bugs
+- Reinvenção da roda
+- Pode ser menos eficiente que implementações otimizadas
+
+**Usando `<string.h>`:**
+Vantagens:
+- Implementações testadas e otimizadas
+- Padrão amplamente aceito
+- Desenvolvimento mais rápido
+- Menos propenso a erros
+
+Desvantagens:
+- Menor controle sobre comportamento
+- Dependência de biblioteca
+- Possível overhead desnecessário
+- Menos educativo para aprendizado
+
+### **Questão 13: Arrays de Strings**
+**Pergunta:** Explique as diferentes formas de declarar e usar arrays de strings em C.
+
+**Resposta:**
+
+**1. Array de Ponteiros para Strings:**
+```c
+char *nomes[3] = {"Ana", "Bruno", "Carlos"};
+```
+- Cada elemento é um ponteiro para string literal
+- Strings são somente leitura
+- Memória eficiente (sem duplicação)
+
+**2. Array Bidimensional de Caracteres:**
+```c
+char nomes[3][20] = {"Ana", "Bruno", "Carlos"};
+```
+- Cada linha é um array de caracteres modificável
+- Desperdício de memória se strings forem curtas
+- Strings modificáveis
+
+**3. Alocação Dinâmica:**
+```c
+char **nomes = malloc(3 * sizeof(char*));
+nomes[0] = malloc(20 * sizeof(char));
+strcpy(nomes[0], "Ana");
+```
+- Flexibilidade total
+- Gerenciamento manual de memória
+- Possibilidade de redimensionar
+
+### **Questão 14: Performance em Operações de String**
+**Pergunta:** Analise a complexidade das principais operações de string e como otimizá-las.
+
+**Resposta:**
+
+**Complexidades das Operações:**
+
+| Operação | Complexidade | Observações |
+|----------|--------------|-------------|
+| `strlen()` | O(n) | Precisa percorrer até '\0' |
+| `strcpy()` | O(n) | Copia caractere por caractere |
+| `strcat()` | O(n+m) | n = strlen(dest), m = strlen(src) |
+| `strcmp()` | O(min(n,m)) | Para no primeiro caractere diferente |
+| Acesso `str[i]` | O(1) | Acesso direto por índice |
+
+**Otimizações Possíveis:**
+1. **Manter tamanho em variável** para evitar `strlen()` repetidos
+2. **Usar `strncpy` e `strncat`** para controlar limites
+3. **Alocar memória adequada** evitando realocações
+4. **Cache-friendly access** em processamento de texto
+
+### **Questão 15: Problemas Comuns com Strings**
+**Pergunta:** Identifique e explique os principais problemas de segurança e bugs relacionados a strings em C.
+
+**Resposta:**
+
+**1. Buffer Overflow:**
+```c
+// PROBLEMA
+char buffer[10];
+strcpy(buffer, "String muito longa"); // Overflow!
+
+// SOLUÇÃO
+char buffer[10];
+strncpy(buffer, "String muito longa", sizeof(buffer) - 1);
+buffer[sizeof(buffer) - 1] = '\0';
+```
+
+**2. String não terminada:**
+```c
+// PROBLEMA
+char str[5] = {'H', 'e', 'l', 'l', 'o'}; // Sem '\0'
+printf("%s\n", str); // Comportamento indefinido
+
+// SOLUÇÃO
+char str[6] = {'H', 'e', 'l', 'l', 'o', '\0'};
+```
+
+**3. Ponteiro dangling:**
+```c
+// PROBLEMA
+char* criarString() {
+    char local[] = "teste";
+    return local; // Retorna ponteiro para variável local
+}
+
+// SOLUÇÃO
+char* criarString() {
+    char *dinamica = malloc(6 * sizeof(char));
+    strcpy(dinamica, "teste");
+    return dinamica; // Lembrar de fazer free()
+}
+```
+
+**4. Vazamento de memória:**
+```c
+// PROBLEMA
+char *str = malloc(100);
+strcpy(str, "teste");
+// Esqueceu do free(str);
+
+// SOLUÇÃO
+char *str = malloc(100);
+strcpy(str, "teste");
+// ... usar str ...
+free(str);
+str = NULL;
+```
+
+---
+
+## **PARTE IV: PROBLEMAS PRÁTICOS**
 
 ### **Questão 7: Otimização de Cache**
 **Pergunta:** Por que o acesso sequencial a um vetor é mais rápido que o acesso aleatório? Como isso afeta o desempenho de algoritmos?
@@ -167,7 +335,7 @@ int kadane(int arr[], int n) {
 
 ---
 
-## **PARTE IV: ANÁLISE AVANÇADA**
+## **PARTE V: ANÁLISE AVANÇADA**
 
 ### **Questão 9: Trade-offs de Design**
 **Pergunta:** Em que situações você escolheria vetores ao invés de listas ligadas? Justifique com exemplos práticos.
@@ -209,8 +377,23 @@ int kadane(int arr[], int n) {
 
 ## **EXERCÍCIOS PRÁTICOS PROPOSTOS**
 
+### **Exercícios de Vetores Básicos:**
 1. Implemente um sistema de notas que calcule médias, encontre a maior nota e ordene os resultados
 2. Crie um programa para multiplicação de matrizes esparsas (com muitos zeros)
 3. Desenvolva um detector de padrões em sequências numéricas
 4. Implemente um jogo da vida (Conway) usando matrizes
 5. Crie um algoritmo para rotação de imagens usando transformações matriciais
+
+### **Exercícios de Strings com Vetores:**
+6. **Editor de Texto Simples:** Implemente funções para inserir, remover e buscar texto em um buffer
+7. **Analisador de Frequência de Palavras:** Conte a frequência de cada palavra em um texto
+8. **Validador de Palíndromos:** Verifique se uma string é um palíndromo, ignorando espaços e pontuação
+9. **Sistema de Criptografia Caesar:** Implemente cifra de César para criptografar/descriptografar texto
+10. **Formatador de Texto:** Crie um programa que justifique texto em colunas de largura específica
+
+### **Exercícios Avançados:**
+11. **Biblioteca de Strings:** Implemente sua própria versão de todas as funções de `<string.h>`
+12. **Parser de CSV:** Leia e processe arquivos CSV usando apenas arrays
+13. **Compressor de Texto:** Implemente algoritmo simples de compressão usando frequência de caracteres
+14. **Autocomplete:** Sistema que sugere palavras baseado em prefixos digitados
+15. **Analisador Léxico:** Tokenize código fonte simples identificando palavras-chave, identificadores e operadores

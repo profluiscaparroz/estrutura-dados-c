@@ -14,6 +14,7 @@ RAIZ_DIR = .
 
 # Executáveis
 EXECUTAVEIS = exemploSimples \
+              exemploStringVetores \
               exemploAvancadoVetor \
               exemploAvancadoMatriz \
               aplicacoesPraticas \
@@ -28,7 +29,7 @@ EXECUTAVEIS = exemploSimples \
 all: $(EXECUTAVEIS)
 
 # Exemplos básicos
-exemplos-basicos: exemploSimples exemploMatrizSimples
+exemplos-basicos: exemploSimples exemploStringVetores exemploMatrizSimples
 	@echo "Exemplos básicos compilados com sucesso!"
 
 # Exemplos avançados
@@ -37,6 +38,9 @@ exemplos-avancados: exemploAvancadoVetor exemploAvancadoMatriz aplicacoesPratica
 
 # Compilação dos executáveis
 exemploSimples: $(VETOR_DIR)/exemploSimples.c
+	$(CC) $(CFLAGS) -o $@ $< $(LDFLAGS)
+
+exemploStringVetores: $(VETOR_DIR)/exemploStringVetores.c
 	$(CC) $(CFLAGS) -o $@ $< $(LDFLAGS)
 
 exemploAvancadoVetor: $(VETOR_DIR)/exemploAvancado.c
@@ -64,6 +68,9 @@ exemploOperacoesMatrizes: $(MATRIZ_DIR)/exemploOperacoesMatrizes.c
 test: exemplos-basicos
 	@echo "=== Testando exemplo simples de vetor ==="
 	@echo "1\n2\n3\n4\n5" | ./exemploSimples || true
+	@echo ""
+	@echo "=== Testando exemplo de strings com vetores ==="
+	@echo "teste\nstring\nfim" | ./exemploStringVetores || true
 	@echo ""
 	@echo "=== Testando exemplo simples de matriz ==="
 	@./exemploMatrizSimples
@@ -99,6 +106,7 @@ help:
 	@echo ""
 	@echo "Exemplos individuais:"
 	@echo "  exemploSimples          - Exemplo básico de vetores"
+	@echo "  exemploStringVetores    - Manipulação de strings com vetores"
 	@echo "  exemploAvancadoVetor    - Exemplos avançados de vetores"
 	@echo "  exemploAvancadoMatriz   - Exemplos avançados de matrizes"
 	@echo "  aplicacoesPraticas      - Aplicações práticas"
