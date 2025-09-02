@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <string.h>
 
 #define TAMANHO 5  // Definição de tamanho do vetor
 
@@ -53,8 +54,15 @@ int main() {
     printf("Menor número: %d\n\n", menor);
 
     // 7. Criando e imprimindo um vetor de caracteres (string)
-    char nome[] = "C é incrível!";
-    printf("Vetor de caracteres (string): %s\n\n", nome);
+    char nome[] = "Linguagem C";
+    printf("Vetor de caracteres (string): %s\n", nome);
+    
+    // Demonstrando que strings são arrays de caracteres
+    printf("Caracteres individuais da string:\n");
+    for (int i = 0; nome[i] != '\0'; i++) {
+        printf("nome[%d] = '%c'\n", i, nome[i]);
+    }
+    printf("Terminador: nome[%d] = '\\0'\n\n", (int)strlen(nome));
 
     // 8. Vetor bidimensional (Matriz)
     int matriz[2][3] = {
@@ -69,6 +77,10 @@ int main() {
         }
         printf("\n");
     }
+    
+    printf("\n=== Para mais exemplos de strings com vetores ===\n");
+    printf("Execute: ./exemploStringVetores\n");
+    printf("Veja também: README.md (seção Strings como Vetores)\n");
 
     return 0;
 }

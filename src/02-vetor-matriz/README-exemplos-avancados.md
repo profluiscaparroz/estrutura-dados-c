@@ -5,6 +5,7 @@ Este diretório contém uma coleção abrangente de exemplos, exercícios acadê
 ## **📁 Estrutura do Conteúdo**
 
 ### **📚 Documentação Acadêmica**
+- **`README.md`** - Documentação principal com foco em strings e vetores
 - **`questoes-academicas.md`** - Questões acadêmicas com respostas detalhadas
 - **`analise-performance.md`** - Análise completa de performance e otimizações
 - **`README-exemplos-avancados.md`** - Este arquivo (guia de navegação)
@@ -13,6 +14,7 @@ Este diretório contém uma coleção abrangente de exemplos, exercícios acadê
 
 #### **Vetores (`vetor/`)**
 - **`exemplo/exemploSimples.c`** - Operações básicas com vetores
+- **`exemplo/exemploStringVetores.c`** - Manipulação completa de strings com vetores
 - **`exemplo/exemploAvancado.c`** - Análise de complexidade e otimizações
 - **`exemplo/exemploAlocacaoDinamica.c`** - Gerenciamento de memória
 - **`exemplo/exemploPassagemPorParametro.c`** - Diferentes formas de passagem
@@ -59,22 +61,23 @@ Ao estudar este material, você será capaz de:
 ## **📖 Roteiro de Estudo Recomendado**
 
 ### **Nível Iniciante**
-1. Leia `docs/02-vetor-matriz/README.md` (documentação base)
+1. Leia `README.md` (documentação principal)
 2. Execute `vetor/exemplo/exemploSimples.c`
-3. Execute `matriz/exemploMatrizSimples.c`
-4. Estude as **Questões 1-3** em `questoes-academicas.md`
+3. Execute `vetor/exemplo/exemploStringVetores.c`
+4. Execute `matriz/exemploMatrizSimples.c`
+5. Estude as **Questões 1-5** em `questoes-academicas.md`
 
 ### **Nível Intermediário**
-5. Execute `vetor/exemplo/exemploAvancado.c`
-6. Execute `matriz/exemploAvancado.c`
-7. Estude as **Questões 4-7** em `questoes-academicas.md`
-8. Leia **Parte I-III** de `analise-performance.md`
+6. Execute `vetor/exemplo/exemploAvancado.c`
+7. Execute `matriz/exemploAvancado.c`
+8. Estude as **Questões 6-10** em `questoes-academicas.md`
+9. Leia **Parte I-III** de `analise-performance.md`
 
 ### **Nível Avançado**
-9. Execute `aplicacoes-praticas.c`
-10. Execute `erros-comuns-debug.c`
-11. Estude as **Questões 8-10** em `questoes-academicas.md`
-12. Leia **Parte IV-VI** de `analise-performance.md`
+10. Execute `aplicacoes-praticas.c`
+11. Execute `erros-comuns-debug.c`
+12. Estude as **Questões 11-15** em `questoes-academicas.md`
+13. Leia **Parte IV-VI** de `analise-performance.md`
 
 ---
 
