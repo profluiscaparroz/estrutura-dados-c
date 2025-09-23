@@ -10,7 +10,7 @@ int comprimentoString(char *str) {
 }
 
 // Função para copiar uma string para outra
-void copiarString(char *destino, char *origem) {
+void copiarString(char *destino, const char *origem) {
 		int i = 0;
 		while (origem[i] != '\0') {
 				destino[i] = origem[i];
@@ -20,7 +20,7 @@ void copiarString(char *destino, char *origem) {
 }
 
 // Função para concatenar duas strings
-void concatenarString(char *destino, char *origem) {
+void concatenarString(char *destino, const char *origem) {
 		int i = 0;
 		int j = 0;
 
@@ -39,7 +39,7 @@ void concatenarString(char *destino, char *origem) {
 }
 
 // Função para comparar duas strings
-int compararString(char *str1, char *str2) {
+int compararString(const char *str1, const char *str2) {
 		int i = 0;
 		while (str1[i] != '\0' && str2[i] != '\0') {
 				if (str1[i] != str2[i]) {

@@ -122,7 +122,7 @@ void aplicar_blur(unsigned char *img, int width, int height, int channels) {
 
 int main() {
     int width, height, channels;
-    unsigned char *img = stbi_load("lena.jpg", &width, &height, &channels, 0);
+    unsigned char *img = stbi_load("turing.jpg", &width, &height, &channels, 0);
     if (img == NULL) {
         printf("Erro ao carregar imagem.\n");
         return 1;

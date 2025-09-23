@@ -2,7 +2,7 @@
 #include <stdlib.h>
 
 int main() {
-    FILE *arquivo = fopen("imagem.ppm", "r");
+    FILE *arquivo = fopen("lena.jpg", "r");
     if (!arquivo) {
         perror("Erro ao abrir o arquivo");
         return 1;
