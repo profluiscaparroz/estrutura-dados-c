@@ -7,7 +7,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-
+// Aplica o filtro grayscale (tons de cinza) na imagem.
+// O algoritmo calcula a média ponderada dos valores de vermelho, verde e azul (RGB) de cada pixel,
+// usando os pesos 0.3, 0.59 e 0.11, respectivamente. Esses pesos refletem a percepção humana
+// das cores, dando mais importância ao verde. O resultado é atribuído a todos os canais RGB,
+// transformando o pixel em um tom de cinza.
 void aplicar_grayscale(unsigned char *img, int width, int height, int channels) {
     for (int i = 0; i < width * height * channels; i += channels) {
         unsigned char r = img[i];
@@ -18,6 +22,10 @@ void aplicar_grayscale(unsigned char *img, int width, int height, int channels) 
     }
 }
 
+// Aplica o filtro negativo na imagem, invertendo as cores.
+// O algoritmo subtrai o valor de cada canal RGB de 255, criando o efeito de negativo.
+// Isso inverte as cores, pois os valores mais claros se tornam escuros e vice-versa.
+// O impacto visual é uma imagem com cores complementares.
 void aplicar_negativo(unsigned char *img, int width, int height, int channels) {
     for (int i = 0; i < width * height * channels; i += channels) {
         img[i] = 255 - img[i];
@@ -26,6 +34,11 @@ void aplicar_negativo(unsigned char *img, int width, int height, int channels) {
     }
 }
 
+// Aplica o filtro sépia na imagem, criando um efeito envelhecido.
+// O algoritmo calcula novos valores para os canais RGB usando uma fórmula específica,
+// que combina os valores originais de vermelho, verde e azul com pesos diferentes.
+// Os valores resultantes são limitados a 255 para evitar estouro. O efeito sépia
+// dá à imagem um tom amarelado, simulando fotos antigas.
 void aplicar_sepia(unsigned char *img, int width, int height, int channels) {
     for (int i = 0; i < width * height * channels; i += channels) {
         unsigned char r = img[i];
@@ -42,6 +55,10 @@ void aplicar_sepia(unsigned char *img, int width, int height, int channels) {
     }
 }
 
+// Espelha a imagem horizontalmente, invertendo os lados esquerdo e direito.
+// O algoritmo percorre cada linha da imagem e troca os pixels das extremidades
+// opostas, movendo-se em direção ao centro. Isso é feito para cada canal RGB,
+// garantindo que as cores sejam preservadas. O resultado é uma imagem espelhada.
 void espelhar_horizontal(unsigned char *img, int width, int height, int channels) {
     for (int y = 0; y < height; y++) {
         for (int x = 0; x < width / 2; x++) {
@@ -56,17 +73,30 @@ void espelhar_horizontal(unsigned char *img, int width, int height, int channels
     }
 }
 
+// Salva a imagem processada em um arquivo PNG.
+// A função usa a biblioteca stb_image_write para criar um arquivo PNG com os dados
+// da imagem. O nome do arquivo é especificado pelo usuário, e a função também
+// imprime uma mensagem confirmando o salvamento. Isso permite visualizar o resultado
+// das alterações feitas na imagem.
 void salvar_imagem(const char *nome, unsigned char *img, int width, int height, int channels) {
     stbi_write_png(nome, width, height, channels, img, width * channels);
     printf("Imagem salva como %s\n", nome);
 }
 
+// Copia os dados de uma imagem para outra, útil para criar backups.
+// O algoritmo percorre todos os bytes da imagem de origem e os copia para o destino.
+// Isso é usado para restaurar a imagem original antes de aplicar novos filtros,
+// garantindo que cada operação comece com os dados originais.
 void copiar_imagem(unsigned char *src, unsigned char *dest, int tamanho) {
     for (int i = 0; i < tamanho; i++) {
         dest[i] = src[i];
     }
 }
 
+// Ajusta o brilho da imagem com base em um valor fornecido pelo usuário.
+// O algoritmo soma o valor do brilho a cada canal RGB de cada pixel. Se o resultado
+// ultrapassar 255, ele é limitado a 255; se for menor que 0, é ajustado para 0.
+// Isso torna a imagem mais clara ou mais escura, dependendo do valor fornecido.
 void ajustar_brilho(unsigned char *img, int width, int height, int channels, int brilho) {
     for (int i = 0; i < width * height * channels; i++) {
         int valor = img[i] + brilho;
@@ -74,6 +104,11 @@ void ajustar_brilho(unsigned char *img, int width, int height, int channels, int
     }
 }
 
+// Ajusta o contraste da imagem com base em um fator fornecido pelo usuário.
+// O algoritmo normaliza os valores dos pixels para o intervalo [0, 1], aplica o fator
+// de contraste, e depois reverte a normalização para o intervalo [0, 255]. Valores
+// maiores que 1 aumentam o contraste, enquanto valores menores que 1 o reduzem.
+// Isso realça ou suaviza as diferenças entre as cores.
 void ajustar_contraste(unsigned char *img, int width, int height, int channels, float fator) {
     for (int i = 0; i < width * height * channels; i++) {
         float pixel = img[i] / 255.0;
@@ -87,6 +122,11 @@ void ajustar_contraste(unsigned char *img, int width, int height, int channels, 
     }
 }
 
+// Aplica um efeito de desfoque (blur) na imagem usando um kernel 3x3.
+// O algoritmo percorre cada pixel (exceto as bordas) e calcula a média dos valores
+// dos pixels vizinhos, definidos pelo kernel 3x3. Isso suaviza as transições entre
+// os pixels, criando um efeito de desfoque. Uma cópia da imagem original é usada
+// para evitar que os cálculos afetem os pixels ainda não processados.
 void aplicar_blur(unsigned char *img, int width, int height, int channels) {
     unsigned char *copy = malloc(width * height * channels);
     copiar_imagem(img, copy, width * height * channels);
