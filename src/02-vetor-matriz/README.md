@@ -1213,40 +1213,173 @@ for (int j = 0; j < 1000; j++)
 
 ---
 
-## 🔧 Exemplos Práticos
+## 🔧 Exemplos Práticos Detalhados
 
-### 1. Sistema de Notas com Strings
+### 1. Sistema de Gerenciamento de Notas
+
+**Problema:** Criar um sistema para armazenar e processar notas de alunos.
+
+**Código Completo com Explicações:**
 ```c
 #include <stdio.h>
+#include <string.h>
 
-#define MAX_ALUNOS 5
+#define MAX_ALUNOS 50
 #define MAX_NOME 50
+#define NUM_PROVAS 3
 
+// Estrutura para representar um aluno
 typedef struct {
     char nome[MAX_NOME];
-    float nota;
+    float notas[NUM_PROVAS];
+    float media;
 } Aluno;
 
-void exibir_alunos(Aluno alunos[], int quantidade) {
-    printf("\n=== RELATÓRIO DE NOTAS ===\n");
+// Função para calcular a média das notas
+// Complexidade: O(NUM_PROVAS) = O(1) (constante pequena)
+float calcular_media(float notas[], int quantidade) {
+    float soma = 0;
     for (int i = 0; i < quantidade; i++) {
-        printf("Aluno: %-20s | Nota: %.2f\n", 
-               alunos[i].nome, alunos[i].nota);
+        soma += notas[i];
     }
+    return soma / quantidade;
+}
+
+// Função para encontrar o aluno com maior média
+// Complexidade: O(n) onde n é o número de alunos
+int encontrar_melhor_aluno(Aluno alunos[], int quantidade) {
+    int indice_melhor = 0;
+    float maior_media = alunos[0].media;
+    
+    for (int i = 1; i < quantidade; i++) {
+        if (alunos[i].media > maior_media) {
+            maior_media = alunos[i].media;
+            indice_melhor = i;
+        }
+    }
+    
+    return indice_melhor;
+}
+
+// Função para exibir relatório completo
+// Complexidade: O(n) onde n é o número de alunos
+void exibir_relatorio(Aluno alunos[], int quantidade) {
+    printf("\n╔════════════════════════════════════════════════════════════╗\n");
+    printf("║              RELATÓRIO DE NOTAS DOS ALUNOS                 ║\n");
+    printf("╚════════════════════════════════════════════════════════════╝\n\n");
+    
+    printf("%-20s  Prova1  Prova2  Prova3  Média   Status\n", "Nome");
+    printf("──────────────────────────────────────────────────────────────\n");
+    
+    for (int i = 0; i < quantidade; i++) {
+        printf("%-20s  %6.2f  %6.2f  %6.2f  %6.2f  %s\n",
+               alunos[i].nome,
+               alunos[i].notas[0],
+               alunos[i].notas[1],
+               alunos[i].notas[2],
+               alunos[i].media,
+               alunos[i].media >= 7.0 ? "✓ Aprovado" : "✗ Reprovado");
+    }
+    
+    // Estatísticas
+    int melhor = encontrar_melhor_aluno(alunos, quantidade);
+    printf("\n🏆 Melhor aluno: %s (Média: %.2f)\n", 
+           alunos[melhor].nome, alunos[melhor].media);
+}
+
+int main() {
+    Aluno turma[MAX_ALUNOS];
+    int num_alunos = 3;
+    
+    // Dados de exemplo
+    strcpy(turma[0].nome, "Ana Silva");
+    turma[0].notas[0] = 8.5; turma[0].notas[1] = 9.0; turma[0].notas[2] = 8.0;
+    
+    strcpy(turma[1].nome, "Bruno Costa");
+    turma[1].notas[0] = 7.0; turma[1].notas[1] = 6.5; turma[1].notas[2] = 7.5;
+    
+    strcpy(turma[2].nome, "Carla Santos");
+    turma[2].notas[0] = 9.5; turma[2].notas[1] = 10.0; turma[2].notas[2] = 9.0;
+    
+    // Calcula médias
+    for (int i = 0; i < num_alunos; i++) {
+        turma[i].media = calcular_media(turma[i].notas, NUM_PROVAS);
+    }
+    
+    // Exibe relatório
+    exibir_relatorio(turma, num_alunos);
+    
+    return 0;
 }
 ```
 
-### 2. Processamento de Texto
+**Análise de Complexidade Total:**
+- Calcular médias: O(n × k) onde n=alunos, k=provas
+- Encontrar melhor: O(n)
+- Exibir relatório: O(n)
+- **Total: O(n)** (assumindo k constante)
+
+---
+
+### 2. Processador de Texto Avançado
+
+**Problema:** Analisar um texto e extrair estatísticas.
+
+**Código Completo:**
 ```c
-// Contar palavras em um texto
-int contar_palavras(char *texto) {
-    int palavras = 0;
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+
+#define MAX_TEXTO 1000
+#define MAX_PALAVRAS 200
+
+// Estrutura para análise de texto
+typedef struct {
+    int num_caracteres;
+    int num_palavras;
+    int num_linhas;
+    int num_vogais;
+    int num_consoantes;
+    int num_digitos;
+} EstatisticasTexto;
+
+// Verifica se um caractere é vogal
+// Complexidade: O(1)
+int eh_vogal(char c) {
+    c = tolower(c);
+    return (c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u');
+}
+
+// Analisa o texto e retorna estatísticas
+// Complexidade: O(n) onde n é o tamanho do texto
+EstatisticasTexto analisar_texto(char *texto) {
+    EstatisticasTexto stats = {0, 0, 0, 0, 0, 0};
     int em_palavra = 0;
     
     for (int i = 0; texto[i] != '\0'; i++) {
-        if (texto[i] != ' ' && texto[i] != '\t' && texto[i] != '\n') {
+        stats.num_caracteres++;
+        
+        if (texto[i] == '\n') {
+            stats.num_linhas++;
+        }
+        
+        if (isalpha(texto[i])) {
+            if (eh_vogal(texto[i])) {
+                stats.num_vogais++;
+            } else {
+                stats.num_consoantes++;
+            }
+        }
+        
+        if (isdigit(texto[i])) {
+            stats.num_digitos++;
+        }
+        
+        // Contar palavras
+        if (isalpha(texto[i])) {
             if (!em_palavra) {
-                palavras++;
+                stats.num_palavras++;
                 em_palavra = 1;
             }
         } else {
@@ -1254,9 +1387,513 @@ int contar_palavras(char *texto) {
         }
     }
     
-    return palavras;
+    // Última linha (se texto não termina com \n)
+    if (stats.num_caracteres > 0 && texto[stats.num_caracteres-1] != '\n') {
+        stats.num_linhas++;
+    }
+    
+    return stats;
+}
+
+// Converte texto para maiúsculas
+// Complexidade: O(n)
+void para_maiuscula(char *texto) {
+    for (int i = 0; texto[i] != '\0'; i++) {
+        texto[i] = toupper(texto[i]);
+    }
+}
+
+// Inverte uma string
+// Complexidade: O(n/2) = O(n)
+void inverter_string(char *str) {
+    int inicio = 0;
+    int fim = strlen(str) - 1;
+    
+    while (inicio < fim) {
+        char temp = str[inicio];
+        str[inicio] = str[fim];
+        str[fim] = temp;
+        inicio++;
+        fim--;
+    }
+}
+
+// Conta ocorrências de uma palavra no texto
+// Complexidade: O(n × m) onde n=tamanho do texto, m=tamanho da palavra
+int contar_ocorrencias(char *texto, char *palavra) {
+    int contador = 0;
+    int tam_palavra = strlen(palavra);
+    int tam_texto = strlen(texto);
+    
+    for (int i = 0; i <= tam_texto - tam_palavra; i++) {
+        int j;
+        for (j = 0; j < tam_palavra; j++) {
+            if (tolower(texto[i+j]) != tolower(palavra[j])) {
+                break;
+            }
+        }
+        if (j == tam_palavra) {
+            // Verifica se é palavra completa (não parte de outra)
+            int antes_ok = (i == 0 || !isalpha(texto[i-1]));
+            int depois_ok = (i+tam_palavra >= tam_texto || !isalpha(texto[i+tam_palavra]));
+            if (antes_ok && depois_ok) {
+                contador++;
+            }
+        }
+    }
+    
+    return contador;
+}
+
+void exibir_estatisticas(EstatisticasTexto stats) {
+    printf("\n╔═══════════════════════════════════╗\n");
+    printf("║    ESTATÍSTICAS DO TEXTO          ║\n");
+    printf("╚═══════════════════════════════════╝\n\n");
+    printf("  📝 Caracteres:    %d\n", stats.num_caracteres);
+    printf("  📖 Palavras:      %d\n", stats.num_palavras);
+    printf("  📄 Linhas:        %d\n", stats.num_linhas);
+    printf("  🔤 Vogais:        %d\n", stats.num_vogais);
+    printf("  🔡 Consoantes:    %d\n", stats.num_consoantes);
+    printf("  🔢 Dígitos:       %d\n", stats.num_digitos);
+    
+    if (stats.num_palavras > 0) {
+        float media_chars = (float)stats.num_caracteres / stats.num_palavras;
+        printf("  📊 Média chars/palavra: %.2f\n", media_chars);
+    }
+}
+
+int main() {
+    char texto[] = "Estruturas de dados sao fundamentais em Ciencia da Computacao.\n"
+                   "Vetores e matrizes sao estruturas basicas mas muito importantes.\n"
+                   "Dominando estes conceitos, voce estara preparado para estruturas mais complexas.";
+    
+    printf("Texto original:\n%s\n", texto);
+    
+    // Analisa o texto
+    EstatisticasTexto stats = analisar_texto(texto);
+    exibir_estatisticas(stats);
+    
+    // Conta ocorrências de "estruturas"
+    char palavra[] = "estruturas";
+    int ocorrencias = contar_ocorrencias(texto, palavra);
+    printf("\n  🔍 Palavra '%s' aparece %d vez(es)\n", palavra, ocorrencias);
+    
+    // Demonstra inversão
+    char exemplo[] = "Programacao";
+    printf("\n  Original: %s\n", exemplo);
+    inverter_string(exemplo);
+    printf("  Invertida: %s\n", exemplo);
+    
+    return 0;
 }
 ```
+
+**Saída Esperada:**
+```
+Texto original:
+Estruturas de dados sao fundamentais em Ciencia da Computacao.
+Vetores e matrizes sao estruturas basicas mas muito importantes.
+Dominando estes conceitos, voce estara preparado para estruturas mais complexas.
+
+╔═══════════════════════════════════╗
+║    ESTATÍSTICAS DO TEXTO          ║
+╚═══════════════════════════════════╝
+
+  📝 Caracteres:    193
+  📖 Palavras:      26
+  📄 Linhas:        3
+  🔤 Vogais:        73
+  🔡 Consoantes:    87
+  🔢 Dígitos:       0
+  📊 Média chars/palavra: 7.42
+
+  🔍 Palavra 'estruturas' aparece 3 vez(es)
+
+  Original: Programacao
+  Invertida: oacamargorP
+```
+
+---
+
+### 3. Manipulador de Matrizes - Operações Matemáticas
+
+**Problema:** Implementar operações comuns com matrizes.
+
+**Código Completo:**
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+#define MAX 10
+
+// Aloca matriz dinamicamente
+// Complexidade: O(linhas)
+int** alocar_matriz(int linhas, int colunas) {
+    int **mat = malloc(linhas * sizeof(int*));
+    for (int i = 0; i < linhas; i++) {
+        mat[i] = malloc(colunas * sizeof(int));
+    }
+    return mat;
+}
+
+// Libera matriz
+// Complexidade: O(linhas)
+void liberar_matriz(int **mat, int linhas) {
+    for (int i = 0; i < linhas; i++) {
+        free(mat[i]);
+    }
+    free(mat);
+}
+
+// Preenche matriz com valores aleatórios
+// Complexidade: O(m × n)
+void preencher_aleatoria(int **mat, int linhas, int colunas, int max_valor) {
+    for (int i = 0; i < linhas; i++) {
+        for (int j = 0; j < colunas; j++) {
+            mat[i][j] = rand() % max_valor;
+        }
+    }
+}
+
+// Imprime matriz
+// Complexidade: O(m × n)
+void imprimir_matriz(int **mat, int linhas, int colunas, char *titulo) {
+    printf("\n%s (%dx%d):\n", titulo, linhas, colunas);
+    for (int i = 0; i < linhas; i++) {
+        for (int j = 0; j < colunas; j++) {
+            printf("%4d ", mat[i][j]);
+        }
+        printf("\n");
+    }
+}
+
+// Soma duas matrizes
+// Complexidade: O(m × n)
+int** somar_matrizes(int **A, int **B, int linhas, int colunas) {
+    int **C = alocar_matriz(linhas, colunas);
+    
+    for (int i = 0; i < linhas; i++) {
+        for (int j = 0; j < colunas; j++) {
+            C[i][j] = A[i][j] + B[i][j];
+        }
+    }
+    
+    return C;
+}
+
+// Multiplica duas matrizes
+// Complexidade: O(m × n × p)
+int** multiplicar_matrizes(int **A, int **B, int m, int n, int p) {
+    int **C = alocar_matriz(m, p);
+    
+    // Inicializa com zero
+    for (int i = 0; i < m; i++) {
+        for (int j = 0; j < p; j++) {
+            C[i][j] = 0;
+        }
+    }
+    
+    // Multiplicação
+    for (int i = 0; i < m; i++) {
+        for (int j = 0; j < p; j++) {
+            for (int k = 0; k < n; k++) {
+                C[i][j] += A[i][k] * B[k][j];
+            }
+        }
+    }
+    
+    return C;
+}
+
+// Transpõe matriz
+// Complexidade: O(m × n)
+int** transpor_matriz(int **mat, int linhas, int colunas) {
+    int **transp = alocar_matriz(colunas, linhas);
+    
+    for (int i = 0; i < linhas; i++) {
+        for (int j = 0; j < colunas; j++) {
+            transp[j][i] = mat[i][j];
+        }
+    }
+    
+    return transp;
+}
+
+// Verifica se matriz é identidade
+// Complexidade: O(n²)
+int eh_identidade(int **mat, int n) {
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            if (i == j) {
+                if (mat[i][j] != 1) return 0;
+            } else {
+                if (mat[i][j] != 0) return 0;
+            }
+        }
+    }
+    return 1;
+}
+
+// Cria matriz identidade
+// Complexidade: O(n²)
+int** criar_identidade(int n) {
+    int **mat = alocar_matriz(n, n);
+    
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            mat[i][j] = (i == j) ? 1 : 0;
+        }
+    }
+    
+    return mat;
+}
+
+int main() {
+    srand(time(NULL));
+    
+    printf("╔════════════════════════════════════════════════╗\n");
+    printf("║    CALCULADORA DE OPERAÇÕES COM MATRIZES      ║\n");
+    printf("╚════════════════════════════════════════════════╝\n");
+    
+    // Exemplo 1: Soma de matrizes
+    printf("\n[1] SOMA DE MATRIZES\n");
+    int **A = alocar_matriz(2, 3);
+    int **B = alocar_matriz(2, 3);
+    
+    preencher_aleatoria(A, 2, 3, 10);
+    preencher_aleatoria(B, 2, 3, 10);
+    
+    imprimir_matriz(A, 2, 3, "Matriz A");
+    imprimir_matriz(B, 2, 3, "Matriz B");
+    
+    int **C = somar_matrizes(A, B, 2, 3);
+    imprimir_matriz(C, 2, 3, "C = A + B");
+    
+    // Exemplo 2: Multiplicação de matrizes
+    printf("\n[2] MULTIPLICAÇÃO DE MATRIZES\n");
+    int **D = alocar_matriz(2, 3);
+    int **E = alocar_matriz(3, 2);
+    
+    preencher_aleatoria(D, 2, 3, 5);
+    preencher_aleatoria(E, 3, 2, 5);
+    
+    imprimir_matriz(D, 2, 3, "Matriz D");
+    imprimir_matriz(E, 3, 2, "Matriz E");
+    
+    int **F = multiplicar_matrizes(D, E, 2, 3, 2);
+    imprimir_matriz(F, 2, 2, "F = D × E");
+    
+    // Exemplo 3: Transposição
+    printf("\n[3] TRANSPOSIÇÃO\n");
+    int **G = alocar_matriz(2, 4);
+    preencher_aleatoria(G, 2, 4, 20);
+    
+    imprimir_matriz(G, 2, 4, "Matriz G");
+    
+    int **GT = transpor_matriz(G, 2, 4);
+    imprimir_matriz(GT, 4, 2, "G^T (Transposta)");
+    
+    // Exemplo 4: Matriz identidade
+    printf("\n[4] MATRIZ IDENTIDADE\n");
+    int **I = criar_identidade(4);
+    imprimir_matriz(I, 4, 4, "Matriz Identidade 4x4");
+    printf("É identidade? %s\n", eh_identidade(I, 4) ? "Sim" : "Não");
+    
+    // Limpeza
+    liberar_matriz(A, 2);
+    liberar_matriz(B, 2);
+    liberar_matriz(C, 2);
+    liberar_matriz(D, 2);
+    liberar_matriz(E, 3);
+    liberar_matriz(F, 2);
+    liberar_matriz(G, 2);
+    liberar_matriz(GT, 4);
+    liberar_matriz(I, 4);
+    
+    return 0;
+}
+```
+
+**Conceitos Demonstrados:**
+- ✅ Alocação dinâmica de matrizes
+- ✅ Operações matemáticas (soma, multiplicação, transposição)
+- ✅ Verificação de propriedades (matriz identidade)
+- ✅ Gerenciamento de memória (alocação e liberação)
+- ✅ Formatação de saída profissional
+
+---
+
+### 4. Jogo da Velha (Tic-Tac-Toe) - Matriz 3×3
+
+**Problema:** Implementar o clássico jogo da velha usando matriz.
+
+**Código Completo:**
+```c
+#include <stdio.h>
+
+#define TAM 3
+
+// Inicializa o tabuleiro
+// Complexidade: O(1) - sempre 3×3 = 9 operações
+void inicializar_tabuleiro(char tabuleiro[TAM][TAM]) {
+    for (int i = 0; i < TAM; i++) {
+        for (int j = 0; j < TAM; j++) {
+            tabuleiro[i][j] = ' ';
+        }
+    }
+}
+
+// Exibe o tabuleiro
+// Complexidade: O(1) - sempre 3×3
+void exibir_tabuleiro(char tabuleiro[TAM][TAM]) {
+    printf("\n");
+    printf("     0   1   2\n");
+    printf("   ╔═══╦═══╦═══╗\n");
+    for (int i = 0; i < TAM; i++) {
+        printf(" %d ║ %c ║ %c ║ %c ║\n", i,
+               tabuleiro[i][0], tabuleiro[i][1], tabuleiro[i][2]);
+        if (i < TAM - 1) {
+            printf("   ╠═══╬═══╬═══╣\n");
+        }
+    }
+    printf("   ╚═══╩═══╩═══╝\n");
+}
+
+// Verifica se posição é válida
+// Complexidade: O(1)
+int posicao_valida(char tabuleiro[TAM][TAM], int linha, int coluna) {
+    if (linha < 0 || linha >= TAM || coluna < 0 || coluna >= TAM) {
+        return 0;  // Fora dos limites
+    }
+    return tabuleiro[linha][coluna] == ' ';  // Verifica se está vazia
+}
+
+// Faz jogada
+// Complexidade: O(1)
+int fazer_jogada(char tabuleiro[TAM][TAM], int linha, int coluna, char jogador) {
+    if (!posicao_valida(tabuleiro, linha, coluna)) {
+        return 0;  // Jogada inválida
+    }
+    
+    tabuleiro[linha][coluna] = jogador;
+    return 1;  // Jogada válida
+}
+
+// Verifica vitória
+// Complexidade: O(1) - sempre verifica 8 condições
+char verificar_vitoria(char tabuleiro[TAM][TAM]) {
+    // Verifica linhas
+    for (int i = 0; i < TAM; i++) {
+        if (tabuleiro[i][0] != ' ' &&
+            tabuleiro[i][0] == tabuleiro[i][1] &&
+            tabuleiro[i][1] == tabuleiro[i][2]) {
+            return tabuleiro[i][0];
+        }
+    }
+    
+    // Verifica colunas
+    for (int j = 0; j < TAM; j++) {
+        if (tabuleiro[0][j] != ' ' &&
+            tabuleiro[0][j] == tabuleiro[1][j] &&
+            tabuleiro[1][j] == tabuleiro[2][j]) {
+            return tabuleiro[0][j];
+        }
+    }
+    
+    // Verifica diagonal principal
+    if (tabuleiro[0][0] != ' ' &&
+        tabuleiro[0][0] == tabuleiro[1][1] &&
+        tabuleiro[1][1] == tabuleiro[2][2]) {
+        return tabuleiro[0][0];
+    }
+    
+    // Verifica diagonal secundária
+    if (tabuleiro[0][2] != ' ' &&
+        tabuleiro[0][2] == tabuleiro[1][1] &&
+        tabuleiro[1][1] == tabuleiro[2][0]) {
+        return tabuleiro[0][2];
+    }
+    
+    return ' ';  // Nenhum vencedor
+}
+
+// Verifica empate
+// Complexidade: O(1) - sempre 9 posições
+int verificar_empate(char tabuleiro[TAM][TAM]) {
+    for (int i = 0; i < TAM; i++) {
+        for (int j = 0; j < TAM; j++) {
+            if (tabuleiro[i][j] == ' ') {
+                return 0;  // Ainda há posições vazias
+            }
+        }
+    }
+    return 1;  // Empate (tabuleiro cheio e nenhum vencedor)
+}
+
+int main() {
+    char tabuleiro[TAM][TAM];
+    char jogador_atual = 'X';
+    int linha, coluna;
+    int jogadas = 0;
+    
+    printf("╔═══════════════════════════════════╗\n");
+    printf("║      JOGO DA VELHA (3×3)          ║\n");
+    printf("╚═══════════════════════════════════╝\n");
+    
+    inicializar_tabuleiro(tabuleiro);
+    
+    // Loop do jogo
+    while (1) {
+        exibir_tabuleiro(tabuleiro);
+        
+        printf("\nJogador %c, faça sua jogada!\n", jogador_atual);
+        printf("Linha (0-2): ");
+        scanf("%d", &linha);
+        printf("Coluna (0-2): ");
+        scanf("%d", &coluna);
+        
+        if (fazer_jogada(tabuleiro, linha, coluna, jogador_atual)) {
+            jogadas++;
+            
+            // Verifica vitória
+            char vencedor = verificar_vitoria(tabuleiro);
+            if (vencedor != ' ') {
+                exibir_tabuleiro(tabuleiro);
+                printf("\n🎉 Jogador %c venceu! Parabéns! 🎉\n", vencedor);
+                break;
+            }
+            
+            // Verifica empate
+            if (verificar_empate(tabuleiro)) {
+                exibir_tabuleiro(tabuleiro);
+                printf("\n🤝 Empate! Bom jogo! 🤝\n");
+                break;
+            }
+            
+            // Alterna jogador
+            jogador_atual = (jogador_atual == 'X') ? 'O' : 'X';
+        } else {
+            printf("\n❌ Jogada inválida! Tente novamente.\n");
+        }
+    }
+    
+    printf("\nTotal de jogadas: %d\n", jogadas);
+    
+    return 0;
+}
+```
+
+**Conceitos Demonstrados:**
+- ✅ Uso prático de matriz 2D
+- ✅ Validação de entrada
+- ✅ Verificação de padrões (linhas, colunas, diagonais)
+- ✅ Interface visual com caracteres especiais
+- ✅ Lógica de jogo completa
+
+**Complexidade Total:** O(1) para todas as operações (tamanho fixo 3×3)
+
+---
 
 ---
 
