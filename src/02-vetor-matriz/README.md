@@ -454,16 +454,81 @@ strcpy(nomes[0], "Ana");
 ### Vantagens e Desvantagens
 
 **Vantagens dos Vetores:**
-- Acesso rápido por índice O(1)
-- Eficiência de memória (dados contíguos)
-- Cache-friendly (boa localidade espacial)
-- Simplicidade de implementação
+- **Acesso rápido por índice:** O(1) - qualquer elemento pode ser acessado instantaneamente
+- **Eficiência de memória:** Dados contíguos sem overhead adicional (estruturas mais complexas têm ponteiros extras)
+- **Cache-friendly:** Boa localidade espacial significa menos cache misses e melhor desempenho
+- **Simplicidade:** Fácil de entender e implementar, ideal para iniciantes
+- **Previsibilidade:** Comportamento e performance são previsíveis e determinísticos
 
 **Desvantagens dos Vetores:**
-- Tamanho fixo (vetores estáticos)
-- Inserção/remoção custosa O(n)
-- Possibilidade de overflow
-- Não há verificação automática de limites
+- **Tamanho fixo:** Vetores estáticos não podem crescer; dinâmicos precisam de realocação custosa
+- **Inserção/remoção custosa:** O(n) para operações no meio (exceto no final)
+- **Possibilidade de overflow:** Acessar além dos limites causa comportamento indefinido
+- **Desperdício de memória:** Se alocar muito espaço preventivamente, pode desperdiçar RAM
+- **Não há verificação automática:** C não verifica limites automaticamente (diferente de outras linguagens)
+
+### 📊 Comparação Visual: Vetor vs Outras Estruturas
+
+```
+VETOR (Array):
+┌─────┬─────┬─────┬─────┬─────┐
+│ 10  │ 20  │ 30  │ 40  │ 50  │  ← Memória contígua
+└─────┴─────┴─────┴─────┴─────┘
+  [0]   [1]   [2]   [3]   [4]
+
+Vantagem: Acesso direto O(1)
+Desvantagem: Tamanho fixo
+
+────────────────────────────────────
+
+LISTA LIGADA:
+┌─────┬──┐   ┌─────┬──┐   ┌─────┬──┐
+│ 10  │●─┼──→│ 20  │●─┼──→│ 30  │ X│  ← Memória espalhada
+└─────┴──┘   └─────┴──┘   └─────┴──┘
+
+Vantagem: Inserção/remoção O(1)
+Desvantagem: Acesso sequencial O(n)
+
+────────────────────────────────────
+
+VETOR DINÂMICO (ArrayList):
+Capacidade: 8           Tamanho usado: 5
+┌─────┬─────┬─────┬─────┬─────┬─────┬─────┬─────┐
+│ 10  │ 20  │ 30  │ 40  │ 50  │     │     │     │
+└─────┴─────┴─────┴─────┴─────┴─────┴─────┴─────┘
+                              └─ espaço reservado
+
+Vantagem: Cresce automaticamente
+Desvantagem: Realocação ocasional O(n)
+```
+
+**Vantagens das Strings como Vetores:**
+- **Controle total:** Você decide como gerenciar a memória e manipular os caracteres
+- **Eficiência máxima:** Sem overhead de estruturas complexas
+- **Compatibilidade:** Funciona com todas as funções de sistema e APIs em C
+- **Base educacional:** Entender strings como vetores é fundamental para C
+
+**Desvantagens das Strings como Vetores:**
+- **Gerenciamento manual:** Você é responsável por alocar e liberar memória
+- **Vulnerabilidade:** Buffer overflow é um dos bugs mais comuns e perigosos
+- **Terminador '\0':** Esquecer o terminador causa bugs difíceis de debugar
+- **Sem funcionalidades avançadas:** Sem métodos prontos como em linguagens modernas (Python, Java)
+
+### 🎓 Quando Usar Vetores?
+
+**✅ Use vetores quando:**
+- Você sabe o tamanho dos dados (ou um limite máximo razoável)
+- Precisa de acesso rápido por índice
+- Os dados são processados sequencialmente
+- A performance é crítica (algoritmos, processamento científico)
+- Está implementando estruturas de dados básicas (pilhas, filas)
+
+**❌ Evite vetores quando:**
+- O tamanho dos dados é muito variável e imprevisível
+- Há muitas inserções/remoções no meio dos dados
+- A ordem dos elementos muda frequentemente
+- Precisa de busca eficiente sem ordem (use hash table)
+- Precisa de relacionamentos complexos (use grafos)
 
 **Vantagens das Strings como Vetores:**
 - Controle total sobre a memória
@@ -618,6 +683,206 @@ char texto[5][20]; // 5 strings de até 19 caracteres cada
 // Preenchendo a matriz
 strcpy(texto[0], "Primeira linha");
 strcpy(texto[1], "Segunda linha");
+```
+
+### 🎓 Visualização Didática: Como a Matriz Funciona na Memória
+
+**Exemplo: Matriz 3×4 de inteiros (assumindo int = 4 bytes)**
+
+```
+Declaração: int matriz[3][4];
+
+Visualização conceitual (2D):
+        Col 0   Col 1   Col 2   Col 3
+Row 0   [0]     [1]     [2]     [3]
+Row 1   [4]     [5]     [6]     [7]
+Row 2   [8]     [9]     [10]    [11]
+
+Visualização na memória (1D linear):
+Endereço  |  Offset  |  Elemento
+─────────────────────────────────
+0x1000    |    0     |  matriz[0][0]
+0x1004    |    4     |  matriz[0][1]
+0x1008    |    8     |  matriz[0][2]
+0x100C    |   12     |  matriz[0][3]  ← fim da linha 0
+0x1010    |   16     |  matriz[1][0]  ← início da linha 1
+0x1014    |   20     |  matriz[1][1]
+0x1018    |   24     |  matriz[1][2]
+0x101C    |   28     |  matriz[1][3]
+0x1020    |   32     |  matriz[2][0]
+0x1024    |   36     |  matriz[2][1]
+0x1028    |   40     |  matriz[2][2]
+0x102C    |   44     |  matriz[2][3]
+
+Fórmula de endereço para matriz[i][j]:
+endereço = base + (i × num_colunas + j) × sizeof(tipo)
+endereço = 0x1000 + (i × 4 + j) × 4
+
+Exemplo matriz[1][2]:
+endereço = 0x1000 + (1 × 4 + 2) × 4
+         = 0x1000 + (4 + 2) × 4
+         = 0x1000 + 6 × 4
+         = 0x1000 + 24
+         = 0x1018  ✓
+```
+
+### 🔄 Padrões de Acesso e Performance
+
+**Por que acessar por linhas é mais rápido?**
+
+```
+ACESSO POR LINHAS (cache-friendly):
+for (i = 0; i < 3; i++)
+    for (j = 0; j < 4; j++)
+        soma += matriz[i][j];
+
+Ordem de acesso: [0][0], [0][1], [0][2], [0][3], [1][0], [1][1]...
+                  └────── sequencial na memória ──────┘
+
+Cache behavior:
+┌───────────────────────────────────┐
+│ Cache line carrega vários         │
+│ elementos adjacentes de uma vez   │
+└───────────────────────────────────┘
+     ↓          ↓          ↓
+  [0][0]—→[0][1]—→[0][2]—→[0][3]  ← Uma cache line
+
+Resultado: Poucos cache misses! ✅ RÁPIDO
+
+────────────────────────────────────────────────────────
+
+ACESSO POR COLUNAS (cache-unfriendly):
+for (j = 0; j < 4; j++)
+    for (i = 0; i < 3; i++)
+        soma += matriz[i][j];
+
+Ordem de acesso: [0][0], [1][0], [2][0], [0][1], [1][1]...
+                  └─┬─┘   └─┬─┘   └─┬─┘
+                 +16 bytes cada salto!
+
+Cache behavior:
+Cache line: [0][0][0][1][0][2][0][3]
+Acessa:     [0][0] ✓
+            [1][0] ✗ (outro cache line)
+            [2][0] ✗ (outro cache line)
+
+Resultado: Muitos cache misses! ❌ LENTO (2-5× mais lento)
+```
+
+### 🧠 Conceitos Importantes sobre Matrizes
+
+**1. Matriz vs Array de Ponteiros:**
+```c
+// Método 1: Matriz estática (recomendado quando possível)
+int matriz[3][4];
+// + Memória contígua (mais rápida)
+// + Menos fragmentação
+// + Sintaxe simples
+// - Tamanho fixo em tempo de compilação
+
+// Método 2: Array de ponteiros (flexível)
+int **matriz = malloc(3 * sizeof(int*));
+for (int i = 0; i < 3; i++)
+    matriz[i] = malloc(4 * sizeof(int));
+// + Tamanho dinâmico
+// + Pode ter linhas de tamanhos diferentes
+// - Memória fragmentada (mais lenta)
+// - Mais complexo de gerenciar
+// - Overhead de ponteiros
+
+// Método 3: Bloco contíguo (melhor dos dois mundos)
+int *matriz = malloc(3 * 4 * sizeof(int));
+// Acesso: matriz[i * colunas + j]
+// + Memória contígua (rápida como Método 1)
+// + Tamanho dinâmico (flexível como Método 2)
+// + Apenas uma chamada malloc (eficiente)
+// - Sintaxe menos intuitiva
+```
+
+**2. Tipos Especiais de Matrizes:**
+```
+MATRIZ QUADRADA (n × n):
+[1  2  3]
+[4  5  6]  ← 3 linhas, 3 colunas
+[7  8  9]
+
+MATRIZ IDENTIDADE:
+[1  0  0]
+[0  1  0]  ← Diagonal = 1, resto = 0
+[0  0  1]
+
+MATRIZ DIAGONAL:
+[5  0  0]
+[0  3  0]  ← Apenas diagonal ≠ 0
+[0  0  8]
+
+MATRIZ SIMÉTRICA:
+[1  2  3]
+[2  5  6]  ← mat[i][j] = mat[j][i]
+[3  6  9]
+
+MATRIZ TRIANGULAR SUPERIOR:
+[1  2  3]
+[0  5  6]  ← Abaixo da diagonal = 0
+[0  0  9]
+
+MATRIZ ESPARSA (sparse):
+[0  0  5  0]
+[0  0  0  0]  ← Maioria dos elementos = 0
+[2  0  0  0]  ← Usar matriz completa desperdiça memória
+[0  0  0  8]
+```
+
+### 💡 Aplicações Práticas de Matrizes
+
+**1. Processamento de Imagens:**
+```
+Imagem 800×600 pixels = Matriz [600][800] de cores
+Cada pixel = {R, G, B} = 3 bytes
+Total: 800 × 600 × 3 = 1.440.000 bytes ≈ 1.4 MB
+
+Operações:
+- Filtro blur: média dos vizinhos
+- Detecção de bordas: gradientes
+- Rotação: transformação matricial
+```
+
+**2. Jogos (Grade/Tabuleiro):**
+```
+Sudoku: matriz [9][9]
+Xadrez: matriz [8][8]
+Campo Minado: matriz [m][n]
+Tetris: matriz [20][10]
+```
+
+**3. Grafos (Matriz de Adjacência):**
+```
+Grafo com 4 nós:
+  0──1
+  │  │
+  2──3
+
+Matriz de adjacência [4][4]:
+    0  1  2  3
+0  [0  1  1  0]  ← Nó 0 conecta a 1 e 2
+1  [1  0  0  1]  ← Nó 1 conecta a 0 e 3
+2  [1  0  0  1]
+3  [0  1  1  0]
+
+mat[i][j] = 1 se há aresta entre i e j
+```
+
+**4. Sistemas Lineares (Álgebra Linear):**
+```
+Sistema:
+2x + 3y = 8
+4x - y = 2
+
+Matriz aumentada [2][3]:
+[2   3  | 8]
+[4  -1  | 2]
+
+Resolver usando eliminação de Gauss
 ```
 
 ---
@@ -1934,30 +2199,266 @@ make clean
 
 ---
 
-## ⚠️ Cuidados Importantes
+## ⚠️ Cuidados Importantes e Boas Práticas
 
-### Buffer Overflow em Strings:
+### 1. Buffer Overflow - O Erro Mais Perigoso
+
+**O que é Buffer Overflow?**
+Escrever além dos limites de um vetor, corrompendo memória adjacente.
+
 ```c
-// PERIGOSO - pode causar overflow
-char buffer[10];
-strcpy(buffer, "String muito longa que não cabe");
+// ❌ PERIGOSO - Buffer Overflow!
+char buffer[10];  // 10 bytes: 0-9
+strcpy(buffer, "String muito longa que não cabe");  // 32 bytes!
 
-// SEGURO - controla o tamanho
+Memória antes:
+[buffer: 10 bytes][outras variáveis][dados importantes]
+
+Memória depois do overflow:
+[buffer cheio][CORROMPIDO!][CORROMPIDO!][CORROMPIDO!]
+                ↑
+         Dados importantes destruídos!
+         Pode causar:
+         - Crash do programa
+         - Comportamento imprevisível
+         - Vulnerabilidade de segurança
+```
+
+**✅ Soluções Seguras:**
+```c
+// Método 1: Usar strncpy (com cuidado!)
 char buffer[10];
 strncpy(buffer, "String longa", sizeof(buffer) - 1);
-buffer[sizeof(buffer) - 1] = '\0';
+buffer[sizeof(buffer) - 1] = '\0';  // ⚠️ IMPORTANTE: garantir terminador
+
+// Método 2: Usar snprintf (recomendado)
+char buffer[10];
+snprintf(buffer, sizeof(buffer), "%s", "String longa");
+// Automaticamente adiciona '\0' e não ultrapassa o tamanho
+
+// Método 3: Verificar tamanho antes
+char *origem = "String qualquer";
+size_t tam_necessario = strlen(origem) + 1;  // +1 para '\0'
+if (tam_necessario <= sizeof(buffer)) {
+    strcpy(buffer, origem);  // Seguro
+} else {
+    printf("Erro: String muito grande!\n");
+}
+
+// Método 4: Alocação dinâmica (melhor para strings de tamanho variável)
+char *origem = "String de qualquer tamanho";
+char *buffer = malloc(strlen(origem) + 1);
+if (buffer != NULL) {
+    strcpy(buffer, origem);  // Agora é seguro
+    // ... usar buffer ...
+    free(buffer);  // Não esquecer!
+}
 ```
 
-### Gerenciamento de Memória:
+### 2. Acesso Fora dos Limites (Out of Bounds)
+
 ```c
-// SEMPRE libere memória alocada dinamicamente
-char **strings = malloc(n * sizeof(char*));
-// ... usar strings ...
-for (int i = 0; i < n; i++) {
-    free(strings[i]);
+int vetor[5] = {10, 20, 30, 40, 50};  // Índices válidos: 0-4
+
+// ❌ ERRADO - Acesso inválido
+printf("%d\n", vetor[5]);   // Índice 5 não existe!
+vetor[-1] = 100;            // Índice negativo!
+vetor[10] = 200;            // Muito além do limite!
+
+// Consequências:
+// - Lê/escreve em memória de outra variável
+// - Pode causar segmentation fault (crash)
+// - Comportamento indefinido (pior: parece funcionar às vezes!)
+
+// ✅ CORRETO - Sempre validar índices
+int indice = 5;
+if (indice >= 0 && indice < 5) {
+    printf("%d\n", vetor[indice]);
+} else {
+    printf("Erro: Índice %d fora dos limites [0-4]\n", indice);
 }
-free(strings);
+
+// ✅ Usar constantes e sizeof
+#define TAM 5
+int vetor[TAM];
+for (int i = 0; i < TAM; i++) {  // Garante não ultrapassar
+    vetor[i] = i * 10;
+}
 ```
+
+### 3. Gerenciamento de Memória Dinâmica
+
+```c
+// ❌ Erro 1: Não verificar se malloc falhou
+int *vetor = malloc(1000000000 * sizeof(int));  // Muita memória!
+vetor[0] = 10;  // CRASH! vetor é NULL
+
+// ✅ SEMPRE verificar retorno do malloc
+int *vetor = malloc(n * sizeof(int));
+if (vetor == NULL) {
+    fprintf(stderr, "Erro: Não foi possível alocar memória!\n");
+    return 1;  // Ou outro tratamento apropriado
+}
+// Agora pode usar com segurança
+free(vetor);  // E liberar!
+
+// ❌ Erro 2: Memory leak (vazamento de memória)
+void funcao_com_leak() {
+    int *dados = malloc(100 * sizeof(int));
+    // ... usar dados ...
+    return;  // ❌ Esqueceu de fazer free(dados)!
+}
+// A cada chamada, 400 bytes são perdidos!
+
+// ✅ SEMPRE liberar o que alocou
+void funcao_correta() {
+    int *dados = malloc(100 * sizeof(int));
+    if (dados == NULL) return;
+    // ... usar dados ...
+    free(dados);  // ✅ Liberou a memória
+}
+
+// ❌ Erro 3: Double free
+int *ptr = malloc(10 * sizeof(int));
+free(ptr);
+free(ptr);  // ❌ ERRO! Liberou a mesma memória duas vezes
+
+// ✅ Anular ponteiro após free
+int *ptr = malloc(10 * sizeof(int));
+free(ptr);
+ptr = NULL;  // ✅ Evita uso acidental
+
+// ❌ Erro 4: Use after free
+int *ptr = malloc(10 * sizeof(int));
+free(ptr);
+ptr[0] = 10;  // ❌ ERRO! Usando memória já liberada
+
+// ✅ Não usar após liberar
+int *ptr = malloc(10 * sizeof(int));
+// ... usar ptr ...
+free(ptr);
+ptr = NULL;
+// Agora qualquer tentativa de usar ptr gerará erro óbvio
+```
+
+### 4. Matrizes: Cuidados Especiais
+
+```c
+// ❌ Erro: Confundir ordem dos índices
+int matriz[3][4];  // 3 linhas, 4 colunas
+matriz[4][2] = 10;  // ❌ ERRO! Linha 4 não existe (vai até 2)
+
+// ✅ Lembrar: matriz[linha][coluna]
+#define LINHAS 3
+#define COLUNAS 4
+int matriz[LINHAS][COLUNAS];
+
+for (int i = 0; i < LINHAS; i++) {
+    for (int j = 0; j < COLUNAS; j++) {
+        matriz[i][j] = i * COLUNAS + j;  // ✅ Sempre dentro dos limites
+    }
+}
+
+// ❌ Erro: Liberar matriz dinâmica incorretamente
+int **mat = alocar_matriz(linhas, colunas);
+free(mat);  // ❌ ERRO! Não liberou as linhas individuais
+
+// ✅ Liberar na ordem correta
+int **mat = alocar_matriz(linhas, colunas);
+// ... usar matriz ...
+for (int i = 0; i < linhas; i++) {
+    free(mat[i]);  // Libera cada linha primeiro
+}
+free(mat);  // Depois libera o array de ponteiros
+```
+
+### 5. Problemas com String Terminators
+
+```c
+// ❌ Erro: Esquecer o terminador '\0'
+char str[5];
+str[0] = 'O'; str[1] = 'l'; str[2] = 'a'; str[3] = '!';
+// str[4] deveria ser '\0' mas não foi definido!
+printf("%s\n", str);  // Imprime lixo depois de "Ola!"
+
+// ✅ Sempre adicionar '\0'
+char str[5];
+str[0] = 'O'; str[1] = 'l'; str[2] = 'a'; str[3] = '!'; str[4] = '\0';
+printf("%s\n", str);  // ✅ Imprime "Ola!" corretamente
+
+// ❌ Erro: Contar tamanho sem '\0'
+char nome[10];
+// Precisa de 11 caracteres: "João Silva" + '\0'
+strcpy(nome, "João Silva");  // ❌ Overflow!
+
+// ✅ Lembrar que '\0' ocupa espaço
+char nome[11];  // 10 caracteres + '\0'
+strcpy(nome, "João Silva");  // ✅ Cabe perfeitamente
+```
+
+### 6. Performance: Cache Locality
+
+```c
+// ❌ LENTO - Acessa matriz por colunas
+int soma = 0;
+for (int j = 0; j < COLUNAS; j++) {
+    for (int i = 0; i < LINHAS; i++) {
+        soma += matriz[i][j];  // Cache miss frequente!
+    }
+}
+
+// ✅ RÁPIDO - Acessa por linhas (ordem na memória)
+int soma = 0;
+for (int i = 0; i < LINHAS; i++) {
+    for (int j = 0; j < COLUNAS; j++) {
+        soma += matriz[i][j];  // Cache hit frequente!
+    }
+}
+
+// Diferença: Pode ser 3-5× mais rápido em matrizes grandes!
+```
+
+### 7. Overflow Aritmético
+
+```c
+// ❌ Perigo: Overflow em cálculo de índice
+int i = 1000000000;
+int j = 1000000000;
+int indice = i + j;  // ❌ Overflow! Pode dar valor negativo
+
+// ✅ Verificar antes de calcular
+if (i > INT_MAX - j) {
+    printf("Erro: Soma causaria overflow!\n");
+} else {
+    int indice = i + j;
+}
+
+// ❌ Perigo: Overflow em malloc
+size_t n = 1000000000;
+int *vetor = malloc(n * n * sizeof(int));  // n² pode overflow!
+
+// ✅ Verificar antes de multiplicar
+if (n > SIZE_MAX / n / sizeof(int)) {
+    printf("Erro: Tamanho muito grande!\n");
+    return NULL;
+}
+int *vetor = malloc(n * n * sizeof(int));
+```
+
+### 📋 Checklist de Segurança
+
+Antes de usar vetores/matrizes, sempre verifique:
+
+- [ ] ✅ Validei todos os índices antes de acessar?
+- [ ] ✅ Strings têm espaço para o '\0'?
+- [ ] ✅ Verifico se malloc retornou NULL?
+- [ ] ✅ Para cada malloc, há um free correspondente?
+- [ ] ✅ Não uso ponteiros após free?
+- [ ] ✅ Percorro matrizes na ordem correta (por linhas)?
+- [ ] ✅ Usei strncpy/snprintf ao invés de strcpy/sprintf?
+- [ ] ✅ Cálculos de tamanho não causam overflow?
+
+**Regra de Ouro:** Quando em dúvida, valide! É melhor um `if` extra do que um bug silencioso.
 
 ---
 
