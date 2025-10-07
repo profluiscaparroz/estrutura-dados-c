@@ -3379,22 +3379,1188 @@ Para 1000 elementos de tipo int:
 
 **Veredicto:** Array circular é vastamente superior em uso de memória para este caso, usando apenas 1/12 da memória da lista ligada. A lista ligada só é vantajosa quando o tamanho varia drasticamente e de forma imprevisível, compensando seu enorme overhead.
 
-## 📋 Exercícios Práticos
+## 📋 Exercícios Práticos (com Soluções Detalhadas)
+
+Esta seção apresenta exercícios progressivos com soluções completas, análise de complexidade e explicações detalhadas.
 
 ### Nível Básico
-1. Implemente uma função que inverta uma string usando pilha
-2. Crie uma fila que armazene números pares e ímpares separadamente
-3. Desenvolva um verificador de expressões matemáticas balanceadas
+
+#### Exercício 1: Inverter uma String Usando Pilha
+
+**Problema:** Implemente uma função que inverta uma string usando pilha.
+
+**Solução:**
+
+```c
+#include <stdio.h>
+#include <string.h>
+
+char* reverseString(char* str) {
+    int len = strlen(str);
+    Stack s;
+    initStack(&s);
+    
+    // Empilha cada caractere
+    for (int i = 0; i < len; i++) {
+        push(&s, str[i]);
+    }
+    
+    // Desempilha para string de saída
+    char* reversed = malloc(len + 1);
+    for (int i = 0; i < len; i++) {
+        reversed[i] = pop(&s);
+    }
+    reversed[len] = '\0';
+    
+    return reversed;
+}
+
+// Teste
+int main() {
+    char* input = "Hello World";
+    char* output = reverseString(input);
+    
+    printf("Original: %s\n", input);   // Hello World
+    printf("Invertida: %s\n", output); // dlroW olleH
+    
+    free(output);
+    return 0;
+}
+```
+
+**Análise de Complexidade:**
+- **Tempo:** Θ(n) - percorre string duas vezes (push e pop)
+- **Espaço:** O(n) - pilha armazena todos n caracteres
+
+**Por que usar pilha?**
+- LIFO inverte naturalmente a ordem
+- Alternativa: inverter in-place com dois ponteiros seria mais eficiente
+- Pilha é didática e demonstra o princípio LIFO
+
+**Variação: Inverter apenas palavras**
+
+```c
+void reverseWords(char* sentence) {
+    Stack wordStack;
+    initStack(&wordStack);
+    
+    char* word = strtok(sentence, " ");
+    while (word != NULL) {
+        push(&wordStack, strdup(word));  // Empilha cópia da palavra
+        word = strtok(NULL, " ");
+    }
+    
+    // Reconstrói frase com palavras invertidas
+    printf("Frase invertida: ");
+    while (!isEmpty(&wordStack)) {
+        char* w = pop(&wordStack);
+        printf("%s ", w);
+        free(w);
+    }
+    printf("\n");
+}
+
+// Entrada: "Hello World from C"
+// Saída: "C from World Hello"
+```
+
+---
+
+#### Exercício 2: Fila que Armazena Pares e Ímpares Separadamente
+
+**Problema:** Crie uma fila que armazene números pares e ímpares em filas separadas e implemente operações que mantenham essa separação.
+
+**Solução:**
+
+```c
+typedef struct {
+    Queue evenQueue;   // Fila de números pares
+    Queue oddQueue;    // Fila de números ímpares
+    int totalSize;     // Tamanho total
+} SeparatedQueue;
+
+void initSeparatedQueue(SeparatedQueue* sq) {
+    initQueue(&sq->evenQueue);
+    initQueue(&sq->oddQueue);
+    sq->totalSize = 0;
+}
+
+void enqueueNumber(SeparatedQueue* sq, int num) {
+    if (num % 2 == 0) {
+        enqueue(&sq->evenQueue, num);
+        printf("Enfileirado PAR: %d\n", num);
+    } else {
+        enqueue(&sq->oddQueue, num);
+        printf("Enfileirado ÍMPAR: %d\n", num);
+    }
+    sq->totalSize++;
+}
+
+int dequeueEven(SeparatedQueue* sq) {
+    if (isEmpty(&sq->evenQueue)) {
+        printf("Fila de pares vazia!\n");
+        return -1;
+    }
+    sq->totalSize--;
+    return dequeue(&sq->evenQueue);
+}
+
+int dequeueOdd(SeparatedQueue* sq) {
+    if (isEmpty(&sq->oddQueue)) {
+        printf("Fila de ímpares vazia!\n");
+        return -1;
+    }
+    sq->totalSize--;
+    return dequeue(&sq->oddQueue);
+}
+
+// Desenfileira alternando entre pares e ímpares
+int dequeueAlternating(SeparatedQueue* sq) {
+    static bool getEven = true;  // Alterna entre par e ímpar
+    
+    if (getEven && !isEmpty(&sq->evenQueue)) {
+        getEven = false;
+        sq->totalSize--;
+        return dequeue(&sq->evenQueue);
+    } else if (!getEven && !isEmpty(&sq->oddQueue)) {
+        getEven = true;
+        sq->totalSize--;
+        return dequeue(&sq->oddQueue);
+    } else if (!isEmpty(&sq->evenQueue)) {
+        sq->totalSize--;
+        return dequeue(&sq->evenQueue);
+    } else if (!isEmpty(&sq->oddQueue)) {
+        sq->totalSize--;
+        return dequeue(&sq->oddQueue);
+    }
+    
+    return -1;  // Ambas vazias
+}
+
+void printStatistics(SeparatedQueue* sq) {
+    printf("\n=== Estatísticas ===\n");
+    printf("Total: %d elementos\n", sq->totalSize);
+    printf("Pares: %d elementos\n", queueSize(&sq->evenQueue));
+    printf("Ímpares: %d elementos\n", queueSize(&sq->oddQueue));
+}
+
+// Teste
+int main() {
+    SeparatedQueue sq;
+    initSeparatedQueue(&sq);
+    
+    // Enfileira números
+    int numbers[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    for (int i = 0; i < 10; i++) {
+        enqueueNumber(&sq, numbers[i]);
+    }
+    
+    printStatistics(&sq);
+    
+    // Desenfileira pares
+    printf("\nDesenfileirando pares:\n");
+    while (!isEmpty(&sq.evenQueue)) {
+        printf("%d ", dequeueEven(&sq));
+    }
+    
+    // Desenfileira ímpares
+    printf("\nDesenfileirando ímpares:\n");
+    while (!isEmpty(&sq.oddQueue)) {
+        printf("%d ", dequeueOdd(&sq));
+    }
+    
+    return 0;
+}
+```
+
+**Análise:**
+- **Tempo:** O(1) para todas operações
+- **Espaço:** O(n) - duas filas armazenam n elementos total
+
+**Aplicações:**
+- Separar requisições por prioridade
+- Processar diferentes tipos de eventos
+- Load balancing entre processadores
+
+---
+
+#### Exercício 3: Verificador de Expressões Matemáticas Balanceadas
+
+**Problema:** Desenvolva um verificador completo de expressões que valide parênteses, colchetes e chaves balanceados.
+
+**Solução Completa:**
+
+```c
+typedef enum {
+    VALID,
+    UNBALANCED,
+    WRONG_CLOSING,
+    UNOPENED_BRACKET
+} ValidationResult;
+
+typedef struct {
+    ValidationResult result;
+    int errorPosition;
+    char errorChar;
+    char expectedChar;
+} ValidationReport;
+
+bool isOpeningBracket(char c) {
+    return c == '(' || c == '[' || c == '{';
+}
+
+bool isClosingBracket(char c) {
+    return c == ')' || c == ']' || c == '}';
+}
+
+char getMatchingClosing(char opening) {
+    switch (opening) {
+        case '(': return ')';
+        case '[': return ']';
+        case '{': return '}';
+        default: return '\0';
+    }
+}
+
+char getMatchingOpening(char closing) {
+    switch (closing) {
+        case ')': return '(';
+        case ']': return '[';
+        case '}': return '{';
+        default: return '\0';
+    }
+}
+
+ValidationReport validateExpression(char* expr) {
+    Stack brackets;
+    initStack(&brackets);
+    ValidationReport report;
+    report.result = VALID;
+    report.errorPosition = -1;
+    
+    for (int i = 0; expr[i] != '\0'; i++) {
+        char c = expr[i];
+        
+        if (isOpeningBracket(c)) {
+            push(&brackets, c);
+        }
+        else if (isClosingBracket(c)) {
+            if (isEmpty(&brackets)) {
+                // Fecha sem abrir
+                report.result = UNOPENED_BRACKET;
+                report.errorPosition = i;
+                report.errorChar = c;
+                report.expectedChar = getMatchingOpening(c);
+                return report;
+            }
+            
+            char top = pop(&brackets);
+            char expected = getMatchingClosing(top);
+            
+            if (c != expected) {
+                // Tipo incompatível
+                report.result = WRONG_CLOSING;
+                report.errorPosition = i;
+                report.errorChar = c;
+                report.expectedChar = expected;
+                return report;
+            }
+        }
+    }
+    
+    // Verifica se sobrou algo na pilha
+    if (!isEmpty(&brackets)) {
+        report.result = UNBALANCED;
+        report.errorChar = peek(&brackets);
+        // Posição do erro seria onde deveria fechar
+        report.errorPosition = strlen(expr);
+        report.expectedChar = getMatchingClosing(report.errorChar);
+    }
+    
+    return report;
+}
+
+void printValidationReport(char* expr, ValidationReport report) {
+    printf("Expressão: %s\n", expr);
+    
+    if (report.result == VALID) {
+        printf("✓ Expressão válida!\n\n");
+        return;
+    }
+    
+    printf("✗ Expressão inválida!\n");
+    
+    // Mostra a posição do erro
+    printf("   ");
+    for (int i = 0; i < report.errorPosition; i++) {
+        printf(" ");
+    }
+    printf("^\n");
+    
+    switch (report.result) {
+        case UNBALANCED:
+            printf("Erro: Faltou fechar '%c' (esperado '%c')\n",
+                   report.errorChar, report.expectedChar);
+            break;
+        case WRONG_CLOSING:
+            printf("Erro: Encontrado '%c' mas esperava '%c'\n",
+                   report.errorChar, report.expectedChar);
+            break;
+        case UNOPENED_BRACKET:
+            printf("Erro: Fechando '%c' sem abrir '%c'\n",
+                   report.errorChar, report.expectedChar);
+            break;
+    }
+    printf("\n");
+}
+
+// Teste
+int main() {
+    char* tests[] = {
+        "((2 + 3) * 4)",           // Válida
+        "[(1 + 2) * {3 + 4}]",     // Válida
+        "((2 + 3)",                // Não balanceada
+        "(2 + 3]",                 // Tipo errado
+        "2 + 3)",                  // Fecha sem abrir
+        "{[()]}"                   // Válida (aninhada)
+    };
+    
+    for (int i = 0; i < 6; i++) {
+        ValidationReport report = validateExpression(tests[i]);
+        printValidationReport(tests[i], report);
+    }
+    
+    return 0;
+}
+```
+
+**Output esperado:**
+```
+Expressão: ((2 + 3) * 4)
+✓ Expressão válida!
+
+Expressão: [(1 + 2) * {3 + 4}]
+✓ Expressão válida!
+
+Expressão: ((2 + 3)
+✗ Expressão inválida!
+          ^
+Erro: Faltou fechar '(' (esperado ')')
+
+Expressão: (2 + 3]
+✗ Expressão inválida!
+        ^
+Erro: Encontrado ']' mas esperava ')'
+
+...
+```
+
+**Extensão: Validar Expressão Completa**
+
+```c
+bool isValidMathExpression(char* expr) {
+    // 1. Verifica balanceamento
+    ValidationReport report = validateExpression(expr);
+    if (report.result != VALID) return false;
+    
+    // 2. Verifica sintaxe de operadores
+    bool expectOperand = true;
+    for (int i = 0; expr[i]; i++) {
+        if (isdigit(expr[i]) || isalpha(expr[i])) {
+            if (!expectOperand) return false;
+            expectOperand = false;
+        }
+        else if (expr[i] == '+' || expr[i] == '-' || 
+                 expr[i] == '*' || expr[i] == '/') {
+            if (expectOperand) return false;
+            expectOperand = true;
+        }
+    }
+    
+    return !expectOperand;  // Deve terminar com operando
+}
+```
+
+**Análise:**
+- **Tempo:** O(n) - uma passada pela string
+- **Espaço:** O(n) - pior caso todos abre parênteses
+
+---
 
 ### Nível Intermediário
-4. Implemente uma pilha que mantenha o valor mínimo em O(1)
-5. Crie uma fila com prioridade usando arrays
-6. Desenvolva um simulador de impressora com fila de trabalhos
+
+#### Exercício 4: Pilha que Mantém Valor Mínimo em O(1)
+
+**Problema:** Implemente uma pilha que suporte push, pop, top e getMin, todas em O(1).
+
+**Desafio:** Manter o mínimo sem percorrer todos elementos.
+
+**Solução:**
+
+```c
+typedef struct {
+    Stack mainStack;    // Pilha principal
+    Stack minStack;     // Pilha de mínimos
+} MinStack;
+
+void initMinStack(MinStack* ms) {
+    initStack(&ms->mainStack);
+    initStack(&ms->minStack);
+}
+
+void pushMin(MinStack* ms, int value) {
+    // Sempre empilha na pilha principal
+    push(&ms->mainStack, value);
+    
+    // Empilha na pilha de mínimos se:
+    // 1. Pilha de mínimos vazia, ou
+    // 2. Novo valor <= mínimo atual
+    if (isEmpty(&ms->minStack) || value <= peek(&ms->minStack)) {
+        push(&ms->minStack, value);
+    }
+}
+
+int popMin(MinStack* ms) {
+    if (isEmpty(&ms->mainStack)) {
+        printf("Pilha vazia!\n");
+        return -1;
+    }
+    
+    int value = pop(&ms->mainStack);
+    
+    // Remove de minStack se era o mínimo
+    if (value == peek(&ms->minStack)) {
+        pop(&ms->minStack);
+    }
+    
+    return value;
+}
+
+int getMin(MinStack* ms) {
+    if (isEmpty(&ms->minStack)) {
+        printf("Pilha vazia!\n");
+        return -1;
+    }
+    
+    return peek(&ms->minStack);  // O(1)!
+}
+
+// Demonstração
+int main() {
+    MinStack ms;
+    initMinStack(&ms);
+    
+    printf("=== Operações ===\n");
+    
+    pushMin(&ms, 5);
+    printf("Push 5, Min: %d\n", getMin(&ms));  // Min: 5
+    
+    pushMin(&ms, 3);
+    printf("Push 3, Min: %d\n", getMin(&ms));  // Min: 3
+    
+    pushMin(&ms, 7);
+    printf("Push 7, Min: %d\n", getMin(&ms));  // Min: 3
+    
+    pushMin(&ms, 2);
+    printf("Push 2, Min: %d\n", getMin(&ms));  // Min: 2
+    
+    pushMin(&ms, 2);  // Duplicata
+    printf("Push 2, Min: %d\n", getMin(&ms));  // Min: 2
+    
+    printf("\n=== Remoções ===\n");
+    
+    printf("Pop %d, Min: %d\n", popMin(&ms), getMin(&ms));  // Pop 2, Min: 2
+    printf("Pop %d, Min: %d\n", popMin(&ms), getMin(&ms));  // Pop 2, Min: 3
+    printf("Pop %d, Min: %d\n", popMin(&ms), getMin(&ms));  // Pop 7, Min: 3
+    printf("Pop %d, Min: %d\n", popMin(&ms), getMin(&ms));  // Pop 3, Min: 5
+    
+    return 0;
+}
+```
+
+**Visualização do Estado Interno:**
+
+```
+Após push(5):
+mainStack: [5]
+minStack:  [5]  ← mínimo atual
+
+Após push(3):
+mainStack: [5, 3]
+minStack:  [5, 3]  ← novo mínimo
+
+Após push(7):
+mainStack: [5, 3, 7]
+minStack:  [5, 3]  ← 7 não é mínimo, não empilha
+
+Após push(2):
+mainStack: [5, 3, 7, 2]
+minStack:  [5, 3, 2]  ← novo mínimo
+
+Após push(2):
+mainStack: [5, 3, 7, 2, 2]
+minStack:  [5, 3, 2, 2]  ← empilha duplicata!
+
+Pop (remove 2):
+mainStack: [5, 3, 7, 2]
+minStack:  [5, 3, 2]  ← remove de min também
+```
+
+**Análise:**
+- **Tempo:** O(1) para todas operações
+- **Espaço:** O(n) - no pior caso (sequência decrescente) minStack tem n elementos
+
+**Otimização de Espaço:**
+
+```c
+// Alternativa: armazenar apenas diferenças
+typedef struct {
+    Stack stack;
+    int min;
+} OptimizedMinStack;
+
+void pushOptimized(OptimizedMinStack* ms, int value) {
+    if (isEmpty(&ms->stack)) {
+        push(&ms->stack, 0);  // Diferença = 0
+        ms->min = value;
+    } else {
+        push(&ms->stack, value - ms->min);  // Armazena diferença
+        if (value < ms->min) {
+            ms->min = value;
+        }
+    }
+}
+
+int popOptimized(OptimizedMinStack* ms) {
+    int diff = pop(&ms->stack);
+    int value = ms->min + diff;
+    
+    if (diff < 0) {
+        // Era um novo mínimo, restaura anterior
+        ms->min = ms->min - diff;
+    }
+    
+    return value;
+}
+```
+
+**Aplicações:**
+- Stock market: track minimum price
+- Statistics: running minimum
+- Game development: min health in party
+
+---
+
+#### Exercício 5: Fila com Prioridade Usando Arrays
+
+**Problema:** Implemente uma fila com prioridade usando arrays, onde elementos de maior prioridade são desenfileirados primeiro.
+
+**Solução:**
+
+```c
+typedef struct {
+    int data;
+    int priority;  // Maior valor = maior prioridade
+} PriorityItem;
+
+typedef struct {
+    PriorityItem items[MAX_SIZE];
+    int size;
+} PriorityQueue;
+
+void initPriorityQueue(PriorityQueue* pq) {
+    pq->size = 0;
+}
+
+void enqueueWithPriority(PriorityQueue* pq, int data, int priority) {
+    if (pq->size == MAX_SIZE) {
+        printf("Fila cheia!\n");
+        return;
+    }
+    
+    // Encontra posição correta (mantém ordenado por prioridade)
+    int i = pq->size - 1;
+    
+    // Desloca elementos de menor prioridade para direita
+    while (i >= 0 && pq->items[i].priority < priority) {
+        pq->items[i + 1] = pq->items[i];
+        i--;
+    }
+    
+    // Insere na posição correta
+    pq->items[i + 1].data = data;
+    pq->items[i + 1].priority = priority;
+    pq->size++;
+    
+    printf("Enfileirado: %d (prioridade %d)\n", data, priority);
+}
+
+int dequeuePriority(PriorityQueue* pq) {
+    if (pq->size == 0) {
+        printf("Fila vazia!\n");
+        return -1;
+    }
+    
+    // Elemento de maior prioridade está no início
+    int data = pq->items[0].data;
+    
+    // Desloca todos para esquerda
+    for (int i = 0; i < pq->size - 1; i++) {
+        pq->items[i] = pq->items[i + 1];
+    }
+    pq->size--;
+    
+    return data;
+}
+
+int peekPriority(PriorityQueue* pq) {
+    if (pq->size == 0) {
+        printf("Fila vazia!\n");
+        return -1;
+    }
+    return pq->items[0].data;
+}
+
+void printPriorityQueue(PriorityQueue* pq) {
+    printf("\n=== Fila de Prioridade ===\n");
+    printf("Tamanho: %d\n", pq->size);
+    printf("Elementos (ordem de prioridade):\n");
+    for (int i = 0; i < pq->size; i++) {
+        printf("  [%d] Data: %d, Prioridade: %d\n",
+               i, pq->items[i].data, pq->items[i].priority);
+    }
+    printf("\n");
+}
+
+// Teste: Sistema de Emergência Hospitalar
+int main() {
+    PriorityQueue emergencyQueue;
+    initPriorityQueue(&emergencyQueue);
+    
+    printf("=== Sistema de Triagem Hospitalar ===\n\n");
+    
+    // Chegada de pacientes
+    enqueueWithPriority(&emergencyQueue, 101, 1);  // Prioridade baixa
+    enqueueWithPriority(&emergencyQueue, 102, 5);  // Crítico
+    enqueueWithPriority(&emergencyQueue, 103, 3);  // Média
+    enqueueWithPriority(&emergencyQueue, 104, 5);  // Crítico
+    enqueueWithPriority(&emergencyQueue, 105, 2);  // Baixa-média
+    
+    printPriorityQueue(&emergencyQueue);
+    
+    // Atendimento
+    printf("=== Atendimento (ordem de prioridade) ===\n");
+    while (emergencyQueue.size > 0) {
+        int patient = dequeuePriority(&emergencyQueue);
+        printf("Atendendo paciente: %d\n", patient);
+    }
+    
+    return 0;
+}
+```
+
+**Output:**
+```
+=== Sistema de Triagem Hospitalar ===
+
+Enfileirado: 101 (prioridade 1)
+Enfileirado: 102 (prioridade 5)
+Enfileirado: 103 (prioridade 3)
+Enfileirado: 104 (prioridade 5)
+Enfileirado: 105 (prioridade 2)
+
+=== Fila de Prioridade ===
+Tamanho: 5
+Elementos (ordem de prioridade):
+  [0] Data: 102, Prioridade: 5
+  [1] Data: 104, Prioridade: 5
+  [2] Data: 103, Prioridade: 3
+  [3] Data: 105, Prioridade: 2
+  [4] Data: 101, Prioridade: 1
+
+=== Atendimento (ordem de prioridade) ===
+Atendendo paciente: 102
+Atendendo paciente: 104
+Atendendo paciente: 103
+Atendendo paciente: 105
+Atendendo paciente: 101
+```
+
+**Análise de Complexidade:**
+- **Enqueue:** O(n) - pode precisar deslocar todos elementos
+- **Dequeue:** O(n) - desloca todos elementos
+- **Peek:** O(1) - acesso direto ao primeiro
+
+**Otimização com Heap (para nível avançado):**
+
+```c
+// Usando Min-Heap (implementação futura)
+// Enqueue: O(log n)
+// Dequeue: O(log n)
+// Peek: O(1)
+```
+
+**Aplicações:**
+- Sistemas de emergência (hospitais, bombeiros)
+- Escalonamento de processos (CPU scheduling)
+- Algoritmo de Dijkstra (shortest path)
+- Huffman coding (compression)
+
+---
+
+#### Exercício 6: Simulador de Impressora com Fila de Trabalhos
+
+**Problema:** Desenvolva um simulador realista de fila de impressão com múltiplos jobs e estatísticas.
+
+**Solução Completa:**
+
+```c
+typedef struct {
+    int jobId;
+    char documentName[50];
+    int pages;
+    int priority;
+    double submitTime;
+    double startTime;
+    double endTime;
+} PrintJob;
+
+typedef struct {
+    Queue jobQueue;
+    bool printerBusy;
+    PrintJob* currentJob;
+    int totalJobsProcessed;
+    double totalWaitTime;
+    double currentTime;
+    int pagesPerMinute;  // Velocidade da impressora
+} PrinterSimulator;
+
+void initPrinter(PrinterSimulator* ps, int ppm) {
+    initQueue(&ps->jobQueue);
+    ps->printerBusy = false;
+    ps->currentJob = NULL;
+    ps->totalJobsProcessed = 0;
+    ps->totalWaitTime = 0;
+    ps->currentTime = 0;
+    ps->pagesPerMinute = ppm;
+}
+
+void submitJob(PrinterSimulator* ps, char* docName, int pages, int priority) {
+    PrintJob* job = malloc(sizeof(PrintJob));
+    job->jobId = ps->totalJobsProcessed + queueSize(&ps->jobQueue) + 1;
+    strncpy(job->documentName, docName, 49);
+    job->pages = pages;
+    job->priority = priority;
+    job->submitTime = ps->currentTime;
+    job->startTime = -1;
+    job->endTime = -1;
+    
+    enqueue(&ps->jobQueue, job);
+    
+    printf("[%.2f] Job #%d enviado: %s (%d páginas, prioridade %d)\n",
+           ps->currentTime, job->jobId, job->documentName, 
+           job->pages, job->priority);
+}
+
+void startNextJob(PrinterSimulator* ps) {
+    if (isEmpty(&ps->jobQueue) || ps->printerBusy) {
+        return;
+    }
+    
+    ps->currentJob = dequeue(&ps->jobQueue);
+    ps->currentJob->startTime = ps->currentTime;
+    ps->printerBusy = true;
+    
+    double waitTime = ps->currentTime - ps->currentJob->submitTime;
+    ps->totalWaitTime += waitTime;
+    
+    printf("[%.2f] Iniciando Job #%d: %s\n",
+           ps->currentTime, ps->currentJob->jobId, 
+           ps->currentJob->documentName);
+    printf("       Tempo de espera: %.2f minutos\n", waitTime);
+}
+
+void updatePrinter(PrinterSimulator* ps, double deltaTime) {
+    ps->currentTime += deltaTime;
+    
+    if (ps->printerBusy && ps->currentJob != NULL) {
+        double printTime = (double)ps->currentJob->pages / ps->pagesPerMinute;
+        
+        if (ps->currentTime - ps->currentJob->startTime >= printTime) {
+            // Job concluído
+            ps->currentJob->endTime = ps->currentTime;
+            ps->totalJobsProcessed++;
+            
+            printf("[%.2f] Job #%d concluído: %s\n",
+                   ps->currentTime, ps->currentJob->jobId,
+                   ps->currentJob->documentName);
+            printf("       Tempo total: %.2f minutos\n",
+                   ps->currentJob->endTime - ps->currentJob->submitTime);
+            
+            free(ps->currentJob);
+            ps->currentJob = NULL;
+            ps->printerBusy = false;
+            
+            // Inicia próximo job se houver
+            startNextJob(ps);
+        }
+    }
+}
+
+void printStatistics(PrinterSimulator* ps) {
+    printf("\n");
+    printf("╔════════════════════════════════════════════╗\n");
+    printf("║       ESTATÍSTICAS DA IMPRESSORA          ║\n");
+    printf("╠════════════════════════════════════════════╣\n");
+    printf("║ Jobs processados: %-23d ║\n", ps->totalJobsProcessed);
+    printf("║ Jobs na fila: %-27d ║\n", queueSize(&ps->jobQueue));
+    
+    if (ps->totalJobsProcessed > 0) {
+        double avgWait = ps->totalWaitTime / ps->totalJobsProcessed;
+        printf("║ Tempo médio de espera: %-18.2f ║\n", avgWait);
+    }
+    
+    double utilization = (ps->printerBusy ? 100.0 : 0.0);
+    printf("║ Utilização atual: %-22.1f%% ║\n", utilization);
+    printf("║ Tempo de simulação: %-20.2f ║\n", ps->currentTime);
+    printf("╚════════════════════════════════════════════╝\n");
+}
+
+// Teste: Simulação ao longo do dia
+int main() {
+    PrinterSimulator printer;
+    initPrinter(&printer, 10);  // 10 páginas por minuto
+    
+    printf("=== Simulador de Fila de Impressão ===\n");
+    printf("Velocidade: %d páginas/minuto\n\n", printer.pagesPerMinute);
+    
+    // Submete jobs ao longo do tempo
+    submitJob(&printer, "Relatório Anual", 50, 3);
+    startNextJob(&printer);
+    
+    updatePrinter(&printer, 2.0);  // +2 minutos
+    submitJob(&printer, "Contrato", 20, 5);
+    submitJob(&printer, "Memo Interno", 3, 1);
+    
+    updatePrinter(&printer, 3.0);  // +3 minutos (total 5)
+    // Relatório deve terminar em 5 minutos (50 páginas / 10 ppm)
+    
+    updatePrinter(&printer, 0.5);  // +0.5 minutos (total 5.5)
+    submitJob(&printer, "Apresentação", 15, 4);
+    
+    // Continua simulação até esvaziar fila
+    while (!isEmpty(&printer.jobQueue) || printer.printerBusy) {
+        updatePrinter(&printer, 0.5);
+    }
+    
+    printStatistics(&printer);
+    
+    return 0;
+}
+```
+
+**Extensões Possíveis:**
+
+1. **Fila com Prioridade:**
+```c
+void submitJobPriority(PrinterSimulator* ps, char* docName, 
+                       int pages, int priority) {
+    // Inserir na posição correta baseado em prioridade
+    // Similar ao exercício 5
+}
+```
+
+2. **Múltiplas Impressoras:**
+```c
+typedef struct {
+    PrinterSimulator printers[NUM_PRINTERS];
+    int numPrinters;
+} PrinterPool;
+
+void submitToPool(PrinterPool* pool, PrintJob* job) {
+    // Encontra impressora menos ocupada
+    int minQueue = 0;
+    for (int i = 1; i < pool->numPrinters; i++) {
+        if (queueSize(&pool->printers[i].jobQueue) < 
+            queueSize(&pool->printers[minQueue].jobQueue)) {
+            minQueue = i;
+        }
+    }
+    
+    submitJob(&pool->printers[minQueue], job->documentName, 
+              job->pages, job->priority);
+}
+```
+
+3. **Cancelamento de Jobs:**
+```c
+bool cancelJob(PrinterSimulator* ps, int jobId) {
+    // Procura na fila e remove
+    return removeFromQueue(&ps->jobQueue, jobId);
+}
+```
+
+**Análise:**
+- **Tempo:** O(1) para operações básicas
+- **Espaço:** O(n) onde n = número de jobs na fila
+
+---
 
 ### Nível Avançado
-7. Implemente uma calculadora pós-fixa completa
-8. Crie um sistema de navegação de páginas web com histórico
-9. Desenvolva um escalonador de processos usando múltiplas filas
+
+#### Exercício 7: Calculadora Pós-fixa Completa
+
+**Problema:** Implemente uma calculadora completa que:
+- Avalia expressões RPN
+- Suporta operações: +, -, *, /, ^, sqrt, sin, cos
+- Valida entrada
+- Fornece mensagens de erro detalhadas
+
+**Solução:**
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <math.h>
+#include <ctype.h>
+
+typedef enum {
+    SUCCESS,
+    ERR_EMPTY_STACK,
+    ERR_INVALID_TOKEN,
+    ERR_INSUFFICIENT_OPERANDS,
+    ERR_DIVISION_BY_ZERO,
+    ERR_REMAINING_OPERANDS
+} CalcError;
+
+typedef struct {
+    double result;
+    CalcError error;
+    char errorToken[50];
+    int tokenPosition;
+} CalcResult;
+
+bool isOperator(char* token) {
+    return strcmp(token, "+") == 0 || strcmp(token, "-") == 0 ||
+           strcmp(token, "*") == 0 || strcmp(token, "/") == 0 ||
+           strcmp(token, "^") == 0;
+}
+
+bool isFunction(char* token) {
+    return strcmp(token, "sqrt") == 0 || strcmp(token, "sin") == 0 ||
+           strcmp(token, "cos") == 0 || strcmp(token, "tan") == 0 ||
+           strcmp(token, "log") == 0 || strcmp(token, "exp") == 0;
+}
+
+bool isNumber(char* token) {
+    char* endptr;
+    strtod(token, &endptr);
+    return *endptr == '\0';
+}
+
+double applyOperator(char* op, double a, double b, CalcError* error) {
+    if (strcmp(op, "+") == 0) return a + b;
+    if (strcmp(op, "-") == 0) return a - b;
+    if (strcmp(op, "*") == 0) return a * b;
+    if (strcmp(op, "^") == 0) return pow(a, b);
+    
+    if (strcmp(op, "/") == 0) {
+        if (b == 0.0) {
+            *error = ERR_DIVISION_BY_ZERO;
+            return 0.0;
+        }
+        return a / b;
+    }
+    
+    return 0.0;
+}
+
+double applyFunction(char* func, double x, CalcError* error) {
+    if (strcmp(func, "sqrt") == 0) {
+        if (x < 0) {
+            *error = ERR_INVALID_TOKEN;
+            return 0.0;
+        }
+        return sqrt(x);
+    }
+    if (strcmp(func, "sin") == 0) return sin(x);
+    if (strcmp(func, "cos") == 0) return cos(x);
+    if (strcmp(func, "tan") == 0) return tan(x);
+    if (strcmp(func, "log") == 0) {
+        if (x <= 0) {
+            *error = ERR_INVALID_TOKEN;
+            return 0.0;
+        }
+        return log(x);
+    }
+    if (strcmp(func, "exp") == 0) return exp(x);
+    
+    return 0.0;
+}
+
+CalcResult evaluateRPN(char* expression) {
+    Stack stack;
+    initStack(&stack);
+    CalcResult result;
+    result.error = SUCCESS;
+    result.tokenPosition = 0;
+    
+    char exprCopy[1000];
+    strncpy(exprCopy, expression, 999);
+    
+    char* token = strtok(exprCopy, " ");
+    int position = 0;
+    
+    while (token != NULL) {
+        position++;
+        
+        if (isNumber(token)) {
+            double value = atof(token);
+            pushDouble(&stack, value);
+        }
+        else if (isOperator(token)) {
+            if (stackSize(&stack) < 2) {
+                result.error = ERR_INSUFFICIENT_OPERANDS;
+                strncpy(result.errorToken, token, 49);
+                result.tokenPosition = position;
+                return result;
+            }
+            
+            double b = popDouble(&stack);
+            double a = popDouble(&stack);
+            
+            CalcError opError = SUCCESS;
+            double res = applyOperator(token, a, b, &opError);
+            
+            if (opError != SUCCESS) {
+                result.error = opError;
+                strncpy(result.errorToken, token, 49);
+                result.tokenPosition = position;
+                return result;
+            }
+            
+            pushDouble(&stack, res);
+        }
+        else if (isFunction(token)) {
+            if (stackSize(&stack) < 1) {
+                result.error = ERR_INSUFFICIENT_OPERANDS;
+                strncpy(result.errorToken, token, 49);
+                result.tokenPosition = position;
+                return result;
+            }
+            
+            double x = popDouble(&stack);
+            
+            CalcError funcError = SUCCESS;
+            double res = applyFunction(token, x, &funcError);
+            
+            if (funcError != SUCCESS) {
+                result.error = funcError;
+                strncpy(result.errorToken, token, 49);
+                result.tokenPosition = position;
+                return result;
+            }
+            
+            pushDouble(&stack, res);
+        }
+        else {
+            result.error = ERR_INVALID_TOKEN;
+            strncpy(result.errorToken, token, 49);
+            result.tokenPosition = position;
+            return result;
+        }
+        
+        token = strtok(NULL, " ");
+    }
+    
+    if (stackSize(&stack) != 1) {
+        result.error = ERR_REMAINING_OPERANDS;
+        return result;
+    }
+    
+    result.result = popDouble(&stack);
+    return result;
+}
+
+void printCalcResult(char* expr, CalcResult result) {
+    printf("\nExpressão: %s\n", expr);
+    
+    if (result.error == SUCCESS) {
+        printf("Resultado: %.6f\n", result.result);
+    } else {
+        printf("ERRO: ");
+        switch (result.error) {
+            case ERR_EMPTY_STACK:
+                printf("Pilha vazia\n");
+                break;
+            case ERR_INVALID_TOKEN:
+                printf("Token inválido: '%s' (posição %d)\n",
+                       result.errorToken, result.tokenPosition);
+                break;
+            case ERR_INSUFFICIENT_OPERANDS:
+                printf("Operandos insuficientes para '%s' (posição %d)\n",
+                       result.errorToken, result.tokenPosition);
+                break;
+            case ERR_DIVISION_BY_ZERO:
+                printf("Divisão por zero\n");
+                break;
+            case ERR_REMAINING_OPERANDS:
+                printf("Operandos sobrando na pilha (expressão incompleta)\n");
+                break;
+        }
+    }
+}
+
+// Teste
+int main() {
+    printf("=== Calculadora RPN Completa ===\n");
+    
+    char* tests[] = {
+        "3 4 +",                    // 7
+        "15 7 1 1 + - / 3 * 2 1 1 + + -",  // ((15 / (7 - (1 + 1))) * 3) - (2 + (1 + 1))
+        "3 4 2 * +",                // 11
+        "90 sin",                   // sin(90)
+        "4 sqrt 2 +",               // sqrt(4) + 2 = 4
+        "10 0 /",                   // Erro: divisão por zero
+        "3 4",                      // Erro: operandos sobrando
+        "3 + 4",                    // Erro: operandos insuficientes
+    };
+    
+    for (int i = 0; i < 8; i++) {
+        CalcResult res = evaluateRPN(tests[i]);
+        printCalcResult(tests[i], res);
+    }
+    
+    // Modo interativo
+    printf("\n=== Modo Interativo ===\n");
+    printf("Digite expressões RPN (ou 'sair' para terminar):\n");
+    
+    char input[1000];
+    while (1) {
+        printf("\n> ");
+        fgets(input, 999, stdin);
+        input[strcspn(input, "\n")] = 0;  // Remove newline
+        
+        if (strcmp(input, "sair") == 0) break;
+        
+        CalcResult res = evaluateRPN(input);
+        printCalcResult(input, res);
+    }
+    
+    return 0;
+}
+```
+
+**Aplicações:**
+- Calculadoras HP
+- PostScript (linguagem de impressoras)
+- Forth (linguagem de programação)
+- Java Virtual Machine (JVM usa stack-based execution)
+
+---
+
+Este conjunto de exercícios cobre desde conceitos básicos até aplicações avançadas de pilhas e filas, fornecendo soluções completas, análises de complexidade e explicações detalhadas.
 
 ## 🔍 Debugging e Testes
 
