@@ -1277,27 +1277,745 @@ Heurística gulosa:
 **Conclusão Filosófica**:
 A ubiquidade de problemas NP-Completos em grafos reflete a capacidade dos grafos de modelar relações complexas e interdependentes. A teoria dos grafos serve como ponte entre lógica, combinatória e computação, tornando-se natural que problemas fundamentalmente difíceis apareçam neste contexto.
 
+### Questões de Implementação e Performance
+
+#### 8. Otimizações em Dijkstra para Grafos Reais
+**Pergunta**: Que otimizações podem ser aplicadas ao algoritmo de Dijkstra para melhorar sua performance em aplicações reais como GPS?
+
+**Resposta Completa**:
+
+**Problema com Dijkstra Clássico**:
+- Explora vértices em todas as direções igualmente
+- Não aproveita informação sobre localização do destino
+- Para grafos com milhões de nós, pode ser lento
+
+**Otimizações Modernas**:
+
+**1. A* Search (A-estrela)**:
+```c
+// Em vez de apenas dist[u], usa f[u] = g[u] + h(u)
+// g[u] = distância real do início até u
+// h(u) = heurística (estimativa) de u até destino
+
+void aStar(Graph* g, int src, int dest) {
+    // Usar dist[u] + heuristic(u, dest) como prioridade
+    // Heurística comum: distância Euclidiana
+}
+```
+- **Vantagem**: Direciona busca para o destino
+- **Complexidade**: Mesma O((V+E) log V) mas muito mais rápida na prática
+- **Requisito**: Heurística admissível (nunca superestima)
+- **Exemplo**: Distância em linha reta nunca excede distância real por estradas
+
+**2. Bidirectional Search**:
+```
+- Executar Dijkstra simultaneamente do início e do fim
+- Parar quando as buscas se encontram
+- Complexidade: Procura √V vértices em vez de V
+- Speedup: ~2x na prática
+```
+
+**3. Contraction Hierarchies (CH)**:
+```
+Pré-processamento:
+1. Ordenar vértices por "importância"
+2. Remover vértices sequencialmente, adicionando "atalhos"
+3. Criar hierarquia de vértices
+
+Consulta:
+1. Subir na hierarquia do início
+2. Descer na hierarquia até o fim
+3. Complexidade: Milissegundos para milhões de nós
+```
+- **Pré-processamento**: O(E log V) - feito uma vez
+- **Consulta**: O(log V) - extremamente rápido!
+- **Espaço**: ~50% mais arestas (atalhos)
+- **Usado por**: Google Maps, HERE Maps
+
+**4. ALT (A*, Landmarks, Triangle inequality)**:
+```
+Pré-processamento:
+- Selecionar k landmarks (vértices importantes)
+- Calcular distâncias de todos os vértices para landmarks
+
+Heurística durante busca:
+h(v, t) = max over landmarks L: |dist(L,t) - dist(L,v)|
+```
+- **Base matemática**: Desigualdade triangular
+- **Vantagem**: Heurística mais informada que distância Euclidiana
+- **Flexível**: Funciona com atualizações de tráfego
+
+**5. Transit Node Routing**:
+```
+Ideia:
+- Caminhos longos sempre passam por "nós de trânsito" (rodovias)
+- Pré-computar caminhos entre todos os pares de nós de trânsito
+- Consulta: apenas acesso local + lookup em tabela
+
+Performance:
+- Consulta: Microsegundos (!!)
+- Usado em redes muito grandes
+```
+
+**Comparação Prática** (Europa, ~18M vértices):
+```
+Dijkstra clássico:     ~5 segundos
+A*:                    ~1 segundo
+Bidirectional A*:      ~500ms
+Contraction Hierarchies: ~0.5ms
+Transit Node Routing:  ~0.01ms
+```
+
+**Trade-offs**:
+- Pré-processamento vs velocidade de consulta
+- Memória vs performance
+- Flexibilidade vs otimização
+
+**Conclusão**: Para aplicações reais, Dijkstra puro nunca é usado - sempre com otimizações.
+
+#### 9. DFS vs BFS: Quando Usar Cada Um?
+**Pergunta**: Além de encontrar caminhos mais curtos, que outros critérios devem guiar a escolha entre DFS e BFS?
+
+**Resposta Completa**:
+
+**Análise Comparativa Profunda**:
+
+| Aspecto | DFS | BFS |
+|---------|-----|-----|
+| **Estrutura de dados** | Pilha (recursão) | Fila |
+| **Memória** | O(altura) ≈ O(V) pior caso | O(largura) ≈ O(V) pior caso |
+| **Ordem de exploração** | Profundidade primeiro | Largura primeiro |
+| **Caminho encontrado** | Não necessariamente o menor | Sempre o menor |
+| **Implementação** | Simples (recursiva) | Requer fila explícita |
+
+**Quando usar DFS**:
+
+1. **Detecção de Ciclos**:
+   - DFS naturalmente detecta back edges
+   - Mais elegante que BFS para este propósito
+   - Usado em detecção de deadlock
+
+2. **Ordenação Topológica**:
+   - Ordem de finalização do DFS é essencial
+   - BFS (algoritmo de Kahn) também funciona, mas menos intuitivo
+
+3. **Componentes Fortemente Conexos**:
+   - Algoritmo de Kosaraju: 2 DFS
+   - Algoritmo de Tarjan: 1 DFS com stack
+   - DFS é fundamental para ambos
+
+4. **Espaço Limitado em Grafos Profundos**:
+   - Árvores binárias balanceadas: DFS usa O(log V) vs BFS O(V)
+   - Exemplo: Árvore de altura 20, largura 2^19 nós no nível mais profundo
+   - DFS: 20 frames de pilha vs BFS: 524.288 nós na fila!
+
+5. **Problemas de Busca Completa**:
+   - Backtracking natural: N-queens, Sudoku
+   - Exploração de todas as possibilidades
+   - Fácil voltar atrás
+
+6. **Análise de Grafos**:
+   - Pontes e pontos de articulação (Tarjan)
+   - Biconnected components
+   - DFS fornece mais estrutura (árvore + back edges)
+
+**Quando usar BFS**:
+
+1. **Caminho Mais Curto (não ponderado)**:
+   - BFS garante menor número de arestas
+   - Essencial para distâncias em redes sociais
+
+2. **Teste de Bipartição**:
+   - BFS com coloração alternada
+   - DFS também funciona, mas BFS é mais natural (nível = cor)
+
+3. **Nível/Camada dos Vértices**:
+   - BFS naturalmente processa por níveis
+   - Útil para árvores genealógicas, hierarquias
+
+4. **Grafos Largos e Rasos**:
+   - Redes sociais: poucos graus de separação
+   - BFS explora vizinhos próximos primeiro (mais provável que sejam relevantes)
+
+5. **Broadcasting/Flooding**:
+   - Propagação de mensagens em rede
+   - BFS modela como informação se espalha
+
+6. **Encontrar "Mais Próximo"**:
+   - Hospital mais próximo, ATM mais próximo
+   - BFS encontra primeiro = mais próximo
+
+**Caso Especial - Iterative Deepening DFS (IDDFS)**:
+```
+Combina vantagens de ambos:
+- Memória de DFS: O(profundidade)
+- Completude de BFS: encontra solução mais rasa
+- Complexidade: O(V + E) - mesmo que BFS!
+- Usado em: AI (jogos), quando profundidade da solução é desconhecida
+```
+
+**Exemplo Prático - Rede Social**:
+```
+Problema: "Amigos de amigos" (2 graus de separação)
+Grafo: 1M usuários, grau médio = 200
+
+BFS (correto):
+- Explorar nível 0: 1 usuário
+- Explorar nível 1: 200 amigos
+- Explorar nível 2: 40.000 amigos de amigos
+- Total: 40.201 vértices
+- Memória: Fila com ~40k entradas
+
+DFS (errado para este problema):
+- Pode explorar caminho de comprimento 1000
+- Não garante encontrar todos os amigos de amigos
+- Mas usa menos memória
+```
+
+**Conclusão Prática**:
+- **Objetivo claro (menor caminho)**: BFS
+- **Exploração estrutural**: DFS
+- **Memória crítica**: DFS
+- **Padrão do grafo** (largo vs profundo): influencia escolha
+
+#### 10. Representações Alternativas de Grafos
+**Pergunta**: Além de matriz e lista de adjacência, que outras representações existem e quando são úteis?
+
+**Resposta Completa**:
+
+**1. Matriz de Incidência**:
+```c
+// Matriz V × E
+// inc[v][e] = 1 se vértice v é incidente à aresta e
+// Para grafo direcionado:
+//   inc[v][e] = +1 se v é fonte
+//   inc[v][e] = -1 se v é destino
+```
+- **Vantagens**: 
+  - Representa bem arestas como entidades
+  - Útil em teoria dos grafos (teoremas)
+  - Multiplexos (arestas paralelas) são naturais
+- **Desvantagens**:
+  - Espaço: O(V × E) - geralmente pior
+  - Operações mais lentas
+- **Uso**: Análise teórica, circuitos elétricos
+
+**2. Lista de Arestas (Edge List)**:
+```c
+typedef struct {
+    int src, dest;
+    int weight;
+} Edge;
+
+Edge edges[E];
+```
+- **Vantagens**:
+  - Simples e compacto: O(E)
+  - Excelente para algoritmos que processam arestas (Kruskal)
+  - Fácil de serializar/deserializar
+- **Desvantagens**:
+  - Verificar adjacência: O(E)
+  - Iterar vizinhos: O(E)
+  - Não adequada para travessia
+- **Uso**: Entrada/saída, MST com Kruskal, grafos como datasets
+
+**3. Compressed Sparse Row (CSR)**:
+```c
+typedef struct {
+    int* row_ptr;      // Tamanho V+1
+    int* col_indices;  // Tamanho E
+    int* values;       // Tamanho E (opcional)
+} CSRGraph;
+
+// row_ptr[i] aponta para início das adjacências de i
+// Adjacentes de v: col_indices[row_ptr[v] .. row_ptr[v+1]-1]
+```
+- **Vantagens**:
+  - Espaço: O(V + E) - como lista, mas mais compacto
+  - Cache-friendly: dados contíguos
+  - Melhor localidade espacial que lista encadeada
+  - Padrão em bibliotecas de álgebra linear esparsa
+- **Desvantagens**:
+  - Imutável: difícil adicionar/remover arestas
+  - Construção requer conhecer todas as arestas
+- **Uso**: Grafos estáticos, computação de alto desempenho, GPU computing
+
+**4. Forward Star**:
+```c
+// Similar a CSR, mas para grafos direcionados
+// Otimizado para iterar sobre arestas de saída
+```
+- **Uso**: Algoritmos de fluxo, pathfinding em larga escala
+
+**5. Adjacency Array**:
+```c
+typedef struct {
+    int** neighbors;   // Array de arrays
+    int* degrees;      // Número de vizinhos
+} AdjArray;
+```
+- **Vantagens sobre lista encadeada**:
+  - Acesso mais rápido (array vs ponteiros)
+  - Menos overhead de memória
+  - Melhor cache performance
+- **Desvantagens**:
+  - Dinâmico (adicionar aresta) mais custoso
+- **Uso**: Quando grafo não muda frequentemente
+
+**6. Bit Matrix**:
+```c
+// Para grafos não-ponderados
+// Usar bits em vez de ints
+BitArray matrix[V];  // Cada linha é um bit array
+```
+- **Espaço**: O(V²/8) bytes vs O(4V²) com int
+- **Uso**: Grafos muito densos, análise teórica
+
+**7. Implicit Representation**:
+```c
+// Não armazenar grafo explicitamente
+// Gerar vizinhos sob demanda
+bool isAdjacent(int u, int v) {
+    // Computar baseado em regra
+    return (u + v) % 2 == 0;  // Exemplo: grafo bipartido
+}
+```
+- **Espaço**: O(1) - nada armazenado!
+- **Exemplos**:
+  - Grid graphs: vizinhos = {(x±1,y), (x,y±1)}
+  - Chess board: movimentos válidos
+  - Sudoku: conflitos de posição
+- **Uso**: Problemas com estrutura regular, economizar memória
+
+**8. Hierarchical/Nested Graphs**:
+```c
+// Grafos de grafos - múltiplos níveis de abstração
+typedef struct {
+    Graph* detailedLevel;
+    Graph* abstractLevel;
+    int* mapping;  // Nós abstratos → nós detalhados
+} HierarchicalGraph;
+```
+- **Uso**: Mapas (país → estado → cidade), redes multi-nível
+
+**Escolha da Representação - Matriz de Decisão**:
+
+```
+| Característica | Melhor Representação |
+|----------------|---------------------|
+| Grafo denso (E ≈ V²) | Matriz de adjacência |
+| Grafo esparso | Lista ou CSR |
+| Muitas adições/remoções | Lista de adjacência |
+| Grafo estático | CSR ou Adjacency Array |
+| Consultas de adjacência | Matriz ou Bit Matrix |
+| Algoritmos de aresta | Edge List |
+| Alto desempenho | CSR ou Adjacency Array |
+| Memória limitada | CSR ou Bit Matrix |
+| Grafos gigantes | Implicit ou Compressed |
+```
+
+**Exemplo Real - Facebook**:
+- ~3 bilhões de usuários (V)
+- ~200 bilhões de amizades (E)
+- Densidade: E/V² ≈ 0.00002% - EXTREMAMENTE esparso
+- **Representação usada**: Variante de CSR distribuída em milhares de servidores
+- **Impossível**: Matriz (V² = 9×10¹⁸ = 36 exabytes!)
+
+**Conclusão**: A escolha da representação pode ser a diferença entre viável e impossível para grafos grandes.
+
 ## 📋 Exercícios Práticos
 
 ### Nível Básico
-1. Implemente uma função que calcule o grau de entrada e saída de cada vértice em um grafo direcionado
-2. Crie uma função que verifique se um grafo é conectado
-3. Desenvolva uma função que encontre todos os vértices alcançáveis a partir de um vértice dado
+
+#### 1. Grau de Vértices em Grafos Direcionados
+**Problema**: Implemente uma função que calcule o grau de entrada e saída de cada vértice em um grafo direcionado.
+
+**Objetivo de Aprendizado**: Compreender a diferença entre graus em grafos direcionados e não-direcionados.
+
+**Complexidade esperada**:
+- Lista de adjacência: O(V + E)
+- Matriz de adjacência: O(V²)
+
+**Dicas**:
+- Grau de saída: número de arestas que saem do vértice
+- Grau de entrada: número de arestas que chegam ao vértice
+- Para lista: percorra todas as listas
+- Para matriz: some linhas (saída) e colunas (entrada)
+
+**Testes sugeridos**:
+```
+Grafo: 0→1, 0→2, 1→2, 2→0
+Esperado:
+  Vértice 0: entrada=1, saída=2
+  Vértice 1: entrada=1, saída=1
+  Vértice 2: entrada=2, saída=1
+```
+
+#### 2. Verificar Conectividade
+**Problema**: Crie uma função que verifique se um grafo não-direcionado é conectado (existe caminho entre quaisquer dois vértices).
+
+**Objetivo de Aprendizado**: Aplicação prática de DFS/BFS.
+
+**Estratégia**:
+1. Execute DFS/BFS a partir de qualquer vértice
+2. Se todos os vértices foram visitados, o grafo é conectado
+3. Caso contrário, é desconectado
+
+**Complexidade**: O(V + E) com qualquer representação
+
+**Extensão**: Contar o número de componentes conectados.
+
+#### 3. Vértices Alcançáveis
+**Problema**: Desenvolva uma função que encontre todos os vértices alcançáveis a partir de um vértice dado.
+
+**Objetivo de Aprendizado**: Domínio de algoritmos de travessia.
+
+**Aplicação prática**: 
+- Análise de redes sociais (quem você pode alcançar?)
+- Verificação de acessibilidade em sistemas
+
+**Saída esperada**: Conjunto (ou lista) de vértices alcançáveis e suas distâncias.
 
 ### Nível Intermediário
-4. Implemente o algoritmo de ordenação topológica
-5. Crie uma função que encontre o menor caminho entre dois vértices usando BFS
-6. Desenvolva um algoritmo para detectar ciclos em grafos direcionados
+
+#### 4. Ordenação Topológica
+**Problema**: Implemente o algoritmo de ordenação topológica para um DAG (Directed Acyclic Graph).
+
+**Objetivo de Aprendizado**: Entender ordenação de dependências.
+
+**Dois Algoritmos**:
+
+**A) Algoritmo de Kahn (BFS-based)**:
+```
+1. Calcule grau de entrada de todos os vértices
+2. Adicione vértices com grau 0 à fila
+3. Enquanto fila não vazia:
+   - Remova vértice v da fila
+   - Adicione v ao resultado
+   - Para cada vizinho u de v:
+     - Decremente grau de entrada de u
+     - Se grau(u) == 0, adicione u à fila
+4. Se resultado tem V vértices, sucesso; senão, há ciclo
+```
+- Complexidade: O(V + E)
+- Detecta ciclos automaticamente
+
+**B) Algoritmo baseado em DFS**:
+```
+1. Execute DFS e registre ordem de finalização
+2. Inverta a ordem de finalização
+```
+- Complexidade: O(V + E)
+- Mais elegante mas requer DFS modificado
+
+**Aplicação**: Build systems, resolução de dependências de pacotes, escalonamento de tarefas.
+
+**Teste**: Grafo de pré-requisitos de disciplinas.
+
+#### 5. Caminho Mais Curto com BFS
+**Problema**: Crie uma função que encontre o menor caminho entre dois vértices usando BFS, reconstruindo o caminho completo.
+
+**Objetivo de Aprendizado**: Reconstrução de caminhos, não apenas distâncias.
+
+**Estratégia**:
+```c
+// Além de visited[], mantenha array predecessor[]
+int bfsShortestPath(Graph* g, int src, int dest, int path[]) {
+    int* dist = malloc(V * sizeof(int));
+    int* pred = malloc(V * sizeof(int));
+    
+    // Inicializar
+    for (int i = 0; i < V; i++) {
+        dist[i] = -1;
+        pred[i] = -1;
+    }
+    
+    // BFS padrão, mas registrando predecessores
+    // ...
+    
+    // Reconstruir caminho de dest até src usando pred[]
+    // Inverter e retornar
+}
+```
+
+**Análise**: 
+- Complexidade: O(V + E)
+- Espaço: O(V) para estruturas auxiliares
+- Garante menor caminho apenas para grafos não-ponderados
+
+#### 6. Detecção de Ciclos em Grafos Direcionados
+**Problema**: Desenvolva um algoritmo para detectar ciclos em grafos direcionados usando DFS com três cores.
+
+**Objetivo de Aprendizado**: Entender diferenças sutis entre grafos direcionados e não-direcionados.
+
+**Implementação completa fornecida na seção de Questões** (Questão 5).
+
+**Casos de teste**:
+- DAG simples: 0→1→2→3 (sem ciclo)
+- Ciclo simples: 0→1→2→0 (ciclo)
+- Ciclo complexo: 0→1→2→3→1 (ciclo não envolvendo vértice inicial)
+
+**Extensão**: Retornar os vértices do ciclo, não apenas indicar existência.
 
 ### Nível Avançado
-7. Implemente o algoritmo de Kruskal para árvore geradora mínima
-8. Crie uma solução para o problema do caixeiro viajante usando backtracking
-9. Desenvolva o algoritmo de Ford-Fulkerson para fluxo máximo
 
-### Desafios
-10. Implemente um algoritmo para encontrar pontes em um grafo
-11. Crie uma solução para coloração de grafos com número mínimo de cores
-12. Desenvolva um algoritmo para encontrar o centro de um grafo
+#### 7. Algoritmo de Kruskal para MST
+**Problema**: Implemente o algoritmo de Kruskal para árvore geradora mínima usando Union-Find.
+
+**Componentes necessários**:
+
+**A) Estrutura Union-Find**:
+```c
+typedef struct {
+    int* parent;
+    int* rank;
+    int size;
+} UnionFind;
+
+UnionFind* createUF(int n);
+int find(UnionFind* uf, int x);  // Com path compression
+void unionSets(UnionFind* uf, int x, int y);  // Com union by rank
+```
+
+**B) Estrutura de Aresta**:
+```c
+typedef struct {
+    int src, dest, weight;
+} Edge;
+
+// Função de comparação para qsort
+int compareEdges(const void* a, const void* b) {
+    return ((Edge*)a)->weight - ((Edge*)b)->weight;
+}
+```
+
+**C) Algoritmo Principal**:
+```
+1. Criar array de todas as arestas
+2. Ordenar arestas por peso crescente: O(E log E)
+3. Criar Union-Find: O(V)
+4. Para cada aresta (u,v):
+   - Se find(u) != find(v):  // Não forma ciclo
+     - Adicionar aresta à MST
+     - union(u, v)
+5. Complexidade total: O(E log E)
+```
+
+**Prova de corretude**: Algoritmo guloso, propriedade da aresta leve (cut property).
+
+**Teste**: Compare peso total com resultado esperado.
+
+#### 8. Problema do Caixeiro Viajante (TSP) com Backtracking
+**Problema**: Crie uma solução para o problema do caixeiro viajante usando backtracking.
+
+**Objetivo de Aprendizado**: Explorar problema NP-Completo, entender explosão combinatória.
+
+**Algoritmo**:
+```c
+int tsp(Graph* g, int pos, bool visited[], int count, int cost, int* minCost) {
+    // Se visitou todos os vértices
+    if (count == V) {
+        // Verificar se pode retornar ao início
+        if (hasEdge(g, pos, 0)) {
+            *minCost = min(*minCost, cost + getWeight(g, pos, 0));
+        }
+        return *minCost;
+    }
+    
+    // Tentar visitar cada vértice não visitado
+    for (int i = 0; i < V; i++) {
+        if (!visited[i] && hasEdge(g, pos, i)) {
+            // Poda: não explorar se custo já excedeu mínimo
+            int newCost = cost + getWeight(g, pos, i);
+            if (newCost >= *minCost) continue;
+            
+            visited[i] = true;
+            tsp(g, i, visited, count + 1, newCost, minCost);
+            visited[i] = false;  // Backtrack
+        }
+    }
+    return *minCost;
+}
+```
+
+**Complexidade**: O(V!) no pior caso - explosão fatorial
+
+**Otimizações possíveis**:
+- **Branch and Bound**: Poda agressiva
+- **Programação Dinâmica (Held-Karp)**: O(2^V × V²)
+- **Heurísticas**: Nearest neighbor, 2-opt
+- **Aproximação**: Algoritmo de Christofides (1.5-aproximação)
+
+**Teste**: Grafos pequenos (V ≤ 15) são viáveis
+
+#### 9. Algoritmo de Ford-Fulkerson para Fluxo Máximo
+**Problema**: Desenvolva o algoritmo de Ford-Fulkerson para fluxo máximo em uma rede.
+
+**Conceitos necessários**:
+- **Rede de fluxo**: Grafo direcionado com capacidades nas arestas
+- **Grafo residual**: Representa capacidades restantes
+- **Caminho aumentante**: Caminho de s a t no grafo residual
+- **Corte**: Partição de vértices em S e T
+
+**Algoritmo**:
+```
+1. Inicializar fluxo = 0
+2. Enquanto existe caminho aumentante s→t no grafo residual:
+   - Encontrar caminho usando BFS/DFS
+   - Calcular fluxo mínimo no caminho (gargalo)
+   - Aumentar fluxo ao longo do caminho
+   - Atualizar grafo residual
+3. Retornar fluxo total
+```
+
+**Complexidade**: 
+- Ford-Fulkerson básico: O(E × |f*|) onde f* é fluxo máximo
+- Edmonds-Karp (BFS): O(V × E²)
+
+**Teorema do Fluxo Máximo/Corte Mínimo**: O fluxo máximo é igual à capacidade do corte mínimo.
+
+**Aplicações**:
+- Redes de transporte
+- Bipartite matching
+- Alocação de recursos
+
+### Desafios Especiais
+
+#### 10. Encontrar Pontes em um Grafo
+**Problema**: Implemente o algoritmo de Tarjan para encontrar pontes (arestas cuja remoção desconecta o grafo).
+
+**Conceitos**:
+- **Ponte**: Aresta crítica para conectividade
+- **DFS tree**: Árvore gerada por DFS
+- **Back edges**: Arestas não na árvore DFS
+
+**Algoritmo de Tarjan**:
+```c
+void findBridges(Graph* g, int u, bool visited[], int disc[], int low[], 
+                 int parent[], int* time) {
+    visited[u] = true;
+    disc[u] = low[u] = ++(*time);
+    
+    for each neighbor v of u {
+        if (!visited[v]) {
+            parent[v] = u;
+            findBridges(g, v, visited, disc, low, parent, time);
+            
+            low[u] = min(low[u], low[v]);
+            
+            // Se low[v] > disc[u], então (u,v) é ponte
+            if (low[v] > disc[u]) {
+                printf("Ponte: %d-%d\n", u, v);
+            }
+        }
+        else if (v != parent[u]) {
+            low[u] = min(low[u], disc[v]);
+        }
+    }
+}
+```
+
+**Arrays usados**:
+- `disc[]`: Tempo de descoberta (discovery time)
+- `low[]`: Menor tempo alcançável via subárvore
+- `parent[]`: Pai na árvore DFS
+
+**Complexidade**: O(V + E) - linear!
+
+**Aplicação**: Identificar pontos únicos de falha em redes.
+
+#### 11. Coloração de Grafos
+**Problema**: Crie uma solução para coloração de grafos com número mínimo de cores.
+
+**Heurística Gulosa (Welsh-Powell)**:
+```
+1. Ordenar vértices por grau decrescente
+2. Para cada vértice:
+   - Atribuir menor cor não usada por vizinhos
+3. Complexidade: O(V² + E)
+4. Garantia: χ ≤ Δ + 1 (Brooks)
+```
+
+**Backtracking para solução ótima**:
+```c
+bool graphColoring(Graph* g, int colors[], int v, int numColors) {
+    if (v == V) return true;  // Todos coloridos
+    
+    for (int c = 1; c <= numColors; c++) {
+        if (isSafe(g, colors, v, c)) {
+            colors[v] = c;
+            if (graphColoring(g, colors, v + 1, numColors))
+                return true;
+            colors[v] = 0;  // Backtrack
+        }
+    }
+    return false;
+}
+```
+
+**Complexidade**: O(m^V) onde m é número de cores - exponencial
+
+**Aplicações**:
+- Escalonamento (sem conflitos de horário)
+- Alocação de registradores em compiladores
+- Problemas de compatibilidade
+
+**Casos especiais polinomiais**:
+- Grafos bipartidos: χ = 2
+- Árvores: χ = 2
+- Grafos planares: χ ≤ 4 (Teorema das Quatro Cores)
+
+#### 12. Encontrar o Centro de um Grafo
+**Problema**: Desenvolva um algoritmo para encontrar o centro de um grafo (vértice que minimiza a excentricidade).
+
+**Definições**:
+- **Excentricidade**: Maior distância de um vértice a qualquer outro
+- **Raio**: Menor excentricidade entre todos os vértices
+- **Diâmetro**: Maior excentricidade entre todos os vértices
+- **Centro**: Vértice(s) com excentricidade igual ao raio
+
+**Algoritmo**:
+```
+1. Para cada vértice v:
+   - Executar BFS para encontrar distâncias
+   - Calcular excentricidade[v] = max(distâncias)
+2. raio = min(excentricidades)
+3. centro = {v | excentricidade[v] == raio}
+4. Complexidade: O(V × (V + E)) = O(V² + VE)
+```
+
+**Otimização para árvores**: O(V) usando duas BFS
+
+**Aplicação**: 
+- Localização de servidores em redes
+- Planejamento urbano (localização de hospitais)
+- Análise de redes sociais
+
+### Projetos Integrados
+
+#### 13. Simulador de Rede Social
+Implemente um sistema completo com:
+- Adicionar/remover usuários e amizades
+- Calcular graus de separação (BFS)
+- Sugerir amigos (amigos de amigos)
+- Detectar comunidades (componentes densamente conectados)
+- Calcular influência (PageRank simplificado)
+
+#### 14. Sistema de Navegação
+Crie um sistema de rotas com:
+- Carregar mapa de arquivo
+- Implementar A* com heurística
+- Suportar múltiplos objetivos (distância, tempo, pedágios)
+- Atualização dinâmica de tráfego
+- Visualização do caminho
+
+#### 15. Analisador de Dependências
+Desenvolva um sistema que:
+- Parse arquivos de configuração (package.json, pom.xml, etc.)
+- Construa grafo de dependências
+- Detecte dependências circulares
+- Ordene topologicamente para build
+- Identifique dependências críticas
 
 ## 🔍 Debugging e Testes
 
