@@ -22,8 +22,15 @@ void exemploMatriz() {
     printf("Media do aluno 2: %.2f\n", media);
 }
 
+void pegarTamanhoMatriz(){
+    int matriz[3][4] = {0};
+    printf("Tamanho da matriz: %zu bytes\n", sizeof(matriz));
+    printf("Numero de linhas: %zu\n", sizeof(matriz) / sizeof(matriz[0]));
+    printf("Numero de colunas: %zu\n", sizeof(matriz[0]) / sizeof(matriz[0][0]));
+}
+
 int main() {
 
-
+    pegarTamanhoMatriz();
     return 0;
 }
