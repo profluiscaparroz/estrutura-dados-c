@@ -245,47 +245,1156 @@ bool isFull(CircularQueue* q);
 
 ## 🚀 Aplicações Práticas
 
+Esta seção explora as aplicações de pilhas e filas em diversos contextos, desde fundamentos teóricos até sistemas reais de produção.
+
 ### Aplicações de Pilhas
-1. **Controle de Chamadas de Função**
-   - Stack de execução
-   - Recursão
-   - Retorno de funções
 
-2. **Avaliação de Expressões**
-   - Conversão infixa para pós-fixa
-   - Calculadora
-   - Parser de expressões
+#### 1. Controle de Chamadas de Função (Call Stack)
 
-3. **Navegação e Histórico**
-   - Histórico do browser
-   - Undo/Redo operations
-   - Navegação em editores
+**Contexto Acadêmico:**
 
-4. **Algoritmos de Grafos**
-   - Busca em profundidade (DFS)
-   - Verificação de parênteses balanceados
-   - Conversão de notações
+A pilha de chamadas é um mecanismo fundamental em todas as linguagens de programação modernas. Quando uma função é chamada, o sistema cria um **activation record** (registro de ativação) contendo:
+
+- **Parâmetros da função**: Valores passados para a função
+- **Variáveis locais**: Espaço para variáveis declaradas na função
+- **Endereço de retorno**: Onde continuar após a função terminar
+- **Frame pointer anterior**: Para reconstruir o frame do chamador
+- **Valores salvos de registradores**: Estado da CPU
+
+**Estrutura do Activation Record:**
+
+```c
+typedef struct {
+    void* return_address;      // Onde retornar
+    void* frame_pointer;       // Base do frame anterior
+    int parameters[MAX_PARAMS]; // Parâmetros da função
+    int local_vars[MAX_LOCALS]; // Variáveis locais
+    int saved_registers[8];    // Estado dos registradores
+} ActivationRecord;
+```
+
+**Por que LIFO?**
+
+O princípio LIFO é perfeito para chamadas de função porque:
+1. A última função chamada (mais recente) deve retornar primeiro
+2. O retorno segue o caminho inverso das chamadas
+3. Cada nível de recursão adiciona uma nova camada que será removida ao retornar
+
+**Exemplo de Recursão:**
+
+```c
+int fibonacci(int n) {
+    // Frame 1 é empilhado
+    if (n <= 1) return n;
+    
+    // Frame 2 para fib(n-1) é empilhado
+    int a = fibonacci(n - 1);
+    
+    // Frame 2 retorna (desempilha), Frame 3 para fib(n-2) é empilhado
+    int b = fibonacci(n - 2);
+    
+    // Frame 3 retorna (desempilha)
+    return a + b;
+    // Frame 1 retorna (desempilha)
+}
+
+// Chamada fibonacci(4):
+// Stack: [fib(4)]
+// Stack: [fib(4), fib(3)]
+// Stack: [fib(4), fib(3), fib(2)]
+// Stack: [fib(4), fib(3), fib(2), fib(1)] ← mais profundo
+// Stack: [fib(4), fib(3), fib(2)] ← fib(1) retornou
+// ... e assim por diante
+```
+
+**Profundidade da Pilha:**
+
+Cada chamada recursiva consome espaço na pilha. Stack overflow ocorre quando:
+- Recursão muito profunda
+- Recursão infinita (sem caso base)
+- Variáveis locais muito grandes
+
+**Stack Overflow Example:**
+
+```c
+void infiniteRecursion(int n) {
+    int bigArray[10000];  // Consome ~40KB por chamada
+    infiniteRecursion(n + 1);  // Sem condição de parada!
+}
+// Stack size típico: 1-8 MB
+// Overflow após ~25-200 chamadas
+```
+
+**Tail Call Optimization:**
+
+Compiladores modernos podem otimizar recursão de cauda:
+
+```c
+// Recursão de cauda (otimizável)
+int factorial_tail(int n, int acc) {
+    if (n == 0) return acc;
+    return factorial_tail(n - 1, n * acc);  // Última operação é chamada
+}
+
+// Compilador pode transformar em loop:
+int factorial_tail_optimized(int n, int acc) {
+    while (n != 0) {
+        acc = n * acc;
+        n = n - 1;
+    }
+    return acc;
+}
+```
+
+**Aplicações Reais:**
+- Todos os programas usam call stack implicitamente
+- Debuggers (GDB, LLDB) inspecionam a pilha: comando `backtrace`
+- Exception handling: unwinding the stack
+- Profilers analisam hot paths na pilha
+
+#### 2. Avaliação de Expressões Matemáticas
+
+**Contexto Teórico:**
+
+Expressões matemáticas podem ser representadas em três notações:
+
+1. **Infixa**: Operador entre operandos - `3 + 4 * 2`
+2. **Pós-fixa (RPN)**: Operador após operandos - `3 4 2 * +`
+3. **Pré-fixa (Polonesa)**: Operador antes operandos - `+ 3 * 4 2`
+
+**Por que notação pós-fixa?**
+- Não requer parênteses
+- Avaliação unambígua
+- Implementação simples com pilha
+- Usado em calculadoras HP, linguagens como PostScript e Forth
+
+**Algoritmo de Avaliação (RPN):**
+
+```c
+int evaluateRPN(char* expression) {
+    Stack s;
+    initStack(&s);
+    
+    char* token = strtok(expression, " ");
+    while (token != NULL) {
+        if (isNumber(token)) {
+            // Empilha operando
+            push(&s, atoi(token));
+        } else {
+            // Desempilha dois operandos
+            int b = pop(&s);  // Segundo operando
+            int a = pop(&s);  // Primeiro operando
+            
+            // Calcula resultado
+            int result;
+            switch (token[0]) {
+                case '+': result = a + b; break;
+                case '-': result = a - b; break;
+                case '*': result = a * b; break;
+                case '/': result = a / b; break;
+            }
+            
+            // Empilha resultado
+            push(&s, result);
+        }
+        token = strtok(NULL, " ");
+    }
+    
+    // Resultado final no topo
+    return pop(&s);
+}
+
+// Exemplo: "3 4 2 * +"
+// Stack: [3]
+// Stack: [3, 4]
+// Stack: [3, 4, 2]
+// Stack: [3, 8]      ← 4 * 2 = 8
+// Stack: [11]        ← 3 + 8 = 11
+// Resultado: 11
+```
+
+**Análise de Complexidade:**
+- Cada token processado uma vez: O(n)
+- Cada operação de pilha: O(1)
+- **Total: Θ(n)** onde n = número de tokens
+
+**Conversão Infixa → Pós-fixa (Shunting Yard Algorithm):**
+
+Algoritmo de Dijkstra para conversão:
+
+```c
+char* infixToPostfix(char* infix) {
+    Stack operators;
+    initStack(&operators);
+    char* postfix = malloc(strlen(infix) * 2);
+    int pos = 0;
+    
+    for (int i = 0; infix[i]; i++) {
+        char c = infix[i];
+        
+        if (isdigit(c)) {
+            // Operando vai direto para saída
+            postfix[pos++] = c;
+            postfix[pos++] = ' ';
+        }
+        else if (c == '(') {
+            // Abre parênteses empilha
+            push(&operators, c);
+        }
+        else if (c == ')') {
+            // Fecha parênteses: desempilha até encontrar '('
+            while (!isEmpty(&operators) && peek(&operators) != '(') {
+                postfix[pos++] = pop(&operators);
+                postfix[pos++] = ' ';
+            }
+            pop(&operators);  // Remove '('
+        }
+        else if (isOperator(c)) {
+            // Operador: desempilha operadores de maior ou igual precedência
+            while (!isEmpty(&operators) && 
+                   precedence(peek(&operators)) >= precedence(c)) {
+                postfix[pos++] = pop(&operators);
+                postfix[pos++] = ' ';
+            }
+            push(&operators, c);
+        }
+    }
+    
+    // Desempilha operadores restantes
+    while (!isEmpty(&operators)) {
+        postfix[pos++] = pop(&operators);
+        postfix[pos++] = ' ';
+    }
+    
+    postfix[pos] = '\0';
+    return postfix;
+}
+
+int precedence(char op) {
+    switch (op) {
+        case '+': case '-': return 1;
+        case '*': case '/': return 2;
+        case '^': return 3;
+        default: return 0;
+    }
+}
+
+// Exemplo: "3 + 4 * 2"
+// Output: "3 4 2 * +"
+```
+
+**Aplicações Reais:**
+- Calculadoras científicas (HP RPN)
+- Compiladores: parsing de expressões
+- Interpretadores: avaliação de expressões
+- Linguagens de programação: operador de precedência
+
+#### 3. Verificação de Parênteses Balanceados
+
+**Problema Formal:**
+
+Dada uma string contendo caracteres `()[]{}`, determinar se os parênteses estão balanceados.
+
+**Definição Matemática:**
+
+Uma string S de parênteses é balanceada se:
+1. String vazia é balanceada
+2. Se A é balanceada, então `(A)`, `[A]`, `{A}` são balanceadas
+3. Se A e B são balanceadas, então AB é balanceada
+
+**Gramática Livre de Contexto:**
+
+```
+S → ε              (vazio)
+S → (S)            (parênteses ao redor)
+S → [S]
+S → {S}
+S → SS             (concatenação)
+```
+
+**Algoritmo com Pilha:**
+
+```c
+bool isBalanced(char* expression) {
+    Stack s;
+    initStack(&s);
+    
+    for (int i = 0; expression[i]; i++) {
+        char c = expression[i];
+        
+        // Abre: empilha
+        if (c == '(' || c == '[' || c == '{') {
+            push(&s, c);
+        }
+        // Fecha: verifica correspondência
+        else if (c == ')' || c == ']' || c == '}') {
+            if (isEmpty(&s)) return false;  // Fecha sem abrir
+            
+            char top = pop(&s);
+            if (!isMatchingPair(top, c)) {
+                return false;  // Tipo incompatível
+            }
+        }
+    }
+    
+    return isEmpty(&s);  // Deve ter consumido todos
+}
+
+bool isMatchingPair(char open, char close) {
+    return (open == '(' && close == ')') ||
+           (open == '[' && close == ']') ||
+           (open == '{' && close == '}');
+}
+
+// Exemplos:
+// "()" → true
+// "()[]{}" → true
+// "(]" → false (tipo incompatível)
+// "(()" → false (não vazio ao final)
+// "())" → false (fecha sem abrir)
+```
+
+**Prova de Correção:**
+
+**Teorema:** O algoritmo retorna verdadeiro sse a string é balanceada.
+
+**Prova (⇒):** Se algoritmo retorna verdadeiro, então balanceada.
+- Algoritmo retorna verdadeiro apenas se pilha vazia ao final
+- Cada 'fecha' foi pareado com 'abre' correspondente
+- Logo, estrutura está balanceada ∎
+
+**Prova (⇐):** Se balanceada, então algoritmo retorna verdadeiro.
+- Por indução na estrutura da gramática:
+  - Base (ε): pilha vazia, retorna verdadeiro ✓
+  - Passo ((S)): empilha '(', processa S recursivamente, desempilha ao encontrar ')'
+  - Passo (SS): processa S₁, depois S₂, ambos mantêm invariante ∎
+
+**Complexidade:**
+- Tempo: **Θ(n)** - percorre string uma vez
+- Espaço: **O(n)** - no pior caso (string com apenas 'abre')
+
+**Extensão: Verificação de Sintaxe de Código:**
+
+```c
+bool validateCodeSyntax(char* code) {
+    Stack s;
+    initStack(&s);
+    bool inString = false;
+    bool inComment = false;
+    
+    for (int i = 0; code[i]; i++) {
+        // Tratar strings e comentários
+        if (code[i] == '"' && code[i-1] != '\\') {
+            inString = !inString;
+            continue;
+        }
+        if (inString || inComment) continue;
+        
+        // Verificar balanceamento
+        if (code[i] == '{' || code[i] == '(' || code[i] == '[') {
+            push(&s, code[i]);
+        }
+        else if (code[i] == '}' || code[i] == ')' || code[i] == ']') {
+            if (isEmpty(&s)) return false;
+            char top = pop(&s);
+            if (!isMatchingPair(top, code[i])) return false;
+        }
+    }
+    
+    return isEmpty(&s);
+}
+```
+
+**Aplicações Reais:**
+- IDEs: verificação de sintaxe em tempo real
+- Linters: validação de código
+- Compiladores: análise léxica e sintática
+- Editores de texto: bracket matching
+
+#### 4. Busca em Profundidade (DFS) em Grafos
+
+**Fundamento Teórico:**
+
+DFS é um algoritmo fundamental para exploração de grafos que visita vértices o mais profundamente possível antes de fazer backtracking.
+
+**Propriedades do DFS:**
+1. Explora um ramo completamente antes de explorar outro
+2. Usa pilha (implícita via recursão ou explícita)
+3. Tempo de execução: Θ(V + E)
+4. Espaço: O(V) para pilha + visitados
+
+**DFS Recursivo (Pilha Implícita):**
+
+```c
+void dfsRecursive(Graph* g, int v, bool visited[]) {
+    // Marca como visitado
+    visited[v] = true;
+    printf("%d ", v);
+    
+    // Visita todos vizinhos não visitados
+    for (int i = 0; i < g->adjListSize[v]; i++) {
+        int w = g->adjList[v][i];
+        if (!visited[w]) {
+            dfsRecursive(g, w, visited);  // Chamada recursiva empilha
+        }
+    }
+    // Retorno desempilha automaticamente
+}
+```
+
+**DFS Iterativo (Pilha Explícita):**
+
+```c
+void dfsIterative(Graph* g, int start) {
+    bool visited[MAX_VERTICES] = {false};
+    Stack s;
+    initStack(&s);
+    
+    push(&s, start);
+    
+    while (!isEmpty(&s)) {
+        int v = pop(&s);
+        
+        if (!visited[v]) {
+            visited[v] = true;
+            printf("%d ", v);
+            
+            // Empilha vizinhos não visitados
+            // (em ordem reversa para manter mesma ordem que recursão)
+            for (int i = g->adjListSize[v] - 1; i >= 0; i--) {
+                int w = g->adjList[v][i];
+                if (!visited[w]) {
+                    push(&s, w);
+                }
+            }
+        }
+    }
+}
+```
+
+**Aplicações do DFS:**
+
+1. **Detecção de Ciclos:**
+```c
+bool hasCycleDFS(Graph* g, int v, bool visited[], bool recStack[]) {
+    visited[v] = true;
+    recStack[v] = true;  // Marca como na pilha de recursão
+    
+    for (int i = 0; i < g->adjListSize[v]; i++) {
+        int w = g->adjList[v][i];
+        
+        if (!visited[w]) {
+            if (hasCycleDFS(g, w, visited, recStack))
+                return true;
+        }
+        else if (recStack[w]) {
+            return true;  // Encontrou vértice na pilha atual = ciclo!
+        }
+    }
+    
+    recStack[v] = false;  // Remove da pilha de recursão
+    return false;
+}
+```
+
+2. **Ordenação Topológica:**
+```c
+void topologicalSortUtil(Graph* g, int v, bool visited[], Stack* result) {
+    visited[v] = true;
+    
+    // Visita todos vizinhos primeiro
+    for (int i = 0; i < g->adjListSize[v]; i++) {
+        int w = g->adjList[v][i];
+        if (!visited[w]) {
+            topologicalSortUtil(g, w, visited, result);
+        }
+    }
+    
+    // Empilha vértice após visitar todos descendentes
+    push(result, v);  // Ordem reversa de finalização
+}
+
+void topologicalSort(Graph* g) {
+    bool visited[MAX_VERTICES] = {false};
+    Stack result;
+    initStack(&result);
+    
+    for (int v = 0; v < g->numVertices; v++) {
+        if (!visited[v]) {
+            topologicalSortUtil(g, v, visited, &result);
+        }
+    }
+    
+    // Desempilha para obter ordem topológica
+    while (!isEmpty(&result)) {
+        printf("%d ", pop(&result));
+    }
+}
+```
+
+3. **Componentes Fortemente Conexas (Algoritmo de Tarjan):**
+```c
+void tarjanSCC(Graph* g, int v, int disc[], int low[], 
+               bool onStack[], Stack* s, int* time) {
+    disc[v] = low[v] = ++(*time);
+    push(s, v);
+    onStack[v] = true;
+    
+    for (int i = 0; i < g->adjListSize[v]; i++) {
+        int w = g->adjList[v][i];
+        
+        if (disc[w] == -1) {
+            tarjanSCC(g, w, disc, low, onStack, s, time);
+            low[v] = min(low[v], low[w]);
+        }
+        else if (onStack[w]) {
+            low[v] = min(low[v], disc[w]);
+        }
+    }
+    
+    // Se v é raiz de SCC
+    if (low[v] == disc[v]) {
+        printf("SCC: ");
+        int w;
+        do {
+            w = pop(s);
+            onStack[w] = false;
+            printf("%d ", w);
+        } while (w != v);
+        printf("\n");
+    }
+}
+```
+
+**Aplicações Reais:**
+- Compiladores: análise de dependências
+- Roteamento: encontrar caminhos em redes
+- Puzzle solving: labirintos, Sudoku
+- Web crawling: exploração de links
+- Game AI: busca de caminhos
+
+#### 5. Outras Aplicações Importantes de Pilhas
+
+**5.1 Parsing e Compiladores:**
+
+```c
+// Parser de expressões usando pilha
+ASTNode* parseExpression(Token tokens[]) {
+    Stack operands;
+    Stack operators;
+    
+    for (int i = 0; tokens[i].type != END; i++) {
+        if (tokens[i].type == NUMBER) {
+            ASTNode* node = createNode(tokens[i].value);
+            push(&operands, node);
+        }
+        else if (tokens[i].type == OPERATOR) {
+            while (!isEmpty(&operators) && 
+                   precedence(peek(&operators)) >= precedence(tokens[i])) {
+                processOperator(&operands, &operators);
+            }
+            push(&operators, tokens[i]);
+        }
+    }
+    
+    while (!isEmpty(&operators)) {
+        processOperator(&operands, &operators);
+    }
+    
+    return pop(&operands);
+}
+```
+
+**5.2 Backtracking (N-Queens Problem):**
+
+```c
+void solveNQueens(int board[], int row, int n, Stack* solution) {
+    if (row == n) {
+        printSolution(solution);
+        return;
+    }
+    
+    for (int col = 0; col < n; col++) {
+        if (isSafe(board, row, col, n)) {
+            push(solution, col);  // Tenta colocar rainha
+            board[row] = col;
+            
+            solveNQueens(board, row + 1, n, solution);
+            
+            pop(solution);  // Backtrack
+            board[row] = -1;
+        }
+    }
+}
+```
+
+**5.3 Function Call Tracing:**
+
+```c
+// Tracer para debugging
+Stack callStack;
+
+void enterFunction(char* funcName) {
+    push(&callStack, funcName);
+    printf("-> Entering: %s (depth: %d)\n", 
+           funcName, stackSize(&callStack));
+}
+
+void exitFunction() {
+    char* funcName = pop(&callStack);
+    printf("<- Exiting: %s (depth: %d)\n", 
+           funcName, stackSize(&callStack));
+}
+```
 
 ### Aplicações de Filas
-1. **Sistemas Operacionais**
-   - Escalonamento de processos
-   - Buffer de impressão
-   - Gerenciamento de recursos
 
-2. **Algoritmos de Grafos**
-   - Busca em largura (BFS)
-   - Algoritmo de Dijkstra
-   - Árvore geradora mínima
+#### 1. Sistemas Operacionais - Escalonamento de Processos
 
-3. **Simulações**
-   - Filas de atendimento
-   - Sistemas de semáforos
-   - Modelagem de tráfego
+**Contexto Teórico:**
 
-4. **Programação Assíncrona**
-   - Event loops
-   - Message queues
-   - Task scheduling
+Sistemas operacionais usam filas para implementar políticas de escalonamento justas. O princípio FIFO garante que processos sejam atendidos na ordem de chegada.
+
+**Round-Robin Scheduling:**
+
+```c
+typedef struct {
+    int pid;              // Process ID
+    int burstTime;        // Tempo de CPU necessário
+    int remainingTime;    // Tempo restante
+    int arrivalTime;      // Quando chegou
+    int priority;         // Prioridade
+} Process;
+
+void roundRobinScheduler(Process processes[], int n, int quantum) {
+    Queue readyQueue;
+    initQueue(&readyQueue);
+    
+    int currentTime = 0;
+    int completed = 0;
+    
+    // Enfileira processos que chegaram
+    for (int i = 0; i < n; i++) {
+        if (processes[i].arrivalTime == 0) {
+            enqueue(&readyQueue, &processes[i]);
+        }
+    }
+    
+    while (completed < n) {
+        if (isEmpty(&readyQueue)) {
+            currentTime++;
+            continue;
+        }
+        
+        Process* current = dequeue(&readyQueue);
+        
+        printf("Time %d: Running process %d\n", currentTime, current->pid);
+        
+        // Executa por quantum ou até terminar
+        int executeTime = min(quantum, current->remainingTime);
+        current->remainingTime -= executeTime;
+        currentTime += executeTime;
+        
+        // Enfileira novos processos que chegaram
+        for (int i = 0; i < n; i++) {
+            if (processes[i].arrivalTime <= currentTime && 
+                processes[i].remainingTime > 0 &&
+                !inQueue(&readyQueue, &processes[i])) {
+                enqueue(&readyQueue, &processes[i]);
+            }
+        }
+        
+        // Re-enfileira se não terminou
+        if (current->remainingTime > 0) {
+            enqueue(&readyQueue, current);
+        } else {
+            completed++;
+            printf("Process %d completed at time %d\n", 
+                   current->pid, currentTime);
+        }
+    }
+}
+```
+
+**Análise de Performance:**
+
+Para n processos com quantum q:
+- Tempo médio de resposta: depende da política
+- Overhead de context switch: O(1) por troca
+- Fairness: garantida pelo FIFO
+
+**5.4 Multi-level Feedback Queue:**
+
+```c
+#define NUM_LEVELS 3
+
+typedef struct {
+    Queue queues[NUM_LEVELS];  // Múltiplas filas de prioridade
+    int quantum[NUM_LEVELS];   // Quantum por nível
+} MLFQ;
+
+void initMLFQ(MLFQ* mlfq) {
+    for (int i = 0; i < NUM_LEVELS; i++) {
+        initQueue(&mlfq->queues[i]);
+        mlfq->quantum[i] = (1 << i);  // Quantum dobra a cada nível
+    }
+}
+
+void scheduleMFLQ(MLFQ* mlfq) {
+    // Processa filas em ordem de prioridade
+    for (int level = 0; level < NUM_LEVELS; level++) {
+        if (!isEmpty(&mlfq->queues[level])) {
+            Process* p = dequeue(&mlfq->queues[level]);
+            
+            int executeTime = min(mlfq->quantum[level], p->remainingTime);
+            p->remainingTime -= executeTime;
+            
+            if (p->remainingTime > 0) {
+                // Move para próximo nível (menor prioridade)
+                int nextLevel = min(level + 1, NUM_LEVELS - 1);
+                enqueue(&mlfq->queues[nextLevel], p);
+            }
+            
+            break;  // Processa apenas um processo por vez
+        }
+    }
+}
+```
+
+**Aplicações Reais:**
+- Linux CFS (Completely Fair Scheduler)
+- Windows Thread Scheduler
+- MacOS Dispatcher
+
+#### 2. Busca em Largura (BFS) em Grafos
+
+**Fundamento Teórico:**
+
+BFS explora grafos camada por camada, garantindo o caminho mais curto em grafos não ponderados.
+
+**Teorema:** BFS encontra o caminho mais curto de s para todos vértices alcançáveis.
+
+**Prova:** Por indução na distância:
+- Base: distância 0 (vértice inicial) está correto
+- Hipótese: todos vértices a distância ≤ k foram descobertos corretamente
+- Passo: vértices a distância k+1 são descobertos quando processamos vértices a distância k
+- FIFO garante que processamos todos de distância k antes de k+1 ∎
+
+**Implementação Completa:**
+
+```c
+void bfs(Graph* g, int start, int distance[], int parent[]) {
+    bool visited[MAX_VERTICES] = {false};
+    Queue q;
+    initQueue(&q);
+    
+    // Inicializa distâncias
+    for (int i = 0; i < g->numVertices; i++) {
+        distance[i] = -1;  // Infinito
+        parent[i] = -1;    // Sem pai
+    }
+    
+    visited[start] = true;
+    distance[start] = 0;
+    enqueue(&q, start);
+    
+    while (!isEmpty(&q)) {
+        int v = dequeue(&q);
+        printf("Visitando %d (distância %d)\n", v, distance[v]);
+        
+        // Explora vizinhos
+        for (int i = 0; i < g->adjListSize[v]; i++) {
+            int w = g->adjList[v][i];
+            
+            if (!visited[w]) {
+                visited[w] = true;
+                distance[w] = distance[v] + 1;  // Distância correta!
+                parent[w] = v;
+                enqueue(&q, w);
+            }
+        }
+    }
+}
+
+void printShortestPath(int parent[], int start, int dest) {
+    if (dest == start) {
+        printf("%d", start);
+        return;
+    }
+    if (parent[dest] == -1) {
+        printf("Sem caminho");
+        return;
+    }
+    
+    printShortestPath(parent, start, parent[dest]);
+    printf(" -> %d", dest);
+}
+```
+
+**Análise de Complexidade:**
+- Tempo: **Θ(V + E)** - cada vértice enfileirado uma vez, cada aresta examinada uma vez
+- Espaço: **O(V)** - fila + arrays visited/distance/parent
+
+**Aplicações do BFS:**
+
+**1. Caminho Mais Curto em Redes Sociais:**
+```c
+int degreesOfSeparation(SocialNetwork* net, int person1, int person2) {
+    int distance[MAX_PEOPLE];
+    bfs(net->graph, person1, distance, NULL);
+    return distance[person2];
+}
+// "Six degrees of separation"
+```
+
+**2. Web Crawler:**
+```c
+void crawlWeb(char* seedURL, int maxDepth) {
+    Queue urlQueue;
+    Set visited;
+    
+    enqueue(&urlQueue, seedURL);
+    
+    while (!isEmpty(&urlQueue) && depth <= maxDepth) {
+        char* url = dequeue(&urlQueue);
+        
+        if (contains(&visited, url)) continue;
+        add(&visited, url);
+        
+        Page* page = fetchPage(url);
+        processPage(page);
+        
+        // Enfileira todos links da página
+        for (int i = 0; i < page->numLinks; i++) {
+            if (!contains(&visited, page->links[i])) {
+                enqueue(&urlQueue, page->links[i]);
+            }
+        }
+    }
+}
+```
+
+**3. Componentes Conexas:**
+```c
+int countConnectedComponents(Graph* g) {
+    bool visited[MAX_VERTICES] = {false};
+    int components = 0;
+    
+    for (int v = 0; v < g->numVertices; v++) {
+        if (!visited[v]) {
+            components++;
+            bfsMarkComponent(g, v, visited);
+        }
+    }
+    
+    return components;
+}
+```
+
+#### 3. Simulações de Sistemas de Filas (Queueing Theory)
+
+**Teoria de Filas (Erlang, 1909):**
+
+Sistema de filas caracterizado por:
+- **λ (lambda)**: Taxa de chegada (clientes/minuto)
+- **μ (mu)**: Taxa de atendimento (clientes/minuto)
+- **ρ (rho)**: Utilização = λ/μ
+
+**Lei de Little:** L = λW
+- L: número médio de clientes no sistema
+- W: tempo médio de espera
+- λ: taxa de chegada
+
+**Simulação M/M/1 (Markovian/Markovian/1 server):**
+
+```c
+typedef struct {
+    int customerId;
+    double arrivalTime;
+    double serviceTime;
+} Customer;
+
+typedef struct {
+    double totalWaitTime;
+    int customersServed;
+    double serverIdleTime;
+    double totalServiceTime;
+} QueueStatistics;
+
+void simulateMM1Queue(double lambda, double mu, double simTime) {
+    Queue customerQueue;
+    initQueue(&customerQueue);
+    
+    QueueStatistics stats = {0};
+    double currentTime = 0;
+    double nextArrival = exponentialRandom(1/lambda);
+    bool serverBusy = false;
+    double serviceEndTime = 0;
+    
+    while (currentTime < simTime) {
+        // Próximo evento: chegada ou fim de serviço?
+        if (nextArrival < serviceEndTime || !serverBusy) {
+            // Evento: Chegada de cliente
+            currentTime = nextArrival;
+            
+            Customer* c = malloc(sizeof(Customer));
+            c->customerId = stats.customersServed++;
+            c->arrivalTime = currentTime;
+            c->serviceTime = exponentialRandom(1/mu);
+            
+            enqueue(&customerQueue, c);
+            
+            // Próxima chegada
+            nextArrival = currentTime + exponentialRandom(1/lambda);
+            
+            // Se servidor livre, inicia atendimento
+            if (!serverBusy) {
+                Customer* serving = dequeue(&customerQueue);
+                serverBusy = true;
+                serviceEndTime = currentTime + serving->serviceTime;
+                
+                stats.totalWaitTime += (currentTime - serving->arrivalTime);
+                stats.totalServiceTime += serving->serviceTime;
+            }
+        } else {
+            // Evento: Fim de serviço
+            currentTime = serviceEndTime;
+            serverBusy = false;
+            
+            // Atende próximo cliente se houver
+            if (!isEmpty(&customerQueue)) {
+                Customer* serving = dequeue(&customerQueue);
+                serverBusy = true;
+                serviceEndTime = currentTime + serving->serviceTime;
+                
+                stats.totalWaitTime += (currentTime - serving->arrivalTime);
+                stats.totalServiceTime += serving->serviceTime;
+            } else {
+                stats.serverIdleTime += (nextArrival - currentTime);
+            }
+        }
+    }
+    
+    // Estatísticas
+    printf("Clientes atendidos: %d\n", stats.customersServed);
+    printf("Tempo médio de espera: %.2f\n", 
+           stats.totalWaitTime / stats.customersServed);
+    printf("Utilização do servidor: %.2f%%\n", 
+           100 * (1 - stats.serverIdleTime / simTime));
+    printf("Comprimento médio da fila: %.2f\n", 
+           stats.totalWaitTime / simTime);  // Lei de Little
+}
+
+double exponentialRandom(double rate) {
+    return -log(1.0 - (double)rand() / RAND_MAX) / rate;
+}
+```
+
+**Aplicações Reais:**
+- Call centers: dimensionar número de atendentes
+- Servidores web: capacity planning
+- Hospitais: gerenciamento de emergências
+- Bancos: otimização de caixas
+
+#### 4. Programação Assíncrona e Event Loops
+
+**Event Loop (Node.js, JavaScript, Python asyncio):**
+
+```c
+typedef struct {
+    void (*callback)(void*);
+    void* data;
+    double executeAt;
+} Event;
+
+typedef struct {
+    Queue eventQueue;
+    bool running;
+} EventLoop;
+
+void initEventLoop(EventLoop* loop) {
+    initQueue(&loop->eventQueue);
+    loop->running = false;
+}
+
+void scheduleEvent(EventLoop* loop, void (*callback)(void*), 
+                   void* data, double delay) {
+    Event* event = malloc(sizeof(Event));
+    event->callback = callback;
+    event->data = data;
+    event->executeAt = getCurrentTime() + delay;
+    
+    enqueue(&loop->eventQueue, event);
+}
+
+void runEventLoop(EventLoop* loop) {
+    loop->running = true;
+    
+    while (loop->running && !isEmpty(&loop->eventQueue)) {
+        Event* event = dequeue(&loop->eventQueue);
+        
+        // Espera até tempo de execução
+        double now = getCurrentTime();
+        if (event->executeAt > now) {
+            sleep(event->executeAt - now);
+        }
+        
+        // Executa callback
+        event->callback(event->data);
+        
+        free(event);
+    }
+}
+
+// Exemplo de uso
+void onTimeout(void* data) {
+    printf("Timer expired: %s\n", (char*)data);
+}
+
+void onHTTPRequest(void* data) {
+    HTTPRequest* req = (HTTPRequest*)data;
+    processRequest(req);
+}
+
+int main() {
+    EventLoop loop;
+    initEventLoop(&loop);
+    
+    scheduleEvent(&loop, onTimeout, "First timer", 1.0);
+    scheduleEvent(&loop, onHTTPRequest, request1, 0.5);
+    scheduleEvent(&loop, onTimeout, "Second timer", 2.0);
+    
+    runEventLoop(&loop);
+    
+    return 0;
+}
+```
+
+#### 5. Outras Aplicações Importantes de Filas
+
+**5.1 Buffer de Impressão:**
+
+```c
+typedef struct {
+    char* documentName;
+    int pages;
+    int priority;
+    time_t submitTime;
+} PrintJob;
+
+void printSpooler() {
+    Queue printQueue;
+    initQueue(&printQueue);
+    
+    while (systemRunning) {
+        // Adiciona novos trabalhos
+        if (hasNewJob()) {
+            PrintJob* job = getNewJob();
+            enqueue(&printQueue, job);
+            printf("Enfileirado: %s (%d páginas)\n", 
+                   job->documentName, job->pages);
+        }
+        
+        // Processa próximo trabalho
+        if (!isEmpty(&printQueue) && printerReady()) {
+            PrintJob* job = dequeue(&printQueue);
+            printf("Imprimindo: %s\n", job->documentName);
+            printDocument(job);
+        }
+        
+        sleep(1);
+    }
+}
+```
+
+**5.2 Produtor-Consumidor com Fila:**
+
+```c
+Queue sharedQueue;
+pthread_mutex_t lock;
+pthread_cond_t notEmpty, notFull;
+
+void* producer(void* arg) {
+    while (running) {
+        Item* item = produceItem();
+        
+        pthread_mutex_lock(&lock);
+        while (isFull(&sharedQueue)) {
+            pthread_cond_wait(&notFull, &lock);
+        }
+        
+        enqueue(&sharedQueue, item);
+        pthread_cond_signal(&notEmpty);
+        pthread_mutex_unlock(&lock);
+    }
+}
+
+void* consumer(void* arg) {
+    while (running) {
+        pthread_mutex_lock(&lock);
+        while (isEmpty(&sharedQueue)) {
+            pthread_cond_wait(&notEmpty, &lock);
+        }
+        
+        Item* item = dequeue(&sharedQueue);
+        pthread_cond_signal(&notFull);
+        pthread_mutex_unlock(&lock);
+        
+        consumeItem(item);
+    }
+}
+```
+
+**5.3 Message Queues (RabbitMQ, Kafka style):**
+
+```c
+typedef struct {
+    char* topic;
+    char* message;
+    int priority;
+    time_t timestamp;
+} Message;
+
+typedef struct {
+    Queue messageQueue;
+    List subscribers;
+    char* topicName;
+} MessageTopic;
+
+void publishMessage(MessageBroker* broker, char* topic, char* msg) {
+    MessageTopic* t = findTopic(broker, topic);
+    if (t == NULL) {
+        t = createTopic(broker, topic);
+    }
+    
+    Message* message = createMessage(topic, msg);
+    enqueue(&t->messageQueue, message);
+    
+    notifySubscribers(t);
+}
+
+void subscribeToTopic(MessageBroker* broker, char* topic, 
+                      void (*callback)(Message*)) {
+    MessageTopic* t = findTopic(broker, topic);
+    if (t == NULL) {
+        t = createTopic(broker, topic);
+    }
+    
+    addSubscriber(&t->subscribers, callback);
+    
+    // Processa mensagens pendentes
+    while (!isEmpty(&t->messageQueue)) {
+        Message* msg = dequeue(&t->messageQueue);
+        callback(msg);
+    }
+}
+```
+
+**Aplicações Reais:**
+- RabbitMQ, Apache Kafka: message brokers
+- AWS SQS, Azure Queue Storage: cloud queues
+- Redis: pub/sub system
+- ZeroMQ: distributed messaging
 
 ## 🛠️ Como Compilar e Executar
 
