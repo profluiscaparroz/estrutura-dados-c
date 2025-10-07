@@ -1833,6 +1833,523 @@ void hybridSort(int arr[], int low, int high) {
 
 **Conclusão**: Insertion Sort domina em pequenas escalas e dados parcialmente ordenados. Quick Sort domina em grandes volumes de dados aleatórios. Algoritmos modernos combinam ambos para obter o melhor resultado.
 
+## ⚠️ Armadilhas Comuns e Boas Práticas
+
+### Erro 1: Ignorar o Tamanho da Entrada
+
+**Armadilha:**
+```c
+void sort(int arr[], int n) {
+    bubbleSort(arr, n);  // Sempre usa Bubble Sort!
+}
+```
+
+**Por que é ruim:**
+- Para n=10: OK (~100 operações)
+- Para n=1000: Lento (~1 milhão de operações)
+- Para n=100,000: Impraticável (~10 bilhões de operações)
+
+**Melhor prática:**
+```c
+void sortAdaptive(int arr[], int n) {
+    if (n < 50) {
+        insertionSort(arr, n);    // O(n²) OK para pequenos
+    } else if (n < 100000) {
+        quickSort(arr, 0, n-1);   // O(n log n) para médios
+    } else {
+        mergeSort(arr, 0, n-1);   // Garantia para grandes
+    }
+}
+```
+
+### Erro 2: Quick Sort Sem Proteção Contra Pior Caso
+
+**Armadilha:**
+```c
+// Pivô sempre no final
+int partition(int arr[], int low, int high) {
+    int pivot = arr[high];  // ❌ Pior caso para dados ordenados!
+    // ...
+}
+```
+
+**Impacto:**
+```
+Array ordenado [1,2,3,...,n]:
+- Partições: [vazio] e [n-1 elementos]
+- Recursão: n níveis
+- Complexidade: O(n²) ❌
+- Para n=100,000: ~10 bilhões de operações
+- Stack overflow possível!
+```
+
+**Melhor prática:**
+```c
+// Mediana de três elementos
+int medianOfThree(int arr[], int low, int high) {
+    int mid = low + (high - low) / 2;
+    
+    // Ordena arr[low], arr[mid], arr[high]
+    if (arr[mid] < arr[low])
+        swap(&arr[low], &arr[mid]);
+    if (arr[high] < arr[low])
+        swap(&arr[low], &arr[high]);
+    if (arr[high] < arr[mid])
+        swap(&arr[mid], &arr[high]);
+    
+    // Coloca mediana no high-1
+    swap(&arr[mid], &arr[high-1]);
+    return arr[high-1];
+}
+
+// Ou ainda melhor: pivô aleatório
+int randomPivot(int arr[], int low, int high) {
+    int randomIndex = low + rand() % (high - low + 1);
+    swap(&arr[randomIndex], &arr[high]);
+    return arr[high];
+}
+```
+
+### Erro 3: Não Verificar Casos Limites
+
+**Armadilha:**
+```c
+void insertionSort(int arr[], int n) {
+    for (int i = 1; i < n; i++) {  // ❌ E se n=0 ou n=1?
+        int key = arr[i];
+        int j = i - 1;
+        while (j >= 0 && arr[j] > key) {
+            arr[j + 1] = arr[j];
+            j--;
+        }
+        arr[j + 1] = key;
+    }
+}
+
+// Testes que deveriam passar:
+insertionSort(NULL, 0);           // ❌ Segfault!
+insertionSort(arr, 0);            // ✓ OK (loop não executa)
+insertionSort(singleElement, 1);  // ✓ OK (loop não executa)
+```
+
+**Melhor prática:**
+```c
+void insertionSortSafe(int arr[], int n) {
+    // Validação de entrada
+    if (arr == NULL || n <= 1) {
+        return;  // Nada a fazer
+    }
+    
+    for (int i = 1; i < n; i++) {
+        int key = arr[i];
+        int j = i - 1;
+        while (j >= 0 && arr[j] > key) {
+            arr[j + 1] = arr[j];
+            j--;
+        }
+        arr[j + 1] = key;
+    }
+}
+
+// Testes abrangentes:
+void testEdgeCases() {
+    // Array vazio
+    insertionSortSafe(NULL, 0);
+    
+    // Array de 1 elemento
+    int single[] = {42};
+    insertionSortSafe(single, 1);
+    assert(single[0] == 42);
+    
+    // Array de 2 elementos
+    int two[] = {2, 1};
+    insertionSortSafe(two, 2);
+    assert(two[0] == 1 && two[1] == 2);
+    
+    // Todos iguais
+    int equal[] = {5, 5, 5, 5};
+    insertionSortSafe(equal, 4);
+    
+    // Já ordenado
+    int sorted[] = {1, 2, 3, 4};
+    insertionSortSafe(sorted, 4);
+}
+```
+
+### Erro 4: Overflow em Cálculo de Meio
+
+**Armadilha:**
+```c
+void mergeSort(int arr[], int left, int right) {
+    if (left < right) {
+        int mid = (left + right) / 2;  // ❌ Overflow!
+        // Se left=2,000,000,000 e right=2,100,000,000
+        // left + right = 4,100,000,000 > INT_MAX (overflow)
+        // mid fica negativo!
+    }
+}
+```
+
+**Melhor prática:**
+```c
+void mergeSortSafe(int arr[], int left, int right) {
+    if (left < right) {
+        // Evita overflow
+        int mid = left + (right - left) / 2;  // ✅ Seguro
+        
+        mergeSortSafe(arr, left, mid);
+        mergeSortSafe(arr, mid + 1, right);
+        merge(arr, left, mid, right);
+    }
+}
+```
+
+### Erro 5: Comparação Instável por Engano
+
+**Armadilha:**
+```c
+// Tentativa de tornar Quick Sort estável
+int partition(int arr[], int low, int high) {
+    int pivot = arr[high];
+    int i = low - 1;
+    
+    for (int j = low; j < high; j++) {
+        if (arr[j] <= pivot) {  // ❌ "<=" quebra estabilidade
+            i++;
+            swap(&arr[i], &arr[j]);
+        }
+    }
+    swap(&arr[i + 1], &arr[high]);
+    return i + 1;
+}
+
+// Exemplo:
+// arr = [{3,'a'}, {3,'b'}, {1,'c'}]
+// Após ordenação: [{1,'c'}, {3,'b'}, {3,'a'}]
+// Ordem de 'a' e 'b' foi invertida!
+```
+
+**Melhor prática:**
+```c
+// Para estabilidade, use algoritmo inerentemente estável
+// Merge Sort, Insertion Sort, Bubble Sort
+
+// Ou adicione índice original como critério de desempate
+struct Element {
+    int value;
+    int originalIndex;
+};
+
+int compareStable(const void* a, const void* b) {
+    Element* e1 = (Element*)a;
+    Element* e2 = (Element*)b;
+    
+    if (e1->value != e2->value) {
+        return e1->value - e2->value;
+    }
+    // Desempate: preserva ordem original
+    return e1->originalIndex - e2->originalIndex;
+}
+```
+
+### Erro 6: Vazamento de Memória em Merge Sort
+
+**Armadilha:**
+```c
+void merge(int arr[], int left, int mid, int right) {
+    int n1 = mid - left + 1;
+    int n2 = right - mid;
+    
+    int* L = (int*)malloc(n1 * sizeof(int));  // Aloca
+    int* R = (int*)malloc(n2 * sizeof(int));  // Aloca
+    
+    // ... copia e merge ...
+    
+    // ❌ Esqueceu de liberar!
+    // free(L);
+    // free(R);
+}
+
+// Impacto:
+// Para n=1M: log₂(1M) = ~20 níveis
+// Cada nível aloca O(n) memória
+// Vazamento total: ~20n = 80MB não liberados!
+```
+
+**Melhor prática:**
+```c
+void mergeSafe(int arr[], int left, int mid, int right) {
+    int n1 = mid - left + 1;
+    int n2 = right - mid;
+    
+    int* L = (int*)malloc(n1 * sizeof(int));
+    int* R = (int*)malloc(n2 * sizeof(int));
+    
+    if (L == NULL || R == NULL) {
+        // Trata erro de alocação
+        free(L);  // free(NULL) é seguro
+        free(R);
+        fprintf(stderr, "Erro: memória insuficiente\n");
+        exit(1);
+    }
+    
+    // ... copia e merge ...
+    
+    // ✅ SEMPRE libera
+    free(L);
+    free(R);
+}
+
+// Ou melhor ainda: aloca uma vez e reutiliza
+void mergeSortWithBuffer(int arr[], int temp[], int left, int right) {
+    if (left < right) {
+        int mid = left + (right - left) / 2;
+        mergeSortWithBuffer(arr, temp, left, mid);
+        mergeSortWithBuffer(arr, temp, mid + 1, right);
+        mergeWithBuffer(arr, temp, left, mid, right);
+    }
+}
+
+void sortWrapper(int arr[], int n) {
+    int* temp = (int*)malloc(n * sizeof(int));
+    if (temp == NULL) {
+        fprintf(stderr, "Erro: memória insuficiente\n");
+        exit(1);
+    }
+    
+    mergeSortWithBuffer(arr, temp, 0, n - 1);
+    
+    free(temp);  // Libera uma única vez
+}
+```
+
+### Erro 7: Não Considerar Tipos de Dados Diferentes
+
+**Armadilha:**
+```c
+// Função só funciona com int
+void sort(int arr[], int n) {
+    // ...
+}
+
+// E se eu quiser ordenar doubles? Strings? Structs?
+```
+
+**Melhor prática:**
+```c
+// Usar comparador genérico
+typedef int (*CompareFunc)(const void*, const void*);
+
+void sortGeneric(void* arr, int n, size_t size, CompareFunc cmp) {
+    char* bytes = (char*)arr;
+    
+    for (int i = 1; i < n; i++) {
+        // Copia elemento (genérico)
+        char key[size];
+        memcpy(key, bytes + i * size, size);
+        
+        int j = i - 1;
+        while (j >= 0 && cmp(bytes + j * size, key) > 0) {
+            memcpy(bytes + (j + 1) * size, bytes + j * size, size);
+            j--;
+        }
+        memcpy(bytes + (j + 1) * size, key, size);
+    }
+}
+
+// Comparadores específicos
+int compareInt(const void* a, const void* b) {
+    return (*(int*)a - *(int*)b);
+}
+
+int compareDouble(const void* a, const void* b) {
+    double diff = *(double*)a - *(double*)b;
+    return (diff > 0) - (diff < 0);  // Evita problemas de precisão
+}
+
+int compareString(const void* a, const void* b) {
+    return strcmp(*(char**)a, *(char**)b);
+}
+
+// Uso:
+int nums[] = {3, 1, 4, 1, 5};
+sortGeneric(nums, 5, sizeof(int), compareInt);
+
+double values[] = {3.14, 1.41, 2.71};
+sortGeneric(values, 3, sizeof(double), compareDouble);
+```
+
+### Erro 8: Recursão Sem Limite de Profundidade
+
+**Armadilha:**
+```c
+void quickSort(int arr[], int low, int high) {
+    if (low < high) {
+        int pi = partition(arr, low, high);
+        quickSort(arr, low, pi - 1);      // ❌ Pode estourar stack
+        quickSort(arr, pi + 1, high);
+    }
+}
+
+// Para array ordenado com pivô simples:
+// - n=10,000: 10,000 níveis de recursão
+// - Stack típico: 1-8 MB
+// - Cada frame: ~32 bytes
+// - Necessário: 10,000 × 32 = 320 KB (OK)
+// - n=100,000: 3.2 MB (perigoso!)
+// - n=1,000,000: 32 MB (CRASH!)
+```
+
+**Melhor prática:**
+```c
+// Introsort: detecta recursão profunda e muda algoritmo
+void introsort(int arr[], int low, int high, int maxDepth) {
+    int size = high - low + 1;
+    
+    // Arrays pequenos: Insertion Sort
+    if (size < 16) {
+        insertionSort(arr + low, size);
+        return;
+    }
+    
+    // Recursão muito profunda: Heap Sort
+    if (maxDepth == 0) {
+        heapSort(arr + low, size);
+        return;
+    }
+    
+    // Quick Sort normal
+    int pi = partition(arr, low, high);
+    introsort(arr, low, pi - 1, maxDepth - 1);
+    introsort(arr, pi + 1, high, maxDepth - 1);
+}
+
+void sortSafe(int arr[], int n) {
+    int maxDepth = 2 * log2(n);  // Limite inteligente
+    introsort(arr, 0, n - 1, maxDepth);
+}
+
+// Ou: tail call optimization
+void quickSortIterative(int arr[], int low, int high) {
+    while (low < high) {
+        int pi = partition(arr, low, high);
+        
+        // Recursão na parte menor (garante O(log n) stack)
+        if (pi - low < high - pi) {
+            quickSortIterative(arr, low, pi - 1);
+            low = pi + 1;  // Itera na parte maior
+        } else {
+            quickSortIterative(arr, pi + 1, high);
+            high = pi - 1;
+        }
+    }
+}
+```
+
+### Boas Práticas Gerais
+
+**1. Sempre meça antes de otimizar:**
+```c
+#include <time.h>
+
+double measureSort(void (*sortFunc)(int*, int), int arr[], int n) {
+    clock_t start = clock();
+    sortFunc(arr, n);
+    clock_t end = clock();
+    return (double)(end - start) / CLOCKS_PER_SEC;
+}
+
+// Teste com dados reais
+int data[1000];
+// ... preenche com dados reais do sistema ...
+
+printf("Insertion: %.3f ms\n", measureSort(insertionSort, data, 1000) * 1000);
+printf("Quick:     %.3f ms\n", measureSort(quickSort, data, 1000) * 1000);
+```
+
+**2. Documente complexidade e limitações:**
+```c
+/**
+ * Ordena array de inteiros usando Merge Sort.
+ * 
+ * Complexidade:
+ *   - Tempo: O(n log n) em todos os casos
+ *   - Espaço: O(n) para array auxiliar
+ * 
+ * Características:
+ *   - Estável: Sim
+ *   - In-place: Não
+ *   - Adaptativo: Não
+ * 
+ * Limitações:
+ *   - Requer O(n) memória extra
+ *   - Pode falhar se malloc() falhar
+ * 
+ * @param arr Array a ser ordenado
+ * @param n Número de elementos
+ * @return 0 se sucesso, -1 se erro de memória
+ */
+int mergeSort(int arr[], int n);
+```
+
+**3. Use biblioteca padrão quando possível:**
+```c
+#include <stdlib.h>
+
+// qsort() é otimizado e testado
+int compare(const void* a, const void* b) {
+    return (*(int*)a - *(int*)b);
+}
+
+qsort(arr, n, sizeof(int), compare);
+
+// Só implemente seu próprio quando:
+// - Necessita características específicas (ex: estabilidade)
+// - Tem informações especiais sobre dados
+// - É exercício acadêmico
+```
+
+**4. Teste exaustivamente:**
+```c
+void testSortingAlgorithm(void (*sort)(int*, int)) {
+    // Caso 1: Array vazio
+    sort(NULL, 0);
+    
+    // Caso 2: Um elemento
+    int one[] = {42};
+    sort(one, 1);
+    assert(one[0] == 42);
+    
+    // Caso 3: Já ordenado
+    int sorted[] = {1, 2, 3, 4, 5};
+    sort(sorted, 5);
+    assert(isSorted(sorted, 5));
+    
+    // Caso 4: Ordem reversa
+    int reversed[] = {5, 4, 3, 2, 1};
+    sort(reversed, 5);
+    assert(isSorted(reversed, 5));
+    
+    // Caso 5: Duplicados
+    int dups[] = {3, 1, 4, 1, 5, 9, 2, 6, 5};
+    sort(dups, 9);
+    assert(isSorted(dups, 9));
+    
+    // Caso 6: Todos iguais
+    int equal[] = {7, 7, 7, 7, 7};
+    sort(equal, 5);
+    assert(isSorted(equal, 5));
+    
+    // Caso 7: Grande aleatório
+    int large[10000];
+    fillRandom(large, 10000);
+    sort(large, 10000);
+    assert(isSorted(large, 10000));
+}
+```
+
+**Conclusão**: Escrever algoritmos de ordenação corretos e eficientes requer atenção a detalhes, validação cuidadosa e compreensão profunda dos trade-offs. Sempre teste casos limites, considere as características dos seus dados, e meça performance antes de otimizar.
+
 ### Questão 6: Quando usar Merge Sort ao invés de Quick Sort?
 
 **Pergunta**: Quais são os cenários específicos onde Merge Sort é superior ao Quick Sort, apesar de ser geralmente mais lento?
@@ -2414,24 +2931,488 @@ heapSort(arr, n);    // O(1) memória + O(n log n) garantido
 ## 📋 Exercícios Práticos
 
 ### Nível Básico
-1. Implemente uma versão do Bubble Sort que conte o número de trocas realizadas
-2. Modifique o Selection Sort para encontrar simultaneamente o maior e menor elemento
-3. Crie uma versão do Insertion Sort que ordene em ordem decrescente
+
+**1. Bubble Sort com Contador de Trocas**
+
+Implemente uma versão do Bubble Sort que conte o número de trocas realizadas.
+
+*Objetivo*: Entender a relação entre número de inversões e trocas.
+
+*Dica*: Adicione uma variável contador que incremente a cada swap().
+
+*Solução esperada*:
+```c
+int bubbleSortCount(int arr[], int n) {
+    int swaps = 0;
+    for (int i = 0; i < n - 1; i++) {
+        for (int j = 0; j < n - i - 1; j++) {
+            if (arr[j] > arr[j + 1]) {
+                swap(&arr[j], &arr[j + 1]);
+                swaps++;
+            }
+        }
+    }
+    return swaps;
+}
+
+// Teste: Array reverso de tamanho n tem n(n-1)/2 inversões
+// Para [5,4,3,2,1]: espera 10 trocas
+```
+
+**2. Selection Sort Bidirecional**
+
+Modifique o Selection Sort para encontrar simultaneamente o maior e menor elemento.
+
+*Objetivo*: Reduzir o número de passagens pela metade.
+
+*Dica*: Em cada iteração, encontre tanto o mínimo quanto o máximo e coloque-os nas extremidades.
+
+*Análise*: Isso melhora a constante mas não muda a complexidade O(n²).
+
+**3. Insertion Sort Decrescente**
+
+Crie uma versão do Insertion Sort que ordene em ordem decrescente.
+
+*Objetivo*: Entender a lógica de comparação.
+
+*Dica*: Inverta a condição de comparação de `arr[j] > key` para `arr[j] < key`.
+
+*Teste*: [1,5,3,2,4] deve resultar em [5,4,3,2,1].
 
 ### Nível Intermediário
-4. Implemente uma versão híbrida que use Insertion Sort para subarrays pequenos (< 10 elementos) e Quick Sort para arrays maiores
-5. Desenvolva uma função que determine automaticamente o melhor algoritmo baseado no tamanho e características do array
-6. Crie um Merge Sort iterativo (bottom-up) em vez da versão recursiva
+
+**4. Algoritmo Híbrido (Quick + Insertion)**
+
+Implemente uma versão híbrida que use Insertion Sort para subarrays pequenos (< 10 elementos) e Quick Sort para arrays maiores.
+
+*Objetivo*: Combinar eficiência de Quick Sort com simplicidade de Insertion Sort.
+
+*Conceito*: Quick Sort tem overhead que não compensa para arrays pequenos.
+
+*Implementação*:
+```c
+void hybridSort(int arr[], int low, int high) {
+    if (high - low + 1 < 10) {
+        // Subarray pequeno: Insertion Sort
+        insertionSortRange(arr, low, high);
+    } else if (low < high) {
+        // Subarray grande: Quick Sort
+        int pi = partition(arr, low, high);
+        hybridSort(arr, low, pi - 1);
+        hybridSort(arr, pi + 1, high);
+    }
+}
+```
+
+*Desafio*: Experimente diferentes valores de threshold (5, 10, 20, 50) e meça o impacto na performance.
+
+**5. Seletor Automático de Algoritmo**
+
+Desenvolva uma função que determine automaticamente o melhor algoritmo baseado no tamanho e características do array.
+
+*Objetivo*: Criar uma função de ordenação "inteligente".
+
+*Características a detectar*:
+- Tamanho do array
+- Grau de ordenação (contar inversões aproximadamente)
+- Presença de duplicados
+
+*Estrutura*:
+```c
+void smartSort(int arr[], int n) {
+    // Amostragem para detectar características
+    int sampleSize = min(100, n/10);
+    int inversions = countInversionsSample(arr, n, sampleSize);
+    double disorder = (double)inversions / (sampleSize * (sampleSize-1) / 2);
+    
+    if (n < 50) {
+        insertionSort(arr, n);
+    } else if (disorder < 0.1) {
+        // < 10% desordenado
+        insertionSort(arr, n);
+    } else if (n < 100000) {
+        quickSort(arr, 0, n-1);
+    } else {
+        mergeSort(arr, 0, n-1);
+    }
+}
+```
+
+**6. Merge Sort Iterativo (Bottom-Up)**
+
+Crie um Merge Sort iterativo (bottom-up) em vez da versão recursiva.
+
+*Objetivo*: Eliminar overhead de recursão e stack.
+
+*Conceito*: Comece mesclando pares individuais, depois pares de pares, etc.
+
+*Pseudocódigo*:
+```
+para cada tamanho = 1, 2, 4, 8, ..., n:
+    para cada início = 0, 2*tamanho, 4*tamanho, ...:
+        fim = min(início + 2*tamanho - 1, n-1)
+        meio = início + tamanho - 1
+        merge(arr, início, meio, fim)
+```
+
+*Vantagem*: Sem risco de stack overflow, mais cache-friendly.
 
 ### Nível Avançado
-7. Implemente o algoritmo Introsort (Quick Sort com fallback para Heap Sort)
-8. Desenvolva uma versão paralela do Merge Sort usando threads
-9. Crie um algoritmo de ordenação adaptativo que detecte padrões nos dados
+
+**7. Introsort (Quick Sort + Heap Sort)**
+
+Implemente o algoritmo Introsort (Quick Sort com fallback para Heap Sort).
+
+*Objetivo*: Garantir O(n log n) no pior caso mantendo velocidade média do Quick Sort.
+
+*Estratégia*:
+1. Começa com Quick Sort
+2. Monitora profundidade de recursão
+3. Se exceder 2×log(n), muda para Heap Sort
+
+*Implementação chave*:
+```c
+void introsort(int arr[], int low, int high, int maxDepth) {
+    int n = high - low + 1;
+    
+    if (n <= 16) {
+        insertionSort(arr + low, n);
+        return;
+    }
+    
+    if (maxDepth == 0) {
+        // Atingiu limite: usa Heap Sort
+        heapSort(arr + low, n);
+        return;
+    }
+    
+    int pi = partition(arr, low, high);
+    introsort(arr, low, pi - 1, maxDepth - 1);
+    introsort(arr, pi + 1, high, maxDepth - 1);
+}
+
+void sort(int arr[], int n) {
+    int maxDepth = 2 * log2(n);
+    introsort(arr, 0, n - 1, maxDepth);
+}
+```
+
+*Teste*: Use arrays que causam pior caso no Quick Sort normal (já ordenados) e verifique que mantém performance.
+
+**8. Merge Sort Paralelo**
+
+Desenvolva uma versão paralela do Merge Sort usando threads (pthreads ou OpenMP).
+
+*Objetivo*: Aproveitar múltiplos cores para acelerar ordenação.
+
+*Conceito*: As duas metades podem ser ordenadas independentemente em paralelo.
+
+*Implementação com OpenMP*:
+```c
+void mergeSortParallel(int arr[], int left, int right, int depth) {
+    if (left < right) {
+        int mid = left + (right - left) / 2;
+        
+        // Apenas paraleliza nos primeiros níveis
+        if (depth > 0) {
+            #pragma omp parallel sections
+            {
+                #pragma omp section
+                mergeSortParallel(arr, left, mid, depth - 1);
+                
+                #pragma omp section
+                mergeSortParallel(arr, mid + 1, right, depth - 1);
+            }
+        } else {
+            // Sequencial para subproblemas pequenos
+            mergeSortParallel(arr, left, mid, 0);
+            mergeSortParallel(arr, mid + 1, right, 0);
+        }
+        
+        merge(arr, left, mid, right);
+    }
+}
+
+void sortParallel(int arr[], int n) {
+    int numThreads = omp_get_max_threads();
+    int depth = log2(numThreads);
+    mergeSortParallel(arr, 0, n - 1, depth);
+}
+```
+
+*Desafio*: Meça speedup e eficiência. Para n=1M, quantos cores você precisa para dobrar a velocidade?
+
+**9. Algoritmo de Ordenação Adaptativo**
+
+Crie um algoritmo de ordenação adaptativo que detecte padrões nos dados.
+
+*Objetivo*: Criar um algoritmo que se adapta automaticamente aos dados.
+
+*Padrões a detectar*:
+- Sequências já ordenadas (runs)
+- Padrões cíclicos
+- Distribuição uniforme vs. concentrada
+
+*Base do Tim Sort*:
+```c
+void adaptiveSort(int arr[], int n) {
+    // 1. Encontra runs naturais (sequências ordenadas)
+    Run runs[MAX_RUNS];
+    int numRuns = findRuns(arr, n, runs);
+    
+    // 2. Estende runs curtos com Insertion Sort
+    for (int i = 0; i < numRuns; i++) {
+        if (runs[i].length < MIN_RUN) {
+            insertionSortRun(arr, runs[i]);
+        }
+    }
+    
+    // 3. Merge runs de forma inteligente (merge stack)
+    while (numRuns > 1) {
+        mergeOptimal(runs, &numRuns);
+    }
+}
+
+Run* findRuns(int arr[], int n, Run runs[]) {
+    int numRuns = 0;
+    int i = 0;
+    
+    while (i < n) {
+        int start = i;
+        
+        // Detecta run crescente ou decrescente
+        if (i + 1 < n && arr[i] <= arr[i + 1]) {
+            // Run crescente
+            while (i + 1 < n && arr[i] <= arr[i + 1]) {
+                i++;
+            }
+        } else {
+            // Run decrescente (reverter)
+            while (i + 1 < n && arr[i] > arr[i + 1]) {
+                i++;
+            }
+            reverse(arr, start, i);
+        }
+        
+        runs[numRuns++] = (Run){start, i - start + 1};
+        i++;
+    }
+    
+    return runs;
+}
+```
 
 ### Desafios
-10. Implemente Radix Sort para números negativos
-11. Desenvolva um algoritmo de ordenação externo para arquivos que não cabem na memória
-12. Crie um visualizador em tempo real dos algoritmos de ordenação
+
+**10. Radix Sort para Números Negativos**
+
+Implemente Radix Sort que funcione com números negativos.
+
+*Desafio*: Radix Sort padrão assume números não-negativos.
+
+*Abordagem 1*: Separar positivos e negativos
+```c
+void radixSortSigned(int arr[], int n) {
+    // 1. Particiona: negativos à esquerda, positivos à direita
+    int partition = partitionBySign(arr, n);
+    
+    // 2. Ordena negativos (ordem reversa por magnitude)
+    if (partition > 0) {
+        radixSortNegative(arr, partition);
+    }
+    
+    // 3. Ordena positivos normalmente
+    if (partition < n) {
+        radixSort(arr + partition, n - partition);
+    }
+}
+```
+
+*Abordagem 2*: Offset para tornar todos positivos
+```c
+void radixSortSignedOffset(int arr[], int n) {
+    int min = findMin(arr, n);
+    int offset = -min;  // Tornar todos não-negativos
+    
+    for (int i = 0; i < n; i++) {
+        arr[i] += offset;
+    }
+    
+    radixSort(arr, n);
+    
+    for (int i = 0; i < n; i++) {
+        arr[i] -= offset;
+    }
+}
+```
+
+**11. Ordenação Externa para Arquivos Grandes**
+
+Desenvolva um algoritmo de ordenação externo para arquivos que não cabem na memória.
+
+*Cenário*: Ordenar arquivo de 100 GB com apenas 1 GB de RAM.
+
+*Algoritmo (External Merge Sort)*:
+```c
+void externalSort(const char* inputFile, const char* outputFile, 
+                  size_t availableMemory) {
+    // Fase 1: Criar runs ordenados
+    size_t runSize = availableMemory / sizeof(int);
+    int numRuns = createSortedRuns(inputFile, "temp_run_", runSize);
+    
+    // Fase 2: K-way merge
+    int k = availableMemory / (runSize * sizeof(int));
+    kWayMerge("temp_run_", numRuns, outputFile, k);
+}
+
+int createSortedRuns(const char* inputFile, const char* runPrefix, 
+                     size_t runSize) {
+    FILE* input = fopen(inputFile, "rb");
+    int* buffer = malloc(runSize * sizeof(int));
+    int runNumber = 0;
+    
+    size_t read;
+    while ((read = fread(buffer, sizeof(int), runSize, input)) > 0) {
+        // Ordena run na memória (Quick Sort)
+        qsort(buffer, read, sizeof(int), compareInt);
+        
+        // Escreve run em arquivo temporário
+        char filename[256];
+        sprintf(filename, "%s%d.dat", runPrefix, runNumber++);
+        FILE* output = fopen(filename, "wb");
+        fwrite(buffer, sizeof(int), read, output);
+        fclose(output);
+    }
+    
+    free(buffer);
+    fclose(input);
+    return runNumber;
+}
+
+void kWayMerge(const char* runPrefix, int numRuns, 
+               const char* output, int k) {
+    // Abre k runs simultaneamente
+    FILE* runs[k];
+    int* buffers[k];
+    MinHeap heap = createHeap(k);
+    
+    // Inicializa heap com primeiro elemento de cada run
+    for (int i = 0; i < k && i < numRuns; i++) {
+        char filename[256];
+        sprintf(filename, "%s%d.dat", runPrefix, i);
+        runs[i] = fopen(filename, "rb");
+        buffers[i] = malloc(BUFFER_SIZE * sizeof(int));
+        
+        int value;
+        if (fread(&value, sizeof(int), 1, runs[i]) == 1) {
+            heapInsert(&heap, (HeapNode){value, i});
+        }
+    }
+    
+    // Merge usando heap
+    FILE* out = fopen(output, "wb");
+    while (!heapEmpty(&heap)) {
+        HeapNode min = heapExtractMin(&heap);
+        fwrite(&min.value, sizeof(int), 1, out);
+        
+        // Lê próximo do mesmo run
+        int value;
+        if (fread(&value, sizeof(int), 1, runs[min.runId]) == 1) {
+            heapInsert(&heap, (HeapNode){value, min.runId});
+        }
+    }
+    
+    // Cleanup
+    for (int i = 0; i < k; i++) {
+        if (runs[i]) {
+            fclose(runs[i]);
+            free(buffers[i]);
+        }
+    }
+    fclose(out);
+}
+```
+
+*Testes*:
+- Arquivo de 10 GB com 512 MB RAM
+- Verificar resultado final está ordenado
+- Medir tempo e I/O operations
+
+**12. Visualizador em Tempo Real**
+
+Crie um visualizador em tempo real dos algoritmos de ordenação.
+
+*Tecnologias*: SDL2, ncurses, ou terminal ANSI colors
+
+*Funcionalidades*:
+1. Visualização gráfica (barras)
+2. Destacar elementos sendo comparados
+3. Destacar elementos sendo trocados
+4. Contador de comparações e trocas
+5. Velocidade ajustável
+6. Múltiplos algoritmos lado a lado
+
+*Exemplo com ANSI colors no terminal*:
+```c
+void visualizeSort(int arr[], int n, int highlight1, int highlight2) {
+    printf("\033[2J\033[H");  // Limpa tela e volta ao início
+    
+    for (int i = 0; i < n; i++) {
+        if (i == highlight1 || i == highlight2) {
+            printf("\033[1;31m");  // Vermelho (comparando)
+        } else {
+            printf("\033[0m");     // Normal
+        }
+        
+        // Desenha barra proporcional ao valor
+        for (int j = 0; j < arr[i]; j++) {
+            printf("█");
+        }
+        printf(" %d\n", arr[i]);
+    }
+    
+    printf("\033[0m");  // Reset cores
+    usleep(50000);  // Delay 50ms
+}
+
+void bubbleSortVisualized(int arr[], int n) {
+    for (int i = 0; i < n - 1; i++) {
+        for (int j = 0; j < n - i - 1; j++) {
+            visualizeSort(arr, n, j, j + 1);
+            
+            if (arr[j] > arr[j + 1]) {
+                swap(&arr[j], &arr[j + 1]);
+            }
+        }
+    }
+}
+```
+
+*Desafio avançado*: Implementar com GUI usando SDL2 para animações suaves.
+
+### Sugestões de Projetos Completos
+
+1. **Biblioteca de Ordenação Completa**
+   - Todos os algoritmos em uma biblioteca
+   - API consistente
+   - Documentação completa
+   - Testes unitários
+
+2. **Benchmark Suite**
+   - Testa todos algoritmos
+   - Diversos tipos de entrada
+   - Gera gráficos de performance
+   - Exporta relatórios CSV/JSON
+
+3. **Algoritmo Adaptativo Inteligente**
+   - Machine learning para escolher algoritmo
+   - Aprende com padrões históricos
+   - Auto-tuning de parâmetros
+
+4. **Ordenação Distribuída**
+   - Ordena dados em múltiplas máquinas
+   - MapReduce style
+   - Fault-tolerant
 
 ## 🔧 Próximas Implementações
 
