@@ -252,7 +252,7 @@ int main() {
     printf("=================================================\n");
     
     // Tamanhos de array para teste
-    int tamanhos[] = {100, 500, 1000};
+    int tamanhos[] = {10000, 50000, 100000};
     int numTamanhos = sizeof(tamanhos) / sizeof(tamanhos[0]);
     
     for (int i = 0; i < numTamanhos; i++) {

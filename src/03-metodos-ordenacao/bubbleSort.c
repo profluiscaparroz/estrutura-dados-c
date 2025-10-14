@@ -30,7 +30,8 @@ void imprimirArray(int arr[], int n) {
 /**
 * Algoritmo Bubble Sort
 *
-* Esta função implementa o algoritmo Bubble Sort, que é uma técnica de ordenação simples que percorre a lista repetidamente, compara os elementos adjacentes e os troca se estiverem na ordem errada.
+* Esta função implementa o algoritmo Bubble Sort, que é uma técnica de ordenação simples que percorre a lista repetidamente, 
+* compara os elementos adjacentes e os troca se estiverem na ordem errada.
 * O processo é repetido até que a lista seja ordenada.
 *
 * Características:
