@@ -1,0 +1,9 @@
+# Compiled binaries
+countingSort
+radixSort
+bucketSort
+*.o
+*.exe
+
+# Temporary files
+*.tmp
