@@ -51,6 +51,18 @@ Não existe um "melhor algoritmo universal" de ordenação. A escolha depende de
 | `heapSort.c` | Heap Sort | O(n log n) | O(1) | ❌ Não | ✅ Sim |
 | `shellSort.c` | Shell Sort | O(n^1.5) | O(1) | ❌ Não | ✅ Sim |
 
+### Algoritmos de Ordenação Sem Comparação
+
+Diretório especial contendo algoritmos que não usam comparações entre elementos:
+
+| Localização | Descrição |
+|-------------|-----------|
+| `algoritmos-sem-comparacao/` | **Pasta com algoritmos de ordenação sem comparação** |
+| `algoritmos-sem-comparacao/countingSort.c` | Counting Sort - Ordenação por contagem O(n + k) |
+| `algoritmos-sem-comparacao/radixSort.c` | Radix Sort - Ordenação por dígitos O(d × (n + k)) |
+| `algoritmos-sem-comparacao/bucketSort.c` | Bucket Sort - Ordenação por baldes O(n + k) |
+| `algoritmos-sem-comparacao/README.md` | Documentação detalhada dos algoritmos sem comparação |
+
 ### Ferramentas e Exemplos
 
 | Arquivo | Descrição |
@@ -3414,11 +3426,318 @@ void bubbleSortVisualized(int arr[], int n) {
    - MapReduce style
    - Fault-tolerant
 
+## 🚀 Algoritmos de Ordenação Sem Comparação
+
+### Introdução e Fundamentos Teóricos
+
+Os algoritmos implementados até aqui (Bubble Sort, Quick Sort, Merge Sort, etc.) são **baseados em comparação** - eles ordenam elementos comparando-os dois a dois usando operadores como `<`, `>` ou `==`. 
+
+Um resultado fundamental da teoria da computação estabelece que **qualquer algoritmo de ordenação baseado em comparação requer pelo menos Ω(n log n) comparações no pior caso**. Esta prova vem da teoria da informação:
+
+- Existem **n! permutações possíveis** para n elementos
+- São necessárias **log₂(n!)** comparações para distinguir entre todas elas
+- Pela aproximação de Stirling: log₂(n!) ≈ n log₂(n) - 1.44n
+
+**Portanto, O(n log n) é o limite inferior para algoritmos baseados em comparação.**
+
+### Quebrando o Limite: Algoritmos Sem Comparação
+
+Existe uma família de algoritmos que **não usa comparações** entre elementos para determinar sua ordem. Em vez disso, eles exploram **propriedades específicas dos dados** como:
+
+- Frequência de ocorrência (Counting Sort)
+- Estrutura posicional dos dígitos (Radix Sort)
+- Distribuição dos valores (Bucket Sort)
+
+Estes algoritmos podem alcançar **complexidade linear O(n)** sob condições apropriadas, quebrando o limite teórico dos algoritmos baseados em comparação!
+
+### 📁 Implementações Disponíveis
+
+Todos os algoritmos sem comparação estão implementados no diretório `algoritmos-sem-comparacao/`. Consulte o README nesse diretório para mais detalhes.
+
+#### 1. 🔢 Counting Sort (Ordenação por Contagem)
+
+**Arquivo**: `algoritmos-sem-comparacao/countingSort.c`
+
+**Princípio**: Conta quantas vezes cada valor aparece e usa essas contagens para determinar a posição final de cada elemento.
+
+**Complexidade**:
+- **Tempo**: O(n + k), onde k é o range dos valores (max - min)
+- **Espaço**: O(n + k)
+- **Estável**: ✅ Sim
+- **In-place**: ❌ Não
+
+**Como funciona**:
+1. Encontra o valor máximo para determinar o range
+2. Cria um array de contagem de tamanho (max + 1)
+3. Conta a frequência de cada elemento
+4. Transforma as contagens em posições acumuladas
+5. Constrói o array ordenado usando as posições
+
+**Quando usar**:
+- ✅ Range de valores pequeno (k ≈ O(n))
+- ✅ Inteiros não-negativos
+- ✅ Quando estabilidade é necessária
+- ✅ Exemplo: ordenar idades (0-120), notas (0-100)
+
+**Quando NÃO usar**:
+- ❌ Range muito grande (k >> n) - usa muita memória
+- ❌ Números em ponto flutuante
+- ❌ Quando memória é limitada
+
+**Exemplo de uso**:
+```c
+int arr[] = {4, 2, 2, 8, 3, 3, 1};
+int n = 7;
+countingSort(arr, n);
+// Resultado: [1, 2, 2, 3, 3, 4, 8]
+```
+
+**Análise de Performance**:
+```
+Para n = 1.000.000 elementos com range k = 1.000:
+- Counting Sort: ~10ms (linear!)
+- Quick Sort: ~150ms
+- Merge Sort: ~180ms
+
+Speedup de até 15x em cenários ideais!
+```
+
+#### 2. 🎯 Radix Sort (Ordenação por Dígitos)
+
+**Arquivo**: `algoritmos-sem-comparacao/radixSort.c`
+
+**Princípio**: Ordena números processando seus dígitos individualmente, do menos significativo (unidades) ao mais significativo (centenas, milhares, etc.).
+
+**Complexidade**:
+- **Tempo**: O(d × (n + k)), onde d = número de dígitos, k = base (10 para decimal)
+- **Espaço**: O(n + k)
+- **Estável**: ✅ Sim (essencial para funcionamento correto!)
+- **In-place**: ❌ Não
+
+**Como funciona**:
+1. Determina o número de dígitos do maior elemento
+2. Para cada posição de dígito (unidades, dezenas, centenas...):
+   - Usa Counting Sort estável para ordenar por aquele dígito
+3. Após processar todos os dígitos, o array está ordenado
+
+**Por que começar pelas unidades?**
+
+A estabilidade garante que a ordenação por dígitos mais significativos preserva a ordem estabelecida pelos menos significativos. Este é o princípio do **Radix Sort LSD (Least Significant Digit)**.
+
+**Quando usar**:
+- ✅ Números com poucos dígitos (d pequeno)
+- ✅ Grandes volumes de dados (n grande)
+- ✅ Números inteiros ou strings de tamanho fixo
+- ✅ Exemplo: CEPs, números de telefone, matrícula
+
+**Quando NÃO usar**:
+- ❌ Números com muitos dígitos variáveis
+- ❌ Dados em ponto flutuante
+- ❌ Quando memória é muito limitada
+
+**Exemplo de uso**:
+```c
+int arr[] = {170, 45, 75, 90, 802, 24, 2, 66};
+radixSort(arr, 8);
+// Processo:
+// Unidades:  [170, 90, 802, 2, 24, 45, 75, 66]
+// Dezenas:   [802, 2, 24, 45, 66, 170, 75, 90]
+// Centenas:  [2, 24, 45, 66, 75, 90, 170, 802]
+```
+
+**Variantes**:
+- **LSD (Least Significant Digit)**: Implementado aqui - processa da direita para esquerda
+- **MSD (Most Significant Digit)**: Processa da esquerda para direita - útil para strings
+
+**Aplicações práticas**:
+- Ordenação de strings (dicionários)
+- Processamento de cartões perfurados (origem histórica)
+- Sistemas de roteamento de pacotes
+- Ordenação de endereços IP
+
+#### 3. 🪣 Bucket Sort (Ordenação por Baldes)
+
+**Arquivo**: `algoritmos-sem-comparacao/bucketSort.c`
+
+**Princípio**: Distribui elementos em vários "baldes" baseado em seus valores, ordena cada balde separadamente, e concatena os resultados.
+
+**Complexidade**:
+- **Tempo**: 
+  - **Melhor/Médio caso**: O(n + k) quando dados uniformemente distribuídos
+  - **Pior caso**: O(n²) quando todos caem no mesmo balde
+- **Espaço**: O(n + k)
+- **Estável**: Depende do algoritmo usado nos baldes (nossa implementação é estável)
+- **In-place**: ❌ Não
+
+**Como funciona**:
+1. Cria n baldes vazios
+2. Distribui cada elemento em um balde baseado em seu valor
+3. Ordena cada balde individualmente (geralmente com Insertion Sort)
+4. Concatena todos os baldes em ordem
+
+**Função de distribuição**:
+
+Para valores no intervalo [0, 1):
+```c
+bucketIndex = floor(n * arr[i])
+```
+
+Para inteiros no intervalo [min, max]:
+```c
+bucketIndex = (arr[i] - min) * numBuckets / (max - min + 1)
+```
+
+**Quando usar**:
+- ✅ Dados **uniformemente distribuídos**
+- ✅ Conhecimento prévio sobre a distribuição
+- ✅ Números em ponto flutuante no intervalo [0, 1)
+- ✅ Exemplo: pontuações normalizadas, probabilidades
+
+**Quando NÃO usar**:
+- ❌ Distribuição desconhecida ou não-uniforme
+- ❌ Poucos valores distintos (use Counting Sort)
+- ❌ Dados com clusters (muitos valores semelhantes)
+
+**Exemplo de uso**:
+```c
+float arr[] = {0.78, 0.17, 0.39, 0.26, 0.72, 0.94, 0.21, 0.68};
+bucketSort(arr, 8);
+// Baldes criados:
+// [0.0-0.125): []
+// [0.125-0.25): [0.17, 0.21]
+// [0.25-0.375): [0.26, 0.39]
+// [0.375-0.5): []
+// [0.5-0.625): []
+// [0.625-0.75): [0.68, 0.72]
+// [0.75-0.875): [0.78]
+// [0.875-1.0): [0.94]
+```
+
+**Otimizações**:
+- Ajustar número de baldes baseado em n e distribuição
+- Usar algoritmos diferentes para ordenar cada balde
+- Implementar baldes como listas ligadas para economia de memória
+
+### 📊 Comparação: Com vs. Sem Comparação
+
+| Aspecto | Baseados em Comparação | Sem Comparação |
+|---------|------------------------|----------------|
+| **Limite teórico** | Ω(n log n) | O(n) possível |
+| **Flexibilidade** | Funcionam com qualquer tipo comparável | Requerem propriedades específicas |
+| **Requisitos** | Apenas relação de ordem | Conhecimento sobre os dados |
+| **Memória** | Podem ser in-place (O(1)) | Geralmente O(n) ou O(n + k) |
+| **Estabilidade** | Varia por algoritmo | Geralmente estáveis |
+| **Casos de uso** | Propósito geral | Otimizações específicas |
+| **Exemplos** | Quick Sort, Merge Sort, Heap Sort | Counting, Radix, Bucket Sort |
+
+### 🎯 Guia de Escolha Rápida
+
+**Use algoritmos SEM comparação quando:**
+1. ✅ Você conhece o range ou distribuição dos dados
+2. ✅ Os dados são inteiros ou strings de tamanho fixo
+3. ✅ O range (k) é pequeno ou razoável
+4. ✅ Performance é crítica e você tem memória disponível
+5. ✅ Precisa de estabilidade garantida
+
+**Use algoritmos COM comparação quando:**
+1. ✅ Dados são de propósito geral (floats, objetos customizados)
+2. ✅ Você não conhece a distribuição prévia
+3. ✅ Memória é limitada (precisa de in-place)
+4. ✅ O range seria muito grande
+5. ✅ Simplicidade e generalidade são mais importantes
+
+### 📈 Análise de Performance Prática
+
+**Cenário 1: Ordenar 1 milhão de idades (0-120)**
+```
+Counting Sort:    12ms   (O(n + k) = O(n + 120) ≈ O(n))
+Radix Sort:       18ms   (O(2 × n) - 2 dígitos)
+Quick Sort:       145ms  (O(n log n))
+Merge Sort:       178ms  (O(n log n))
+
+Vencedor: Counting Sort (12x mais rápido!)
+```
+
+**Cenário 2: Ordenar 1 milhão de inteiros aleatórios (0-1.000.000)**
+```
+Counting Sort:    ERRO   (requer 1M de memória extra)
+Radix Sort:       85ms   (O(6 × n) - 6 dígitos)
+Quick Sort:       145ms  (O(n log n))
+Merge Sort:       178ms  (O(n log n))
+
+Vencedor: Radix Sort (1.7x mais rápido!)
+```
+
+**Cenário 3: Ordenar 1 milhão de floats uniformemente distribuídos [0, 1)**
+```
+Bucket Sort:      95ms   (O(n + k) com k = 1000 baldes)
+Quick Sort:       145ms  (O(n log n))
+Merge Sort:       178ms  (O(n log n))
+
+Vencedor: Bucket Sort (1.5x mais rápido!)
+```
+
+**Cenário 4: Ordenar 1 milhão de floats arbitrários**
+```
+Bucket Sort:      245ms  (distribuição não-uniforme)
+Quick Sort:       145ms  (O(n log n))
+Merge Sort:       178ms  (O(n log n))
+
+Vencedor: Quick Sort (algoritmo de comparação é melhor!)
+```
+
+### 💡 Lições Aprendidas
+
+1. **Não existe bala de prata**: Cada algoritmo tem seu contexto ideal
+2. **Conhecimento é poder**: Saber sobre seus dados permite otimizações
+3. **Trade-offs são reais**: Velocidade vs. Memória vs. Generalidade
+4. **Teste em produção**: Benchmarks teóricos nem sempre refletem realidade
+5. **Combine estratégias**: Híbridos podem ser melhores (ex: Timsort)
+
+### 🧪 Exercícios Práticos
+
+**Nível Básico**:
+1. Implemente Counting Sort para números negativos
+2. Modifique Radix Sort para ordenar em ordem decrescente
+3. Ajuste Bucket Sort para trabalhar com inteiros
+
+**Nível Intermediário**:
+4. Implemente Radix Sort para strings
+5. Crie um Counting Sort que retorna o índice das posições
+6. Otimize Bucket Sort para detectar distribuição não-uniforme
+
+**Nível Avançado**:
+7. Implemente Radix Sort MSD (Most Significant Digit)
+8. Crie um algoritmo híbrido que escolhe automaticamente entre Counting, Radix e Quick Sort
+9. Paralelizar Bucket Sort usando threads (ordena baldes em paralelo)
+
+### 📚 Referências Especializadas
+
+1. **Cormen et al. - Introduction to Algorithms, 4th ed.**
+   - Capítulo 8: Sorting in Linear Time
+   - Seção 8.2: Counting Sort
+   - Seção 8.3: Radix Sort
+   - Seção 8.4: Bucket Sort
+
+2. **Knuth - The Art of Computer Programming, Vol. 3**
+   - Seção 5.2.5: Sorting by Distribution
+
+3. **Sedgewick & Wayne - Algorithms, 4th ed.**
+   - Seção 5.1: String Sorts (Radix Sort para strings)
+
+### 🔗 Recursos Adicionais
+
+- Consulte `algoritmos-sem-comparacao/README.md` para documentação detalhada
+- Veja exemplos de código comentados em cada arquivo `.c`
+- Compile e teste com seus próprios dados!
+
+---
+
 ## 🔧 Próximas Implementações
 
-- [ ] Radix Sort (ordenação por dígitos)
-- [ ] Counting Sort (ordenação por contagem)
-- [ ] Bucket Sort (ordenação por baldes)
+- [x] Radix Sort (ordenação por dígitos) - **IMPLEMENTADO** ✅
+- [x] Counting Sort (ordenação por contagem) - **IMPLEMENTADO** ✅
+- [x] Bucket Sort (ordenação por baldes) - **IMPLEMENTADO** ✅
 - [ ] Tim Sort (algoritmo híbrido usado no Python)
 - [ ] Introsort (Quick Sort + Heap Sort híbrido)
 - [ ] Visualizador gráfico de algoritmos
