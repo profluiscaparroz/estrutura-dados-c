@@ -284,7 +284,7 @@ int main() {
     printf("=== COMPARAÇÃO COMPLETA DE ALGORITMOS DE BUSCA ===\n");
     
     // Configuração do teste
-    const int TAMANHO = 10000;
+    const int TAMANHO = 1000000;
     const int INICIO = 10;
     const int INCREMENTO = 5;
     int* array = gerarArrayOrdenado(TAMANHO, INICIO, INCREMENTO);
