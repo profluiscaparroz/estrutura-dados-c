@@ -231,7 +231,7 @@ void inicializarMenu() {
     
     // Item 4
     menu[3].codigo = 104;
-    strcpy(menu[3].nome, "Salmao Grelhado");
+    strcpy(menu[3].nome, "Salmão Grelhado");
     strcpy(menu[3].categoria, "prato");
     menu[3].preco = 52.00;
     menu[3].tempoPreparo = 20;
