@@ -217,7 +217,7 @@ void inicializarMenu() {
     
     // Item 2
     menu[1].codigo = 102;
-    strcpy(menu[1].nome, "Bife a Parmegiana");
+    strcpy(menu[1].nome, "Bife à Parmegiana");
     strcpy(menu[1].categoria, "prato");
     menu[1].preco = 38.50;
     menu[1].tempoPreparo = 25;
