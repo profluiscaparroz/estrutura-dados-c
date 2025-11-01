@@ -62,3 +62,5 @@ src/*/aplicacoesPraticas
 src/*/errosComuns
 src/*/*/exemploSimples
 src/*/*/exemploAvancado*
+src/*/*/exemploErros*
+src/*/*/exemplo[A-Z]*
