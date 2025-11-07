@@ -4,6 +4,94 @@
 
 Este módulo demonstra como usar **SQLite**, um banco de dados SQL leve e embarcado, em programas C. SQLite é ideal para aplicações que precisam armazenar dados estruturados de forma persistente sem a complexidade de um servidor de banco de dados completo.
 
+---
+
+## 📂 Índice de Exemplos
+
+Este módulo contém exemplos progressivos que ensinam SQLite do básico ao avançado:
+
+### Exemplos Básicos (CRUD)
+
+1. **[01_create_table](./01_create_table.md)** - Criando tabelas
+   - Como criar tabelas com constraints
+   - PRIMARY KEY, NOT NULL, UNIQUE, CHECK, DEFAULT
+   - Tipos de dados em SQLite
+
+2. **[02_insert](./02_insert.md)** - Inserindo dados
+   - INSERT INTO com Prepared Statements
+   - Segurança contra SQL Injection
+   - Transações para inserções em lote
+
+3. **[03_select](./03_select.md)** - Consultando dados
+   - SELECT com WHERE, ORDER BY, LIMIT
+   - Funções de agregação (COUNT, SUM, AVG, MIN, MAX)
+   - Busca por padrão com LIKE
+
+4. **[04_update](./04_update.md)** - Atualizando dados
+   - UPDATE com WHERE
+   - Atualizar múltiplos campos
+   - UPDATE com cálculos
+
+5. **[05_delete](./05_delete.md)** - Deletando dados
+   - DELETE com confirmação
+   - Soft delete (desativação)
+   - Boas práticas de segurança
+
+### Exemplos Avançados
+
+6. **[06_joins](./06_joins.md)** - Relacionando tabelas
+   - INNER JOIN e LEFT JOIN
+   - Foreign Keys
+   - Múltiplos JOINs
+   - Consultas complexas
+
+7. **[07_transacoes](./07_transacoes.md)** - Transações
+   - BEGIN, COMMIT, ROLLBACK
+   - Atomicidade (tudo ou nada)
+   - Performance 10-100x melhor
+   - Savepoints
+
+8. **[biblioteca_completa.c](./biblioteca_completa.c)** - Sistema Completo
+   - Aplicação completa de gerenciamento de biblioteca
+   - Interface interativa
+   - Todas as operações CRUD
+   - Relatórios e estatísticas
+
+---
+
+## 🚀 Início Rápido
+
+### Compilar todos os exemplos
+
+```bash
+make
+```
+
+### Executar um exemplo específico
+
+```bash
+./01_create_table
+./02_insert
+./03_select
+# etc...
+```
+
+### Limpar arquivos compilados
+
+```bash
+make clean        # Remove executáveis
+make cleandb      # Remove bancos de dados
+make cleanall     # Remove tudo
+```
+
+### Obter ajuda
+
+```bash
+make help
+```
+
+---
+
 ### 🎯 Objetivos Didáticos
 
 - Compreender os fundamentos de bancos de dados relacionais
