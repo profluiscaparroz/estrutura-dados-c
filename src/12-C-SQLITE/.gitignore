@@ -1,0 +1,4 @@
+# Ignorar binário compilado
+biblioteca
+# Ignorar banco de dados (cada usuário deve criar o seu)
+*.db
