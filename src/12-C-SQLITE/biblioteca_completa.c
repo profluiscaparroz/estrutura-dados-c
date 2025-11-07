@@ -49,7 +49,6 @@
 #define MAX_TITULO 100
 #define MAX_AUTOR 80
 #define MAX_EDITORA 80
-#define MAX_SQL 512
 
 // ============================================================================
 // ESTRUTURAS DE DADOS
@@ -178,8 +177,9 @@ void adicionar_livro(sqlite3 *db) {
     printf("\n=== ADICIONAR NOVO LIVRO ===\n\n");
     
     // Coletar dados do usuário
-    printf("Título: ");
+    // Nota: limpar_buffer() é necessário aqui porque scanf() no menu deixa '\n' no buffer
     limpar_buffer();
+    printf("Título: ");
     fgets(livro.titulo, MAX_TITULO, stdin);
     livro.titulo[strcspn(livro.titulo, "\n")] = 0;  // Remove '\n'
     
