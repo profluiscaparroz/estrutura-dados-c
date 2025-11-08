@@ -1,4 +1,12 @@
-# Ignorar binário compilado
+# Ignorar binários compilados
 biblioteca
-# Ignorar banco de dados (cada usuário deve criar o seu)
+01_create_table
+02_insert
+03_select
+04_update
+05_delete
+06_joins
+07_transacoes
+
+# Ignorar bancos de dados (cada usuário deve criar o seu)
 *.db
