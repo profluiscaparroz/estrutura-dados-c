@@ -64,3 +64,15 @@ src/*/*/exemploSimples
 src/*/*/exemploAvancado*
 src/*/*/exemploErros*
 src/*/*/exemplo[A-Z]*
+
+# Algorithm implementations (compiled executables)
+src/algoritmos-avancados/*/skip_list
+src/algoritmos-avancados/*/segment_tree
+src/algoritmos-avancados/*/fenwick_tree
+src/algoritmos-avancados/*/union_find
+src/algoritmos-avancados/*/kd_tree
+src/algoritmos-avancados/*/b_tree
+src/algoritmos-avancados/*/consistent_hashing
+src/algoritmos-avancados/*/trie
+src/algoritmos-avancados/*/bloom_filter
+src/algoritmos-avancados/*/consistent
