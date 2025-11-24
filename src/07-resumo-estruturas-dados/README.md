@@ -759,11 +759,11 @@ Para n = 1.000.000 de elementos:
 - [Listas Encadeadas](../06-lista-encadeada/README.md)
 
 ### Livros Recomendados
-1. **Cormen et al. (2022)** - *Introduction to Algorithms* (CLRS), 4th Edition
-2. **Knuth (1997-2022)** - *The Art of Computer Programming*, Volumes 1-4B
+1. **Cormen et al. (2022)** - *Introduction to Algorithms*, 4th Edition (CLRS)
+2. **Knuth (1997-presente)** - *The Art of Computer Programming*, Volumes 1-4B (série em publicação)
 3. **Sedgewick & Wayne (2011)** - *Algorithms*, 4th Edition
 
-*Nota: As datas referem-se às edições usadas como referência principal para este material.*
+*Nota: As datas referem-se às edições usadas como referência principal para este material educacional.*
 
 ### Ferramentas de Visualização
 - [VisuAlgo](https://visualgo.net/) - Visualização interativa de algoritmos
