@@ -64,6 +64,7 @@ src/*/*/exemploSimples
 src/*/*/exemploAvancado*
 src/*/*/exemploErros*
 src/*/*/exemplo[A-Z]*
+src/*/exemplo-completo
 
 # Algorithm implementations (compiled executables)
 src/algoritmos-avancados/*/skip_list
