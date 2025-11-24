@@ -466,7 +466,8 @@ void demonstrar_lista_encadeada() {
 void demonstrar_comparacao_performance() {
     printf("\n=== COMPARAÇÃO DE PERFORMANCE ===\n");
     
-    int n = 10000;
+    int n = 100000;
+    int iterations = 1000;  // Múltiplas iterações para medição precisa
     
     // Criar array ordenado
     int* arr = (int*)malloc(n * sizeof(int));
@@ -474,24 +475,31 @@ void demonstrar_comparacao_performance() {
         arr[i] = i * 2;  // 0, 2, 4, 6, ...
     }
     
-    int buscar_elemento = 9998;  // Quase no final
+    int buscar_elemento = n - 2;  // Quase no final
     
-    // Busca Linear
+    // Busca Linear - Múltiplas iterações
     clock_t inicio = clock();
-    buscaLinear(arr, n, buscar_elemento);
+    for (int i = 0; i < iterations; i++) {
+        buscaLinear(arr, n, buscar_elemento);
+    }
     clock_t fim = clock();
-    double tempo_linear = ((double)(fim - inicio)) / CLOCKS_PER_SEC * 1000000;
+    double tempo_linear = ((double)(fim - inicio)) / CLOCKS_PER_SEC * 1000000 / iterations;
     
-    // Busca Binária
+    // Busca Binária - Múltiplas iterações
     inicio = clock();
-    buscaBinaria(arr, n, buscar_elemento);
+    for (int i = 0; i < iterations; i++) {
+        buscaBinaria(arr, n, buscar_elemento);
+    }
     fim = clock();
-    double tempo_binaria = ((double)(fim - inicio)) / CLOCKS_PER_SEC * 1000000;
+    double tempo_binaria = ((double)(fim - inicio)) / CLOCKS_PER_SEC * 1000000 / iterations;
     
-    printf("\nBusca em array de %d elementos (elemento no final):\n", n);
-    printf("Busca Linear:  %.2f µs\n", tempo_linear);
-    printf("Busca Binária: %.2f µs\n", tempo_binaria);
-    printf("Speedup: %.1fx mais rápida!\n", tempo_linear / tempo_binaria);
+    printf("\nBusca em array de %d elementos (média de %d execuções):\n", n, iterations);
+    printf("Elemento buscado (próximo ao final): %d\n", buscar_elemento);
+    printf("\nBusca Linear:  %.3f µs\n", tempo_linear);
+    printf("Busca Binária: %.3f µs\n", tempo_binaria);
+    if (tempo_binaria > 0) {
+        printf("Speedup: %.1fx mais rápida!\n", tempo_linear / tempo_binaria);
+    }
     
     free(arr);
 }

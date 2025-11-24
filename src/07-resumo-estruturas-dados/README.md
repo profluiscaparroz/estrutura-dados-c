@@ -710,7 +710,7 @@ Para n = 1.000.000 de elementos:
 | O(n) | 1.000.000 | 1 ms |
 | O(n log n) | 20.000.000 | 20 ms |
 | O(n²) | 1.000.000.000.000 | 16 minutos |
-| O(2ⁿ) | 2^1000000 | Idade do universo × 10^300000 |
+| O(2ⁿ) | Para n=40: 1.099.511.627.776 | ~18 minutos |
 
 \* Assumindo 1 operação = 1 nanosegundo
 
@@ -757,9 +757,11 @@ Para n = 1.000.000 de elementos:
 - [Listas Encadeadas](../06-lista-encadeada/README.md)
 
 ### Livros Recomendados
-1. **Cormen et al. (2009)** - *Introduction to Algorithms* (CLRS)
-2. **Knuth (1997)** - *The Art of Computer Programming*
-3. **Sedgewick & Wayne (2011)** - *Algorithms*
+1. **Cormen et al. (2022)** - *Introduction to Algorithms* (CLRS), 4th Edition
+2. **Knuth (1997-2022)** - *The Art of Computer Programming*, Volumes 1-4B
+3. **Sedgewick & Wayne (2011)** - *Algorithms*, 4th Edition
+
+*Nota: As datas referem-se às edições usadas como referência principal para este material.*
 
 ### Ferramentas de Visualização
 - [VisuAlgo](https://visualgo.net/) - Visualização interativa de algoritmos
