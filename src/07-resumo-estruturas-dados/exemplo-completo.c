@@ -478,26 +478,26 @@ void demonstrar_comparacao_performance() {
     int buscar_elemento = n - 2;  // Quase no final
     
     // Busca Linear - Múltiplas iterações
-    clock_t inicio = clock();
+    clock_t inicio_linear = clock();
     for (int i = 0; i < iterations; i++) {
         buscaLinear(arr, n, buscar_elemento);
     }
-    clock_t fim = clock();
-    double tempo_linear = ((double)(fim - inicio)) / CLOCKS_PER_SEC * 1000000 / iterations;
+    clock_t fim_linear = clock();
+    double tempo_linear = ((double)(fim_linear - inicio_linear)) / CLOCKS_PER_SEC * 1000000 / iterations;
     
     // Busca Binária - Múltiplas iterações
-    inicio = clock();
+    clock_t inicio_binaria = clock();
     for (int i = 0; i < iterations; i++) {
         buscaBinaria(arr, n, buscar_elemento);
     }
-    fim = clock();
-    double tempo_binaria = ((double)(fim - inicio)) / CLOCKS_PER_SEC * 1000000 / iterations;
+    clock_t fim_binaria = clock();
+    double tempo_binaria = ((double)(fim_binaria - inicio_binaria)) / CLOCKS_PER_SEC * 1000000 / iterations;
     
     printf("\nBusca em array de %d elementos (média de %d execuções):\n", n, iterations);
     printf("Elemento buscado (próximo ao final): %d\n", buscar_elemento);
     printf("\nBusca Linear:  %.3f µs\n", tempo_linear);
     printf("Busca Binária: %.3f µs\n", tempo_binaria);
-    if (tempo_binaria > 0) {
+    if (tempo_binaria > 1e-9) {  // Evita divisão por zero com epsilon
         printf("Speedup: %.1fx mais rápida!\n", tempo_linear / tempo_binaria);
     }
     

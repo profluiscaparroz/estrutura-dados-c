@@ -709,10 +709,12 @@ Para n = 1.000.000 de elementos:
 | O(log n) | 20 | 20 ns |
 | O(n) | 1.000.000 | 1 ms |
 | O(n log n) | 20.000.000 | 20 ms |
-| O(n²) | 1.000.000.000.000 | 16 minutos |
-| O(2ⁿ) | Para n=40: 1.099.511.627.776 | ~18 minutos |
+| O(n²) | 1.000.000.000.000 | ~17 minutos |
+| O(2ⁿ) | Para n=30: ~1 bilhão | ~1 segundo |
+| O(2ⁿ) | Para n=40: ~1 trilhão | ~18 minutos |
 
-\* Assumindo 1 operação = 1 nanosegundo
+\* Assumindo 1 operação = 1 nanosegundo (CPU moderna a ~1 GHz)  
+**Observação**: O crescimento exponencial torna O(2ⁿ) inviável para n > 30-40.
 
 **Lição**: Complexidade importa enormemente para grandes datasets!
 
