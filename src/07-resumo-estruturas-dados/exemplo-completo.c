@@ -2,14 +2,22 @@
  * EXEMPLO COMPLETO: DEMONSTRAÇÃO DAS ESTRUTURAS DE DADOS FUNDAMENTAIS
  * 
  * Este programa demonstra na prática os conceitos das cinco estruturas fundamentais:
- * 1. Vetores e Matrizes
- * 2. Métodos de Ordenação
- * 3. Métodos de Pesquisa
- * 4. Pilhas e Filas
- * 5. Listas Encadeadas
+ * 1. Vetores e Matrizes - estruturas estáticas contíguas
+ * 2. Métodos de Ordenação - Bubble Sort, Insertion Sort, Quick Sort, Merge Sort
+ * 3. Métodos de Pesquisa - Busca Linear e Busca Binária
+ * 4. Pilhas e Filas - TADs com acesso restrito (LIFO e FIFO)
+ * 5. Listas Encadeadas - Simplesmente e Duplamente encadeadas
+ * 
+ * Também inclui uma demonstração de comparação de performance entre busca linear
+ * e busca binária para ilustrar a importância da escolha do algoritmo correto.
  * 
  * Compile: gcc exemplo-completo.c -o exemplo-completo
  * Execute: ./exemplo-completo
+ * 
+ * Alternativamente, use o Makefile:
+ *   make          - Compila o programa
+ *   make run      - Compila e executa
+ *   make clean    - Remove executável
  */
 
 #include <stdio.h>
@@ -101,6 +109,86 @@ void quickSort(int arr[], int low, int high) {
     }
 }
 
+// Insertion Sort - O(n²) mas eficiente para arrays pequenos/quase ordenados
+void insertionSort(int arr[], int n) {
+    for (int i = 1; i < n; i++) {
+        int chave = arr[i];
+        int j = i - 1;
+        
+        // Move elementos maiores que a chave uma posição à frente
+        while (j >= 0 && arr[j] > chave) {
+            arr[j + 1] = arr[j];
+            j = j - 1;
+        }
+        arr[j + 1] = chave;
+    }
+}
+
+// Merge Sort - O(n log n) garantido, estável
+void merge(int arr[], int esq, int meio, int dir) {
+    int n1 = meio - esq + 1;
+    int n2 = dir - meio;
+    
+    // Criar arrays temporários
+    int* L = (int*)malloc(n1 * sizeof(int));
+    if (L == NULL) {
+        fprintf(stderr, "Erro: falha na alocação de memória para L\n");
+        return;
+    }
+    
+    int* R = (int*)malloc(n2 * sizeof(int));
+    if (R == NULL) {
+        fprintf(stderr, "Erro: falha na alocação de memória para R\n");
+        free(L);
+        return;
+    }
+    
+    // Copiar dados para arrays temporários
+    for (int i = 0; i < n1; i++)
+        L[i] = arr[esq + i];
+    for (int j = 0; j < n2; j++)
+        R[j] = arr[meio + 1 + j];
+    
+    // Mesclar os arrays temporários de volta
+    int i = 0, j = 0, k = esq;
+    
+    while (i < n1 && j < n2) {
+        if (L[i] <= R[j]) {
+            arr[k] = L[i];
+            i++;
+        } else {
+            arr[k] = R[j];
+            j++;
+        }
+        k++;
+    }
+    
+    // Copiar elementos restantes
+    while (i < n1) {
+        arr[k] = L[i];
+        i++;
+        k++;
+    }
+    while (j < n2) {
+        arr[k] = R[j];
+        j++;
+        k++;
+    }
+    
+    free(L);
+    free(R);
+}
+
+void mergeSort(int arr[], int esq, int dir) {
+    if (esq < dir) {
+        int meio = esq + (dir - esq) / 2;
+        
+        mergeSort(arr, esq, meio);
+        mergeSort(arr, meio + 1, dir);
+        merge(arr, esq, meio, dir);
+    }
+}
+
 void demonstrar_ordenacao() {
     printf("\n=== 2. MÉTODOS DE ORDENAÇÃO ===\n");
     
@@ -108,7 +196,7 @@ void demonstrar_ordenacao() {
     int arr1[] = {64, 34, 25, 12, 22};
     int n1 = 5;
     
-    printf("\nBubble Sort:");
+    printf("\nBubble Sort (O(n²)):");
     printf("\nAntes: ");
     for (int i = 0; i < n1; i++) printf("%d ", arr1[i]);
     
@@ -117,18 +205,44 @@ void demonstrar_ordenacao() {
     printf("\nDepois: ");
     for (int i = 0; i < n1; i++) printf("%d ", arr1[i]);
     
-    // Testar Quick Sort
+    // Testar Insertion Sort
     int arr2[] = {64, 34, 25, 12, 22};
     int n2 = 5;
     
-    printf("\n\nQuick Sort:");
+    printf("\n\nInsertion Sort (O(n²) - eficiente para arrays pequenos):");
     printf("\nAntes: ");
     for (int i = 0; i < n2; i++) printf("%d ", arr2[i]);
     
-    quickSort(arr2, 0, n2 - 1);
+    insertionSort(arr2, n2);
     
     printf("\nDepois: ");
     for (int i = 0; i < n2; i++) printf("%d ", arr2[i]);
+    
+    // Testar Quick Sort
+    int arr3[] = {64, 34, 25, 12, 22, 90, 11};
+    int n3 = 7;
+    
+    printf("\n\nQuick Sort (O(n log n) médio):");
+    printf("\nAntes: ");
+    for (int i = 0; i < n3; i++) printf("%d ", arr3[i]);
+    
+    quickSort(arr3, 0, n3 - 1);
+    
+    printf("\nDepois: ");
+    for (int i = 0; i < n3; i++) printf("%d ", arr3[i]);
+    
+    // Testar Merge Sort
+    int arr4[] = {38, 27, 43, 3, 9, 82, 10};
+    int n4 = 7;
+    
+    printf("\n\nMerge Sort (O(n log n) garantido, estável):");
+    printf("\nAntes: ");
+    for (int i = 0; i < n4; i++) printf("%d ", arr4[i]);
+    
+    mergeSort(arr4, 0, n4 - 1);
+    
+    printf("\nDepois: ");
+    for (int i = 0; i < n4; i++) printf("%d ", arr4[i]);
     printf("\n");
 }
 
@@ -205,9 +319,18 @@ typedef struct {
 
 Pilha* criarPilha(int capacidade) {
     Pilha* pilha = (Pilha*)malloc(sizeof(Pilha));
+    if (pilha == NULL) {
+        fprintf(stderr, "Erro: falha na alocação de memória para pilha\n");
+        return NULL;
+    }
     pilha->capacidade = capacidade;
     pilha->topo = -1;
     pilha->array = (int*)malloc(capacidade * sizeof(int));
+    if (pilha->array == NULL) {
+        fprintf(stderr, "Erro: falha na alocação de memória para array da pilha\n");
+        free(pilha);
+        return NULL;
+    }
     return pilha;
 }
 
@@ -251,11 +374,20 @@ typedef struct {
 
 Fila* criarFila(int capacidade) {
     Fila* fila = (Fila*)malloc(sizeof(Fila));
+    if (fila == NULL) {
+        fprintf(stderr, "Erro: falha na alocação de memória para fila\n");
+        return NULL;
+    }
     fila->capacidade = capacidade;
     fila->frente = 0;
     fila->tamanho = 0;
     fila->tras = capacidade - 1;
     fila->array = (int*)malloc(capacidade * sizeof(int));
+    if (fila->array == NULL) {
+        fprintf(stderr, "Erro: falha na alocação de memória para array da fila\n");
+        free(fila);
+        return NULL;
+    }
     return fila;
 }
 
@@ -338,6 +470,10 @@ typedef struct Node {
 // Criar novo nó
 Node* criarNo(int data) {
     Node* novo = (Node*)malloc(sizeof(Node));
+    if (novo == NULL) {
+        fprintf(stderr, "Erro: falha na alocação de memória para nó\n");
+        return NULL;
+    }
     novo->data = data;
     novo->next = NULL;
     return novo;
@@ -346,6 +482,7 @@ Node* criarNo(int data) {
 // Inserir no início - O(1)
 void inserirInicio(Node** head, int data) {
     Node* novo = criarNo(data);
+    if (novo == NULL) return;  // Falha na alocação
     novo->next = *head;
     *head = novo;
 }
@@ -353,6 +490,7 @@ void inserirInicio(Node** head, int data) {
 // Inserir no final - O(n)
 void inserirFinal(Node** head, int data) {
     Node* novo = criarNo(data);
+    if (novo == NULL) return;  // Falha na alocação
     
     if (*head == NULL) {
         *head = novo;
@@ -425,9 +563,136 @@ void liberarLista(Node** head) {
     *head = NULL;
 }
 
+// ============================================================================
+// 5.1 LISTA DUPLAMENTE ENCADEADA
+// ============================================================================
+
+// Nó da lista duplamente encadeada
+typedef struct DNode {
+    int data;
+    struct DNode* prev;  // Ponteiro para o nó anterior
+    struct DNode* next;  // Ponteiro para o próximo nó
+} DNode;
+
+// Criar novo nó
+DNode* criarDNo(int data) {
+    DNode* novo = (DNode*)malloc(sizeof(DNode));
+    if (novo == NULL) {
+        fprintf(stderr, "Erro: falha na alocação de memória para nó duplo\n");
+        return NULL;
+    }
+    novo->data = data;
+    novo->prev = NULL;
+    novo->next = NULL;
+    return novo;
+}
+
+// Inserir no início - O(1)
+void inserirDInicio(DNode** head, int data) {
+    DNode* novo = criarDNo(data);
+    if (novo == NULL) return;  // Falha na alocação
+    novo->next = *head;
+    
+    if (*head != NULL) {
+        (*head)->prev = novo;
+    }
+    
+    *head = novo;
+}
+
+// Inserir no final - O(n) sem tail pointer
+void inserirDFinal(DNode** head, int data) {
+    DNode* novo = criarDNo(data);
+    if (novo == NULL) return;  // Falha na alocação
+    
+    if (*head == NULL) {
+        *head = novo;
+        return;
+    }
+    
+    DNode* temp = *head;
+    while (temp->next != NULL) {
+        temp = temp->next;
+    }
+    
+    temp->next = novo;
+    novo->prev = temp;
+}
+
+// Remover nó específico - O(1) se tiver ponteiro direto
+void removerDNo(DNode** head, DNode* del) {
+    if (*head == NULL || del == NULL) return;
+    
+    // Se é o primeiro nó
+    if (*head == del) {
+        *head = del->next;
+    }
+    
+    // Atualiza o próximo nó se existir
+    if (del->next != NULL) {
+        del->next->prev = del->prev;
+    }
+    
+    // Atualiza o nó anterior se existir
+    if (del->prev != NULL) {
+        del->prev->next = del->next;
+    }
+    
+    free(del);
+}
+
+// Imprimir lista para frente
+void imprimirDListaFrente(DNode* head) {
+    DNode* temp = head;
+    printf("NULL <-> ");
+    while (temp != NULL) {
+        printf("%d <-> ", temp->data);
+        temp = temp->next;
+    }
+    printf("NULL\n");
+}
+
+// Imprimir lista para trás
+void imprimirDListaTras(DNode* head) {
+    if (head == NULL) {
+        printf("Lista vazia\n");
+        return;
+    }
+    
+    // Ir até o último nó
+    DNode* temp = head;
+    while (temp->next != NULL) {
+        temp = temp->next;
+    }
+    
+    // Imprimir de trás para frente
+    printf("NULL <-> ");
+    while (temp != NULL) {
+        printf("%d <-> ", temp->data);
+        temp = temp->prev;
+    }
+    printf("NULL\n");
+}
+
+// Liberar lista duplamente encadeada
+void liberarDLista(DNode** head) {
+    DNode* atual = *head;
+    DNode* proximo;
+    
+    while (atual != NULL) {
+        proximo = atual->next;
+        free(atual);
+        atual = proximo;
+    }
+    
+    *head = NULL;
+}
+
 void demonstrar_lista_encadeada() {
     printf("\n=== 5. LISTAS ENCADEADAS ===\n");
     
+    // Lista Simplesmente Encadeada
+    printf("\n--- Lista Simplesmente Encadeada ---\n");
     Node* head = NULL;
     
     printf("\nInserindo no início: 30, 20, 10\n");
@@ -455,8 +720,30 @@ void demonstrar_lista_encadeada() {
     printf("Lista: ");
     imprimirLista(head);
     
-    // Liberar memória
+    // Liberar memória da lista simples
     liberarLista(&head);
+    
+    // Lista Duplamente Encadeada
+    printf("\n--- Lista Duplamente Encadeada ---\n");
+    DNode* dhead = NULL;
+    
+    printf("\nInserindo no início: 30, 20, 10\n");
+    inserirDInicio(&dhead, 30);
+    inserirDInicio(&dhead, 20);
+    inserirDInicio(&dhead, 10);
+    printf("Lista (frente): ");
+    imprimirDListaFrente(dhead);
+    
+    printf("\nInserindo no final: 40, 50\n");
+    inserirDFinal(&dhead, 40);
+    inserirDFinal(&dhead, 50);
+    printf("Lista (frente): ");
+    imprimirDListaFrente(dhead);
+    printf("Lista (trás):   ");
+    imprimirDListaTras(dhead);
+    
+    // Liberar memória da lista dupla
+    liberarDLista(&dhead);
 }
 
 // ============================================================================
@@ -471,6 +758,10 @@ void demonstrar_comparacao_performance() {
     
     // Criar array ordenado
     int* arr = (int*)malloc(n * sizeof(int));
+    if (arr == NULL) {
+        fprintf(stderr, "Erro: falha na alocação de memória para array de performance\n");
+        return;
+    }
     for (int i = 0; i < n; i++) {
         arr[i] = i * 2;  // 0, 2, 4, 6, ...
     }
@@ -514,10 +805,10 @@ void imprimir_cabecalho() {
     printf("║                                                              ║\n");
     printf("║   Este programa demonstra na prática:                       ║\n");
     printf("║   1. Vetores e Matrizes                                     ║\n");
-    printf("║   2. Métodos de Ordenação (Bubble Sort, Quick Sort)         ║\n");
+    printf("║   2. Métodos de Ordenação (Bubble, Insertion, Quick, Merge) ║\n");
     printf("║   3. Métodos de Pesquisa (Linear, Binária)                  ║\n");
     printf("║   4. Pilhas (LIFO) e Filas (FIFO)                           ║\n");
-    printf("║   5. Listas Encadeadas                                      ║\n");
+    printf("║   5. Listas Encadeadas (Simples e Dupla)                    ║\n");
     printf("╚══════════════════════════════════════════════════════════════╝\n");
 }
 
@@ -540,11 +831,12 @@ int main() {
     printf("║                                                              ║\n");
     printf("║   Pontos-chave:                                             ║\n");
     printf("║   • Arrays: Acesso O(1), mas inserção O(n)                  ║\n");
-    printf("║   • Quick Sort: O(n log n) - Muito eficiente!               ║\n");
+    printf("║   • Quick/Merge Sort: O(n log n) - Muito eficientes!        ║\n");
     printf("║   • Busca Binária: O(log n) - Exponencialmente rápida!     ║\n");
     printf("║   • Pilha: LIFO - Último entra, primeiro sai                ║\n");
     printf("║   • Fila: FIFO - Primeiro entra, primeiro sai               ║\n");
-    printf("║   • Lista Encadeada: Dinâmica e flexível                    ║\n");
+    printf("║   • Lista Simples: Navegação em uma direção                 ║\n");
+    printf("║   • Lista Dupla: Navegação bidirecional                     ║\n");
     printf("║                                                              ║\n");
     printf("║   Continue estudando e praticando! 🚀                       ║\n");
     printf("╚══════════════════════════════════════════════════════════════╝\n\n");

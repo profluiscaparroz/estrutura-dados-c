@@ -4,6 +4,24 @@
 
 Este documento apresenta um **resumo consolidado** de todas as estruturas de dados e algoritmos fundamentais estudados até o momento, desde vetores e matrizes até listas encadeadas. O objetivo é fornecer uma visão panorâmica dos conceitos, permitindo revisão rápida e comparação entre as diferentes estruturas.
 
+### Por que Estudar Estruturas de Dados?
+
+Estruturas de dados são a **base da programação eficiente**. Elas determinam como os dados são organizados, armazenados e manipulados na memória do computador. A escolha correta de uma estrutura de dados pode fazer a diferença entre um programa que executa em milissegundos e outro que leva horas para processar a mesma quantidade de dados.
+
+**Benefícios de dominar estruturas de dados:**
+- ✅ Escrever código mais eficiente e performático
+- ✅ Resolver problemas complexos de forma elegante
+- ✅ Passar em entrevistas técnicas de empresas de tecnologia
+- ✅ Compreender como linguagens e frameworks funcionam internamente
+- ✅ Tomar decisões de design de software fundamentadas
+
+### Pré-requisitos
+
+Para aproveitar ao máximo este material, você deve ter conhecimento básico de:
+- Programação em linguagem C (variáveis, funções, ponteiros)
+- Alocação dinâmica de memória (`malloc`, `free`)
+- Conceitos básicos de análise de algoritmos
+
 ## 🎯 Objetivo do Resumo
 
 Este resumo consolida os seguintes tópicos estudados:
@@ -13,12 +31,36 @@ Este resumo consolida os seguintes tópicos estudados:
 4. **Pilhas e Filas** - Estruturas lineares com acesso restrito (TADs)
 5. **Listas Encadeadas** - Estruturas dinâmicas não contíguas
 
+### Como Usar Este Material
+
+1. **Leitura teórica**: Estude cada seção para compreender os conceitos
+2. **Análise de código**: Examine os exemplos de código fornecidos
+3. **Prática**: Execute o arquivo `exemplo-completo.c` para ver tudo funcionando
+4. **Exercícios**: Complete os desafios propostos ao final de cada seção
+
 ---
 
 ## 1️⃣ Vetores e Matrizes
 
 ### Conceito Fundamental
 Vetores (arrays) e matrizes são **estruturas de dados estáticas** que armazenam elementos do mesmo tipo em **posições contíguas de memória**. São as estruturas mais básicas e fundamentais da computação.
+
+A contiguidade de memória significa que os elementos são armazenados um ao lado do outro, o que permite calcular diretamente o endereço de qualquer elemento usando uma fórmula simples. Esta característica é a razão pela qual o acesso por índice é extremamente rápido (O(1)).
+
+### Como Funciona na Memória
+
+Quando você declara um vetor `int v[5]`, o compilador reserva um bloco contíguo de memória suficiente para armazenar 5 inteiros. Se cada inteiro ocupa 4 bytes, serão reservados 20 bytes consecutivos:
+
+```
+Endereço base: 1000
+v[0] → 1000-1003 (4 bytes)
+v[1] → 1004-1007 (4 bytes)
+v[2] → 1008-1011 (4 bytes)
+v[3] → 1012-1015 (4 bytes)
+v[4] → 1016-1019 (4 bytes)
+```
+
+Para acessar `v[i]`, o processador calcula: `endereço = base + (i × tamanho_elemento)`
 
 ### Características Principais
 
@@ -28,11 +70,69 @@ Vetores (arrays) e matrizes são **estruturas de dados estáticas** que armazena
 - **Alocação**: Contígua na memória
 - **Tamanho**: Fixo (estático) ou dinâmico (com realocação)
 
-**Exemplo**:
+**Exemplo Básico**:
 ```c
 int vetor[5] = {10, 20, 30, 40, 50};
 // Acesso: vetor[2] retorna 30
 // Endereço = base + (índice × tamanho_elemento)
+```
+
+**Exemplo Completo - Operações com Vetores**:
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+// Função para imprimir vetor
+void imprimirVetor(int arr[], int n, const char* nome) {
+    printf("%s: [", nome);
+    for (int i = 0; i < n; i++) {
+        printf("%d%s", arr[i], i < n-1 ? ", " : "");
+    }
+    printf("]\n");
+}
+
+// Função para somar elementos do vetor
+int somarVetor(int arr[], int n) {
+    int soma = 0;
+    for (int i = 0; i < n; i++) {
+        soma += arr[i];
+    }
+    return soma;
+}
+
+// Função para encontrar maior elemento
+int maiorElemento(int arr[], int n) {
+    int maior = arr[0];
+    for (int i = 1; i < n; i++) {
+        if (arr[i] > maior) {
+            maior = arr[i];
+        }
+    }
+    return maior;
+}
+
+// Função para inverter vetor
+void inverterVetor(int arr[], int n) {
+    for (int i = 0; i < n / 2; i++) {
+        int temp = arr[i];
+        arr[i] = arr[n - 1 - i];
+        arr[n - 1 - i] = temp;
+    }
+}
+
+int main() {
+    int numeros[5] = {10, 25, 8, 42, 15};
+    int n = 5;
+    
+    imprimirVetor(numeros, n, "Original");
+    printf("Soma: %d\n", somarVetor(numeros, n));
+    printf("Maior: %d\n", maiorElemento(numeros, n));
+    
+    inverterVetor(numeros, n);
+    imprimirVetor(numeros, n, "Invertido");
+    
+    return 0;
+}
 ```
 
 #### Matrizes (Arrays Bidimensionais)
@@ -40,7 +140,9 @@ int vetor[5] = {10, 20, 30, 40, 50};
 - **Armazenamento**: Row-major order (linhas consecutivas)
 - **Acesso**: matriz[i][j] em O(1)
 
-**Exemplo**:
+Matrizes são essenciais para representar dados tabulares, imagens, grafos e sistemas de equações lineares.
+
+**Exemplo Básico**:
 ```c
 int matriz[3][3] = {
     {1, 2, 3},
@@ -48,6 +150,93 @@ int matriz[3][3] = {
     {7, 8, 9}
 };
 // Acesso: matriz[1][2] retorna 6
+```
+
+**Exemplo Completo - Operações com Matrizes**:
+```c
+#include <stdio.h>
+
+#define LINHAS 3
+#define COLUNAS 3
+
+// Função para imprimir matriz
+void imprimirMatriz(int mat[LINHAS][COLUNAS]) {
+    printf("Matriz:\n");
+    for (int i = 0; i < LINHAS; i++) {
+        printf("  ");
+        for (int j = 0; j < COLUNAS; j++) {
+            printf("%3d ", mat[i][j]);
+        }
+        printf("\n");
+    }
+}
+
+// Função para calcular soma de todos elementos
+int somaMatriz(int mat[LINHAS][COLUNAS]) {
+    int soma = 0;
+    for (int i = 0; i < LINHAS; i++) {
+        for (int j = 0; j < COLUNAS; j++) {
+            soma += mat[i][j];
+        }
+    }
+    return soma;
+}
+
+// Função para calcular soma da diagonal principal
+int somaDiagonalPrincipal(int mat[LINHAS][COLUNAS]) {
+    int soma = 0;
+    for (int i = 0; i < LINHAS; i++) {
+        soma += mat[i][i];
+    }
+    return soma;
+}
+
+// Função para transpor matriz
+void transporMatriz(int mat[LINHAS][COLUNAS], int resultado[COLUNAS][LINHAS]) {
+    for (int i = 0; i < LINHAS; i++) {
+        for (int j = 0; j < COLUNAS; j++) {
+            resultado[j][i] = mat[i][j];
+        }
+    }
+}
+
+// Função para multiplicar matrizes
+void multiplicarMatrizes(int A[LINHAS][COLUNAS], int B[LINHAS][COLUNAS], 
+                         int resultado[LINHAS][COLUNAS]) {
+    for (int i = 0; i < LINHAS; i++) {
+        for (int j = 0; j < COLUNAS; j++) {
+            resultado[i][j] = 0;
+            for (int k = 0; k < COLUNAS; k++) {
+                resultado[i][j] += A[i][k] * B[k][j];
+            }
+        }
+    }
+}
+
+int main() {
+    int matriz[LINHAS][COLUNAS] = {
+        {1, 2, 3},
+        {4, 5, 6},
+        {7, 8, 9}
+    };
+    
+    imprimirMatriz(matriz);
+    printf("Soma total: %d\n", somaMatriz(matriz));
+    printf("Soma diagonal principal: %d\n", somaDiagonalPrincipal(matriz));
+    
+    int transposta[COLUNAS][LINHAS];
+    transporMatriz(matriz, transposta);
+    printf("\nMatriz Transposta:\n");
+    for (int i = 0; i < COLUNAS; i++) {
+        printf("  ");
+        for (int j = 0; j < LINHAS; j++) {
+            printf("%3d ", transposta[i][j]);
+        }
+        printf("\n");
+    }
+    
+    return 0;
+}
 ```
 
 ### Complexidade das Operações
@@ -86,15 +275,82 @@ int matriz[3][3] = {
 ### Conceito Fundamental
 Ordenação é o processo de **reorganizar elementos em uma ordem específica** (crescente/decrescente). É um dos problemas mais estudados em computação, com impacto direto na eficiência de outras operações (especialmente buscas).
 
+### Por que Ordenação é Importante?
+
+A ordenação é fundamental porque:
+1. **Acelera buscas**: Em dados ordenados, podemos usar busca binária (O(log n)) ao invés de busca linear (O(n))
+2. **Facilita detecção de duplicatas**: Elementos iguais ficam adjacentes
+3. **Simplifica análise de dados**: Encontrar mediana, moda, máximo e mínimo é mais fácil
+4. **Base para outros algoritmos**: Muitos algoritmos dependem de dados ordenados
+
 ### Classificação dos Algoritmos
 
 #### Algoritmos O(n²) - Simples, mas Ineficientes para Grandes Dados
+
+Estes algoritmos são ideais para aprendizado e conjuntos pequenos de dados (< 50 elementos).
 
 ##### **Bubble Sort**
 - **Complexidade**: O(n²) médio/pior, O(n) melhor caso
 - **Estabilidade**: Estável
 - **Método**: Comparações adjacentes, "bolhas" sobem
 - **Uso**: Apenas educacional, arrays muito pequenos
+
+**Como funciona**: Percorre o array repetidamente, comparando elementos adjacentes e trocando-os se estiverem na ordem errada. Elementos maiores "borbulham" para o final.
+
+**Exemplo Visual**:
+```
+Passo 1: [64, 34, 25, 12] → comparar 64 e 34 → trocar → [34, 64, 25, 12]
+Passo 2: [34, 64, 25, 12] → comparar 64 e 25 → trocar → [34, 25, 64, 12]
+Passo 3: [34, 25, 64, 12] → comparar 64 e 12 → trocar → [34, 25, 12, 64]
+(64 está na posição final correta)
+... continua até ordenar completamente
+```
+
+**Implementação Completa**:
+```c
+#include <stdio.h>
+#include <stdbool.h>
+
+// Bubble Sort com otimização de parada antecipada
+void bubbleSort(int arr[], int n) {
+    for (int i = 0; i < n - 1; i++) {
+        bool trocou = false;  // Otimização: detecta se houve troca
+        
+        // Últimos i elementos já estão ordenados
+        for (int j = 0; j < n - i - 1; j++) {
+            if (arr[j] > arr[j + 1]) {
+                // Troca arr[j] e arr[j+1]
+                int temp = arr[j];
+                arr[j] = arr[j + 1];
+                arr[j + 1] = temp;
+                trocou = true;
+            }
+        }
+        
+        // Se não houve nenhuma troca, array já está ordenado
+        if (!trocou) {
+            break;
+        }
+    }
+}
+
+// Exemplo de uso
+int main() {
+    int arr[] = {64, 34, 25, 12, 22, 11, 90};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    
+    printf("Array original: ");
+    for (int i = 0; i < n; i++) printf("%d ", arr[i]);
+    
+    bubbleSort(arr, n);
+    
+    printf("\nArray ordenado: ");
+    for (int i = 0; i < n; i++) printf("%d ", arr[i]);
+    printf("\n");
+    
+    return 0;
+}
+```
 
 ##### **Insertion Sort**
 - **Complexidade**: O(n²) médio/pior, O(n) melhor caso
@@ -103,6 +359,62 @@ Ordenação é o processo de **reorganizar elementos em uma ordem específica** 
 - **Vantagem**: **Adaptativo** - eficiente para dados quase ordenados
 - **Uso**: Arrays pequenos (< 50), dados quase ordenados
 
+**Como funciona**: Funciona como ordenar cartas na mão. Pega um elemento de cada vez e insere na posição correta entre os elementos já ordenados.
+
+**Exemplo Visual**:
+```
+Inicial: [5, 2, 4, 6, 1, 3]
+Passo 1: [5, 2, 4, 6, 1, 3] → inserir 2 → [2, 5, 4, 6, 1, 3]
+Passo 2: [2, 5, 4, 6, 1, 3] → inserir 4 → [2, 4, 5, 6, 1, 3]
+Passo 3: [2, 4, 5, 6, 1, 3] → inserir 6 → [2, 4, 5, 6, 1, 3] (já na posição)
+Passo 4: [2, 4, 5, 6, 1, 3] → inserir 1 → [1, 2, 4, 5, 6, 3]
+Passo 5: [1, 2, 4, 5, 6, 3] → inserir 3 → [1, 2, 3, 4, 5, 6]
+```
+
+**Implementação Completa**:
+```c
+// Insertion Sort - ideal para arrays pequenos ou quase ordenados
+void insertionSort(int arr[], int n) {
+    for (int i = 1; i < n; i++) {
+        int chave = arr[i];  // Elemento a ser inserido
+        int j = i - 1;
+        
+        // Move elementos maiores que a chave uma posição à frente
+        while (j >= 0 && arr[j] > chave) {
+            arr[j + 1] = arr[j];
+            j = j - 1;
+        }
+        
+        // Insere a chave na posição correta
+        arr[j + 1] = chave;
+    }
+}
+
+// Versão com contagem de operações para análise
+void insertionSortComContagem(int arr[], int n, int* comparacoes, int* movimentos) {
+    *comparacoes = 0;
+    *movimentos = 0;
+    
+    for (int i = 1; i < n; i++) {
+        int chave = arr[i];
+        int j = i - 1;
+        
+        while (j >= 0) {
+            (*comparacoes)++;
+            if (arr[j] > chave) {
+                arr[j + 1] = arr[j];
+                (*movimentos)++;
+                j--;
+            } else {
+                break;
+            }
+        }
+        arr[j + 1] = chave;
+        (*movimentos)++;
+    }
+}
+```
+
 ##### **Selection Sort**
 - **Complexidade**: O(n²) sempre (não adaptativo)
 - **Estabilidade**: Não estável
@@ -110,7 +422,34 @@ Ordenação é o processo de **reorganizar elementos em uma ordem específica** 
 - **Vantagem**: Número mínimo de escritas (n-1 trocas)
 - **Uso**: Quando escrita é cara (Flash memory)
 
+**Como funciona**: Encontra o menor elemento e coloca na primeira posição, depois encontra o segundo menor e coloca na segunda posição, e assim por diante.
+
+**Implementação Completa**:
+```c
+// Selection Sort - minimiza número de escritas
+void selectionSort(int arr[], int n) {
+    for (int i = 0; i < n - 1; i++) {
+        // Encontrar o índice do menor elemento no subarray não ordenado
+        int min_idx = i;
+        for (int j = i + 1; j < n; j++) {
+            if (arr[j] < arr[min_idx]) {
+                min_idx = j;
+            }
+        }
+        
+        // Trocar o menor elemento encontrado com o primeiro elemento não ordenado
+        if (min_idx != i) {
+            int temp = arr[min_idx];
+            arr[min_idx] = arr[i];
+            arr[i] = temp;
+        }
+    }
+}
+```
+
 #### Algoritmos O(n log n) - Eficientes para Uso Geral
+
+Estes algoritmos são adequados para grandes conjuntos de dados e são usados em produção.
 
 ##### **Quick Sort**
 - **Complexidade**: O(n log n) médio, O(n²) pior caso
@@ -120,6 +459,81 @@ Ordenação é o processo de **reorganizar elementos em uma ordem específica** 
 - **Vantagem**: **In-place**, constantes pequenas, muito rápido na prática
 - **Uso**: Algoritmo de ordenação de uso geral mais popular
 
+**Como funciona**: 
+1. Escolhe um elemento como pivô
+2. Particiona o array: elementos menores que o pivô à esquerda, maiores à direita
+3. Recursivamente ordena as duas partições
+
+**Exemplo Visual**:
+```
+Array: [8, 4, 2, 9, 5, 1, 6, 3, 7]
+Pivô = 7
+
+Particionamento:
+Menores que 7: [4, 2, 5, 1, 6, 3]
+Pivô: [7]
+Maiores que 7: [8, 9]
+
+Resultado: [4, 2, 5, 1, 6, 3] + [7] + [8, 9]
+Continua recursivamente nas partições...
+```
+
+**Implementação Completa**:
+```c
+// Função auxiliar para trocar dois elementos
+void trocar(int* a, int* b) {
+    int temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+// Particionamento usando o último elemento como pivô
+int particionar(int arr[], int baixo, int alto) {
+    int pivo = arr[alto];  // Pivô é o último elemento
+    int i = baixo - 1;     // Índice do menor elemento
+    
+    for (int j = baixo; j < alto; j++) {
+        // Se elemento atual é menor ou igual ao pivô
+        if (arr[j] <= pivo) {
+            i++;
+            trocar(&arr[i], &arr[j]);
+        }
+    }
+    
+    // Coloca o pivô na posição correta
+    trocar(&arr[i + 1], &arr[alto]);
+    return i + 1;
+}
+
+// Quick Sort recursivo
+void quickSort(int arr[], int baixo, int alto) {
+    if (baixo < alto) {
+        // pi é o índice do pivô após particionamento
+        int pi = particionar(arr, baixo, alto);
+        
+        // Ordena elementos antes e depois do pivô
+        quickSort(arr, baixo, pi - 1);
+        quickSort(arr, pi + 1, alto);
+    }
+}
+
+// Exemplo de uso
+int main() {
+    int arr[] = {10, 7, 8, 9, 1, 5};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    
+    printf("Array original: ");
+    for (int i = 0; i < n; i++) printf("%d ", arr[i]);
+    
+    quickSort(arr, 0, n - 1);
+    
+    printf("\nArray ordenado: ");
+    for (int i = 0; i < n; i++) printf("%d ", arr[i]);
+    
+    return 0;
+}
+```
+
 ##### **Merge Sort**
 - **Complexidade**: O(n log n) sempre (garantido)
 - **Estabilidade**: Estável
@@ -128,6 +542,107 @@ Ordenação é o processo de **reorganizar elementos em uma ordem específica** 
 - **Vantagem**: Previsível, garantia de O(n log n)
 - **Uso**: Quando estabilidade é necessária, ordenação externa
 
+**Como funciona**:
+1. Divide o array ao meio recursivamente até ter arrays de 1 elemento
+2. Mescla os arrays ordenados de volta, mantendo a ordem
+
+**Exemplo Visual**:
+```
+Divisão:
+[38, 27, 43, 3, 9, 82, 10]
+       ↓
+[38, 27, 43] e [3, 9, 82, 10]
+       ↓              ↓
+[38] [27, 43]    [3, 9] [82, 10]
+       ↓              ↓
+[38] [27] [43]  [3] [9] [82] [10]
+
+Mesclagem:
+[27, 38, 43] e [3, 9, 10, 82]
+              ↓
+[3, 9, 10, 27, 38, 43, 82]
+```
+
+**Implementação Completa**:
+```c
+// Função para mesclar dois subarrays ordenados
+void mesclar(int arr[], int esq, int meio, int dir) {
+    int n1 = meio - esq + 1;
+    int n2 = dir - meio;
+    
+    // Criar arrays temporários
+    int* L = (int*)malloc(n1 * sizeof(int));
+    int* R = (int*)malloc(n2 * sizeof(int));
+    
+    // Copiar dados para arrays temporários
+    for (int i = 0; i < n1; i++)
+        L[i] = arr[esq + i];
+    for (int j = 0; j < n2; j++)
+        R[j] = arr[meio + 1 + j];
+    
+    // Mesclar os arrays temporários de volta
+    int i = 0, j = 0, k = esq;
+    
+    while (i < n1 && j < n2) {
+        if (L[i] <= R[j]) {
+            arr[k] = L[i];
+            i++;
+        } else {
+            arr[k] = R[j];
+            j++;
+        }
+        k++;
+    }
+    
+    // Copiar elementos restantes de L[], se houver
+    while (i < n1) {
+        arr[k] = L[i];
+        i++;
+        k++;
+    }
+    
+    // Copiar elementos restantes de R[], se houver
+    while (j < n2) {
+        arr[k] = R[j];
+        j++;
+        k++;
+    }
+    
+    free(L);
+    free(R);
+}
+
+// Merge Sort recursivo
+void mergeSort(int arr[], int esq, int dir) {
+    if (esq < dir) {
+        int meio = esq + (dir - esq) / 2;
+        
+        // Ordena primeira e segunda metade
+        mergeSort(arr, esq, meio);
+        mergeSort(arr, meio + 1, dir);
+        
+        // Mescla as metades ordenadas
+        mesclar(arr, esq, meio, dir);
+    }
+}
+
+// Exemplo de uso
+int main() {
+    int arr[] = {38, 27, 43, 3, 9, 82, 10};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    
+    printf("Array original: ");
+    for (int i = 0; i < n; i++) printf("%d ", arr[i]);
+    
+    mergeSort(arr, 0, n - 1);
+    
+    printf("\nArray ordenado: ");
+    for (int i = 0; i < n; i++) printf("%d ", arr[i]);
+    
+    return 0;
+}
+```
+
 ##### **Heap Sort**
 - **Complexidade**: O(n log n) sempre
 - **Estabilidade**: Não estável
@@ -135,6 +650,56 @@ Ordenação é o processo de **reorganizar elementos em uma ordem específica** 
 - **Espaço**: O(1) - in-place
 - **Vantagem**: In-place com garantia O(n log n)
 - **Uso**: Quando espaço é limitado
+
+**Como funciona**:
+1. Constrói um max-heap a partir do array
+2. Repetidamente extrai o máximo (raiz) e reconstrói o heap
+
+**Implementação Completa**:
+```c
+// Função auxiliar para manter a propriedade do heap
+void heapify(int arr[], int n, int i) {
+    int maior = i;        // Inicializa maior como raiz
+    int esq = 2 * i + 1;  // Filho esquerdo
+    int dir = 2 * i + 2;  // Filho direito
+    
+    // Se filho esquerdo é maior que a raiz
+    if (esq < n && arr[esq] > arr[maior])
+        maior = esq;
+    
+    // Se filho direito é maior que o maior até agora
+    if (dir < n && arr[dir] > arr[maior])
+        maior = dir;
+    
+    // Se o maior não é a raiz
+    if (maior != i) {
+        int temp = arr[i];
+        arr[i] = arr[maior];
+        arr[maior] = temp;
+        
+        // Recursivamente heapify a subárvore afetada
+        heapify(arr, n, maior);
+    }
+}
+
+// Heap Sort
+void heapSort(int arr[], int n) {
+    // Construir heap (reorganizar array)
+    for (int i = n / 2 - 1; i >= 0; i--)
+        heapify(arr, n, i);
+    
+    // Extrair elementos do heap um por um
+    for (int i = n - 1; i > 0; i--) {
+        // Move raiz atual para o final
+        int temp = arr[0];
+        arr[0] = arr[i];
+        arr[i] = temp;
+        
+        // Chama heapify na heap reduzida
+        heapify(arr, i, 0);
+    }
+}
+```
 
 ### Comparação Completa
 
@@ -167,6 +732,16 @@ Ordenação é o processo de **reorganizar elementos em uma ordem específica** 
 ### Conceito Fundamental
 Pesquisa (busca) é a operação de **localizar um elemento específico** dentro de uma coleção de dados. É uma das operações mais executadas em sistemas computacionais.
 
+### Por que Busca é Importante?
+
+Em qualquer sistema de software, a busca é uma operação fundamental:
+- **Bancos de dados**: Encontrar registros por chave
+- **Sistemas de arquivos**: Localizar arquivos por nome
+- **Redes sociais**: Buscar usuários ou posts
+- **E-commerce**: Encontrar produtos
+
+A escolha do algoritmo de busca correto pode fazer a diferença entre uma resposta instantânea e segundos de espera.
+
 ### Algoritmos Fundamentais
 
 #### **Busca Linear (Sequential Search)**
@@ -177,7 +752,21 @@ Pesquisa (busca) é a operação de **localizar um elemento específico** dentro
 - **Pré-requisito**: Nenhum (funciona em dados não ordenados)
 - **Método**: Percorre sequencialmente cada elemento
 
-**Exemplo**:
+**Como funciona**: Examina cada elemento do início ao fim até encontrar o elemento buscado ou chegar ao final do array.
+
+**Exemplo Visual**:
+```
+Array: [4, 2, 7, 1, 9, 3]
+Buscando: 9
+
+Passo 1: Compara com 4 → não é
+Passo 2: Compara com 2 → não é
+Passo 3: Compara com 7 → não é
+Passo 4: Compara com 1 → não é
+Passo 5: Compara com 9 → ENCONTRADO! (índice 4)
+```
+
+**Implementação Básica**:
 ```c
 int buscaLinear(int arr[], int n, int x) {
     for (int i = 0; i < n; i++) {
@@ -185,6 +774,90 @@ int buscaLinear(int arr[], int n, int x) {
             return i;  // Encontrado
     }
     return -1;  // Não encontrado
+}
+```
+
+**Implementação Completa com Variações**:
+```c
+#include <stdio.h>
+#include <stdbool.h>
+
+// Busca linear básica - retorna índice ou -1
+int buscaLinear(int arr[], int n, int x) {
+    for (int i = 0; i < n; i++) {
+        if (arr[i] == x)
+            return i;
+    }
+    return -1;
+}
+
+// Busca linear com contagem de comparações
+int buscaLinearComContagem(int arr[], int n, int x, int* comparacoes) {
+    *comparacoes = 0;
+    for (int i = 0; i < n; i++) {
+        (*comparacoes)++;
+        if (arr[i] == x)
+            return i;
+    }
+    return -1;
+}
+
+// Busca linear com sentinela (otimização)
+// Coloca o elemento no final para evitar verificação de limite
+int buscaLinearSentinela(int arr[], int n, int x) {
+    int ultimo = arr[n - 1];  // Guarda último elemento
+    arr[n - 1] = x;           // Coloca sentinela
+    
+    int i = 0;
+    while (arr[i] != x)
+        i++;
+    
+    arr[n - 1] = ultimo;      // Restaura último elemento
+    
+    if (i < n - 1 || arr[n - 1] == x)
+        return i;
+    return -1;
+}
+
+// Busca que retorna todas as ocorrências
+int buscaTodasOcorrencias(int arr[], int n, int x, int indices[], int* count) {
+    *count = 0;
+    for (int i = 0; i < n; i++) {
+        if (arr[i] == x) {
+            indices[*count] = i;
+            (*count)++;
+        }
+    }
+    return *count > 0 ? indices[0] : -1;
+}
+
+// Exemplo de uso
+int main() {
+    int arr[] = {5, 2, 8, 2, 9, 1, 2, 7};
+    int n = 8;
+    int comparacoes;
+    
+    // Busca básica
+    int pos = buscaLinear(arr, n, 9);
+    printf("Busca por 9: %s (índice %d)\n", 
+           pos != -1 ? "Encontrado" : "Não encontrado", pos);
+    
+    // Busca com contagem
+    pos = buscaLinearComContagem(arr, n, 7, &comparacoes);
+    printf("Busca por 7: Encontrado no índice %d após %d comparações\n", 
+           pos, comparacoes);
+    
+    // Busca todas ocorrências
+    int indices[10];
+    int count;
+    buscaTodasOcorrencias(arr, n, 2, indices, &count);
+    printf("Busca por 2: %d ocorrências nos índices: ", count);
+    for (int i = 0; i < count; i++) {
+        printf("%d ", indices[i]);
+    }
+    printf("\n");
+    
+    return 0;
 }
 ```
 
@@ -207,7 +880,27 @@ int buscaLinear(int arr[], int n, int x) {
 - **Pré-requisito**: **Array ordenado**
 - **Método**: Divisão sucessiva ao meio
 
-**Exemplo**:
+**Como funciona**: Divide o espaço de busca pela metade a cada iteração. Se o elemento do meio é maior que o buscado, descarta a metade superior; se é menor, descarta a metade inferior.
+
+**Exemplo Visual**:
+```
+Array ordenado: [2, 5, 8, 12, 16, 23, 38, 45, 56, 67, 78]
+Buscando: 23
+
+Passo 1: meio = 23 (índice 5)
+         23 == 23? SIM! ENCONTRADO!
+
+Buscando: 56
+Passo 1: [2, 5, 8, 12, 16, 23, 38, 45, 56, 67, 78]
+                        ↑ meio = 23
+         56 > 23 → buscar na metade direita
+
+Passo 2: [38, 45, 56, 67, 78]
+              ↑ meio = 56
+         56 == 56? SIM! ENCONTRADO!
+```
+
+**Implementação Iterativa**:
 ```c
 int buscaBinaria(int arr[], int n, int x) {
     int esq = 0, dir = n - 1;
@@ -223,6 +916,125 @@ int buscaBinaria(int arr[], int n, int x) {
             dir = meio - 1;
     }
     return -1;
+}
+```
+
+**Implementação Completa com Variações**:
+```c
+#include <stdio.h>
+
+// Busca binária iterativa
+int buscaBinariaIterativa(int arr[], int n, int x) {
+    int esq = 0, dir = n - 1;
+    
+    while (esq <= dir) {
+        int meio = esq + (dir - esq) / 2;  // Evita overflow
+        
+        if (arr[meio] == x)
+            return meio;
+        else if (arr[meio] < x)
+            esq = meio + 1;
+        else
+            dir = meio - 1;
+    }
+    
+    return -1;
+}
+
+// Busca binária recursiva
+int buscaBinariaRecursiva(int arr[], int esq, int dir, int x) {
+    if (esq > dir)
+        return -1;
+    
+    int meio = esq + (dir - esq) / 2;
+    
+    if (arr[meio] == x)
+        return meio;
+    else if (arr[meio] < x)
+        return buscaBinariaRecursiva(arr, meio + 1, dir, x);
+    else
+        return buscaBinariaRecursiva(arr, esq, meio - 1, x);
+}
+
+// Encontra a primeira ocorrência de x (lower bound)
+int primeiraOcorrencia(int arr[], int n, int x) {
+    int esq = 0, dir = n - 1;
+    int resultado = -1;
+    
+    while (esq <= dir) {
+        int meio = esq + (dir - esq) / 2;
+        
+        if (arr[meio] == x) {
+            resultado = meio;
+            dir = meio - 1;  // Continua procurando à esquerda
+        } else if (arr[meio] < x) {
+            esq = meio + 1;
+        } else {
+            dir = meio - 1;
+        }
+    }
+    
+    return resultado;
+}
+
+// Encontra a última ocorrência de x (upper bound)
+int ultimaOcorrencia(int arr[], int n, int x) {
+    int esq = 0, dir = n - 1;
+    int resultado = -1;
+    
+    while (esq <= dir) {
+        int meio = esq + (dir - esq) / 2;
+        
+        if (arr[meio] == x) {
+            resultado = meio;
+            esq = meio + 1;  // Continua procurando à direita
+        } else if (arr[meio] < x) {
+            esq = meio + 1;
+        } else {
+            dir = meio - 1;
+        }
+    }
+    
+    return resultado;
+}
+
+// Conta quantas vezes x aparece no array ordenado
+int contarOcorrencias(int arr[], int n, int x) {
+    int primeira = primeiraOcorrencia(arr, n, x);
+    if (primeira == -1)
+        return 0;
+    int ultima = ultimaOcorrencia(arr, n, x);
+    return ultima - primeira + 1;
+}
+
+// Exemplo de uso
+int main() {
+    int arr[] = {2, 5, 5, 5, 8, 12, 16, 23, 38, 45};
+    int n = 10;
+    
+    printf("Array: ");
+    for (int i = 0; i < n; i++) printf("%d ", arr[i]);
+    printf("\n\n");
+    
+    // Busca básica
+    int pos = buscaBinariaIterativa(arr, n, 23);
+    printf("Busca por 23: índice %d\n", pos);
+    
+    // Busca recursiva
+    pos = buscaBinariaRecursiva(arr, 0, n - 1, 12);
+    printf("Busca recursiva por 12: índice %d\n", pos);
+    
+    // Primeira e última ocorrência
+    int primeira = primeiraOcorrencia(arr, n, 5);
+    int ultima = ultimaOcorrencia(arr, n, 5);
+    printf("Elemento 5: primeira ocorrência em %d, última em %d\n", 
+           primeira, ultima);
+    
+    // Contar ocorrências
+    int count = contarOcorrencias(arr, n, 5);
+    printf("Elemento 5 aparece %d vezes\n", count);
+    
+    return 0;
 }
 ```
 
@@ -259,12 +1071,28 @@ int buscaBinaria(int arr[], int n, int x) {
 ### Conceito Fundamental
 Pilhas e filas são **Tipos Abstratos de Dados (TAD)** que implementam estruturas lineares com **acesso restrito**, ou seja, permitem inserção e remoção apenas em posições específicas, seguindo políticas bem definidas.
 
+### O que é um TAD (Tipo Abstrato de Dados)?
+
+Um TAD define:
+- **O QUE** fazer (interface, operações)
+- **NÃO COMO** fazer (implementação)
+
+Isso permite:
+- Encapsulamento: detalhes internos ficam ocultos
+- Substituibilidade: pode trocar a implementação sem afetar o código cliente
+- Abstração: foco no comportamento, não nos detalhes
+
 ### Pilha (Stack) - LIFO
 
 #### Definição
 Estrutura que segue o princípio **LIFO** (*Last-In, First-Out*): o último elemento inserido é o primeiro a ser removido.
 
 **Analogia**: Pilha de pratos - você adiciona e remove sempre do topo.
+
+**Aplicações do mundo real**:
+- **Ctrl+Z no editor**: Desfaz a última ação (última a entrar, primeira a sair)
+- **Botão "Voltar" no navegador**: Volta para a página mais recente
+- **Chamadas de função**: A última função chamada é a primeira a retornar
 
 #### Operações Fundamentais
 ```c
@@ -287,6 +1115,181 @@ push(4) → [1, 2, 3, 4]  // 4 entra no topo
 pop()   → [1, 2, 3]     // 4 sai (último que entrou)
 ```
 
+#### Implementação Completa com Array
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+// Definição da estrutura da Pilha
+typedef struct {
+    int* array;      // Array para armazenar elementos
+    int topo;        // Índice do topo (-1 se vazia)
+    int capacidade;  // Capacidade máxima
+} Pilha;
+
+// Criar uma nova pilha
+Pilha* criarPilha(int capacidade) {
+    Pilha* pilha = (Pilha*)malloc(sizeof(Pilha));
+    pilha->capacidade = capacidade;
+    pilha->topo = -1;
+    pilha->array = (int*)malloc(capacidade * sizeof(int));
+    return pilha;
+}
+
+// Verificar se está vazia
+bool pilhaVazia(Pilha* pilha) {
+    return pilha->topo == -1;
+}
+
+// Verificar se está cheia
+bool pilhaCheia(Pilha* pilha) {
+    return pilha->topo == pilha->capacidade - 1;
+}
+
+// Empilhar elemento - O(1)
+bool push(Pilha* pilha, int item) {
+    if (pilhaCheia(pilha)) {
+        printf("Erro: Pilha cheia! Não foi possível adicionar %d\n", item);
+        return false;
+    }
+    pilha->array[++pilha->topo] = item;
+    printf("Empilhado: %d\n", item);
+    return true;
+}
+
+// Desempilhar elemento - O(1)
+int pop(Pilha* pilha) {
+    if (pilhaVazia(pilha)) {
+        printf("Erro: Pilha vazia!\n");
+        return -1;  // Valor de erro
+    }
+    int item = pilha->array[pilha->topo--];
+    printf("Desempilhado: %d\n", item);
+    return item;
+}
+
+// Ver elemento do topo sem remover - O(1)
+int peek(Pilha* pilha) {
+    if (pilhaVazia(pilha)) {
+        printf("Pilha vazia!\n");
+        return -1;
+    }
+    return pilha->array[pilha->topo];
+}
+
+// Retornar número de elementos
+int tamanho(Pilha* pilha) {
+    return pilha->topo + 1;
+}
+
+// Imprimir pilha
+void imprimirPilha(Pilha* pilha) {
+    if (pilhaVazia(pilha)) {
+        printf("Pilha vazia\n");
+        return;
+    }
+    printf("Pilha (base → topo): ");
+    for (int i = 0; i <= pilha->topo; i++) {
+        printf("%d ", pilha->array[i]);
+    }
+    printf("\n");
+}
+
+// Liberar memória
+void liberarPilha(Pilha* pilha) {
+    free(pilha->array);
+    free(pilha);
+}
+
+// Exemplo de uso
+int main() {
+    Pilha* pilha = criarPilha(5);
+    
+    push(pilha, 10);
+    push(pilha, 20);
+    push(pilha, 30);
+    
+    imprimirPilha(pilha);
+    printf("Topo: %d\n", peek(pilha));
+    printf("Tamanho: %d\n\n", tamanho(pilha));
+    
+    pop(pilha);
+    imprimirPilha(pilha);
+    
+    liberarPilha(pilha);
+    return 0;
+}
+```
+
+#### Aplicação Prática: Verificação de Parênteses Balanceados
+```c
+#include <stdio.h>
+#include <stdbool.h>
+#include <string.h>
+
+#define MAX 100
+
+typedef struct {
+    char array[MAX];
+    int topo;
+} PilhaChar;
+
+void inicializarPilha(PilhaChar* p) { p->topo = -1; }
+bool vazia(PilhaChar* p) { return p->topo == -1; }
+void push(PilhaChar* p, char c) { p->array[++p->topo] = c; }
+char pop(PilhaChar* p) { return p->array[p->topo--]; }
+
+// Verifica se os parênteses estão balanceados
+bool parentesesBalanceados(const char* expressao) {
+    PilhaChar pilha;
+    inicializarPilha(&pilha);
+    
+    for (int i = 0; expressao[i] != '\0'; i++) {
+        char c = expressao[i];
+        
+        // Se é um caractere de abertura, empilha
+        if (c == '(' || c == '[' || c == '{') {
+            push(&pilha, c);
+        }
+        // Se é um caractere de fechamento
+        else if (c == ')' || c == ']' || c == '}') {
+            // Pilha vazia = sem par correspondente
+            if (vazia(&pilha))
+                return false;
+            
+            char topo = pop(&pilha);
+            
+            // Verifica se o par corresponde
+            if ((c == ')' && topo != '(') ||
+                (c == ']' && topo != '[') ||
+                (c == '}' && topo != '{'))
+                return false;
+        }
+    }
+    
+    // Pilha deve estar vazia no final
+    return vazia(&pilha);
+}
+
+int main() {
+    const char* testes[] = {
+        "{[()]}",
+        "((()))",
+        "{[(])}",
+        "((())",
+        "a + (b * c) - [d / e]"
+    };
+    
+    for (int i = 0; i < 5; i++) {
+        printf("\"%s\" → %s\n", testes[i], 
+               parentesesBalanceados(testes[i]) ? "Balanceado ✓" : "Desbalanceado ✗");
+    }
+    
+    return 0;
+}
+```
+
 #### Implementações
 1. **Com Array**: Acesso rápido, tamanho limitado
 2. **Com Lista Encadeada**: Tamanho dinâmico, overhead de ponteiros
@@ -305,6 +1308,11 @@ pop()   → [1, 2, 3]     // 4 sai (último que entrou)
 Estrutura que segue o princípio **FIFO** (*First-In, First-Out*): o primeiro elemento inserido é o primeiro a ser removido.
 
 **Analogia**: Fila de banco - quem chega primeiro é atendido primeiro.
+
+**Aplicações do mundo real**:
+- **Fila de impressão**: Documentos são impressos na ordem de chegada
+- **Atendimento em bancos/hospitais**: Primeiro a chegar, primeiro a ser atendido
+- **Buffer de vídeo streaming**: Dados chegam e são consumidos em ordem
 
 #### Operações Fundamentais
 ```c
@@ -326,6 +1334,209 @@ bool vazia(Fila* f);                   // Verificar se vazia - O(1)
 Fila: [1, 2, 3]
 enqueue(4) → [1, 2, 3, 4]  // 4 entra no final
 dequeue()  → [2, 3, 4]     // 1 sai (primeiro que entrou)
+```
+
+#### Implementação Completa - Fila Circular
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+// Fila Circular - usa o array de forma circular para evitar desperdício
+typedef struct {
+    int* array;
+    int frente;      // Índice do primeiro elemento
+    int tras;        // Índice onde será inserido o próximo
+    int tamanho;     // Quantidade atual de elementos
+    int capacidade;  // Capacidade máxima
+} FilaCircular;
+
+// Criar fila
+FilaCircular* criarFila(int capacidade) {
+    FilaCircular* fila = (FilaCircular*)malloc(sizeof(FilaCircular));
+    fila->capacidade = capacidade;
+    fila->frente = 0;
+    fila->tras = 0;
+    fila->tamanho = 0;
+    fila->array = (int*)malloc(capacidade * sizeof(int));
+    return fila;
+}
+
+// Verificar se está vazia
+bool filaVazia(FilaCircular* fila) {
+    return fila->tamanho == 0;
+}
+
+// Verificar se está cheia
+bool filaCheia(FilaCircular* fila) {
+    return fila->tamanho == fila->capacidade;
+}
+
+// Enfileirar - O(1)
+bool enqueue(FilaCircular* fila, int item) {
+    if (filaCheia(fila)) {
+        printf("Erro: Fila cheia!\n");
+        return false;
+    }
+    
+    fila->array[fila->tras] = item;
+    fila->tras = (fila->tras + 1) % fila->capacidade;  // Circular
+    fila->tamanho++;
+    printf("Enfileirado: %d\n", item);
+    return true;
+}
+
+// Desenfileirar - O(1)
+int dequeue(FilaCircular* fila) {
+    if (filaVazia(fila)) {
+        printf("Erro: Fila vazia!\n");
+        return -1;
+    }
+    
+    int item = fila->array[fila->frente];
+    fila->frente = (fila->frente + 1) % fila->capacidade;  // Circular
+    fila->tamanho--;
+    printf("Desenfileirado: %d\n", item);
+    return item;
+}
+
+// Ver primeiro elemento sem remover
+int front(FilaCircular* fila) {
+    if (filaVazia(fila)) {
+        printf("Fila vazia!\n");
+        return -1;
+    }
+    return fila->array[fila->frente];
+}
+
+// Ver último elemento sem remover
+int rear(FilaCircular* fila) {
+    if (filaVazia(fila)) {
+        printf("Fila vazia!\n");
+        return -1;
+    }
+    int pos = (fila->tras - 1 + fila->capacidade) % fila->capacidade;
+    return fila->array[pos];
+}
+
+// Imprimir fila
+void imprimirFila(FilaCircular* fila) {
+    if (filaVazia(fila)) {
+        printf("Fila vazia\n");
+        return;
+    }
+    
+    printf("Fila (frente → trás): ");
+    int i = fila->frente;
+    for (int count = 0; count < fila->tamanho; count++) {
+        printf("%d ", fila->array[i]);
+        i = (i + 1) % fila->capacidade;
+    }
+    printf("\n");
+}
+
+// Liberar memória
+void liberarFila(FilaCircular* fila) {
+    free(fila->array);
+    free(fila);
+}
+
+// Exemplo de uso
+int main() {
+    FilaCircular* fila = criarFila(5);
+    
+    enqueue(fila, 10);
+    enqueue(fila, 20);
+    enqueue(fila, 30);
+    
+    imprimirFila(fila);
+    printf("Primeiro: %d, Último: %d\n\n", front(fila), rear(fila));
+    
+    dequeue(fila);
+    dequeue(fila);
+    
+    enqueue(fila, 40);
+    enqueue(fila, 50);
+    
+    imprimirFila(fila);
+    
+    liberarFila(fila);
+    return 0;
+}
+```
+
+#### Aplicação Prática: Simulação de Atendimento
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#include <time.h>
+
+#define MAX_FILA 20
+
+typedef struct {
+    int clientes[MAX_FILA];
+    int frente, tras, tamanho;
+} FilaAtendimento;
+
+void inicializarFila(FilaAtendimento* f) {
+    f->frente = 0;
+    f->tras = 0;
+    f->tamanho = 0;
+}
+
+bool chegaCliente(FilaAtendimento* f, int numero) {
+    if (f->tamanho >= MAX_FILA) {
+        printf("❌ Cliente %d: Fila cheia! Desistiu.\n", numero);
+        return false;
+    }
+    f->clientes[f->tras] = numero;
+    f->tras = (f->tras + 1) % MAX_FILA;
+    f->tamanho++;
+    printf("➡️ Cliente %d entrou na fila. Tamanho: %d\n", numero, f->tamanho);
+    return true;
+}
+
+int atenderCliente(FilaAtendimento* f) {
+    if (f->tamanho == 0) {
+        printf("😴 Nenhum cliente na fila.\n");
+        return -1;
+    }
+    int cliente = f->clientes[f->frente];
+    f->frente = (f->frente + 1) % MAX_FILA;
+    f->tamanho--;
+    printf("✅ Cliente %d atendido. Restantes: %d\n", cliente, f->tamanho);
+    return cliente;
+}
+
+int main() {
+    FilaAtendimento fila;
+    inicializarFila(&fila);
+    
+    printf("=== Simulação de Atendimento Bancário ===\n\n");
+    
+    // Simulação de chegadas e atendimentos
+    chegaCliente(&fila, 1);
+    chegaCliente(&fila, 2);
+    chegaCliente(&fila, 3);
+    
+    printf("\n--- Início do atendimento ---\n");
+    atenderCliente(&fila);
+    
+    chegaCliente(&fila, 4);
+    chegaCliente(&fila, 5);
+    
+    printf("\n--- Continuando atendimento ---\n");
+    atenderCliente(&fila);
+    atenderCliente(&fila);
+    atenderCliente(&fila);
+    atenderCliente(&fila);
+    
+    printf("\n--- Fim do expediente ---\n");
+    atenderCliente(&fila);  // Fila vazia
+    
+    return 0;
+}
 ```
 
 #### Tipos Especiais
