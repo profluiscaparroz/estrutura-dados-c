@@ -133,6 +133,14 @@ void merge(int arr[], int esq, int meio, int dir) {
     int* L = (int*)malloc(n1 * sizeof(int));
     int* R = (int*)malloc(n2 * sizeof(int));
     
+    // Verificar se malloc foi bem-sucedido
+    if (L == NULL || R == NULL) {
+        fprintf(stderr, "Erro: falha na alocação de memória\n");
+        free(L);  // free(NULL) é seguro
+        free(R);
+        return;
+    }
+    
     // Copiar dados para arrays temporários
     for (int i = 0; i < n1; i++)
         L[i] = arr[esq + i];
@@ -309,9 +317,18 @@ typedef struct {
 
 Pilha* criarPilha(int capacidade) {
     Pilha* pilha = (Pilha*)malloc(sizeof(Pilha));
+    if (pilha == NULL) {
+        fprintf(stderr, "Erro: falha na alocação de memória para pilha\n");
+        return NULL;
+    }
     pilha->capacidade = capacidade;
     pilha->topo = -1;
     pilha->array = (int*)malloc(capacidade * sizeof(int));
+    if (pilha->array == NULL) {
+        fprintf(stderr, "Erro: falha na alocação de memória para array da pilha\n");
+        free(pilha);
+        return NULL;
+    }
     return pilha;
 }
 
@@ -355,11 +372,20 @@ typedef struct {
 
 Fila* criarFila(int capacidade) {
     Fila* fila = (Fila*)malloc(sizeof(Fila));
+    if (fila == NULL) {
+        fprintf(stderr, "Erro: falha na alocação de memória para fila\n");
+        return NULL;
+    }
     fila->capacidade = capacidade;
     fila->frente = 0;
     fila->tamanho = 0;
     fila->tras = capacidade - 1;
     fila->array = (int*)malloc(capacidade * sizeof(int));
+    if (fila->array == NULL) {
+        fprintf(stderr, "Erro: falha na alocação de memória para array da fila\n");
+        free(fila);
+        return NULL;
+    }
     return fila;
 }
 
@@ -442,6 +468,10 @@ typedef struct Node {
 // Criar novo nó
 Node* criarNo(int data) {
     Node* novo = (Node*)malloc(sizeof(Node));
+    if (novo == NULL) {
+        fprintf(stderr, "Erro: falha na alocação de memória para nó\n");
+        return NULL;
+    }
     novo->data = data;
     novo->next = NULL;
     return novo;
@@ -450,6 +480,7 @@ Node* criarNo(int data) {
 // Inserir no início - O(1)
 void inserirInicio(Node** head, int data) {
     Node* novo = criarNo(data);
+    if (novo == NULL) return;  // Falha na alocação
     novo->next = *head;
     *head = novo;
 }
@@ -457,6 +488,7 @@ void inserirInicio(Node** head, int data) {
 // Inserir no final - O(n)
 void inserirFinal(Node** head, int data) {
     Node* novo = criarNo(data);
+    if (novo == NULL) return;  // Falha na alocação
     
     if (*head == NULL) {
         *head = novo;
@@ -543,6 +575,10 @@ typedef struct DNode {
 // Criar novo nó
 DNode* criarDNo(int data) {
     DNode* novo = (DNode*)malloc(sizeof(DNode));
+    if (novo == NULL) {
+        fprintf(stderr, "Erro: falha na alocação de memória para nó duplo\n");
+        return NULL;
+    }
     novo->data = data;
     novo->prev = NULL;
     novo->next = NULL;
@@ -552,6 +588,7 @@ DNode* criarDNo(int data) {
 // Inserir no início - O(1)
 void inserirDInicio(DNode** head, int data) {
     DNode* novo = criarDNo(data);
+    if (novo == NULL) return;  // Falha na alocação
     novo->next = *head;
     
     if (*head != NULL) {
@@ -564,6 +601,7 @@ void inserirDInicio(DNode** head, int data) {
 // Inserir no final - O(n) sem tail pointer
 void inserirDFinal(DNode** head, int data) {
     DNode* novo = criarDNo(data);
+    if (novo == NULL) return;  // Falha na alocação
     
     if (*head == NULL) {
         *head = novo;
@@ -718,6 +756,10 @@ void demonstrar_comparacao_performance() {
     
     // Criar array ordenado
     int* arr = (int*)malloc(n * sizeof(int));
+    if (arr == NULL) {
+        fprintf(stderr, "Erro: falha na alocação de memória para array de performance\n");
+        return;
+    }
     for (int i = 0; i < n; i++) {
         arr[i] = i * 2;  // 0, 2, 4, 6, ...
     }
