@@ -49,9 +49,21 @@ Uma **estrutura de dados** é uma forma sistemática de organizar, armazenar e g
 #### Definição Formal
 
 Formalmente, uma estrutura de dados pode ser definida como uma tupla **(D, F, A)** onde:
-- **D** representa o conjunto de dados (domínio)
-- **F** representa o conjunto de funções ou operações aplicáveis aos dados
-- **A** representa o conjunto de axiomas ou propriedades que governam o comportamento das operações
+
+**D** representa o conjunto de dados (domínio)
+- Exemplo:
+    - Em uma lista, o domínio pode ser qualquer tipo de dado (inteiros, strings, objetos).
+    - Em uma árvore binária, o domínio são os nós que contêm valores e referências para filhos.
+**F** representa o conjunto de funções ou operações aplicáveis aos dados
+- Exemplos:
+    - Para uma fila (queue): enqueue, dequeue, peek.
+    - Para uma pilha (stack): push, pop, top.
+- Essas funções devem respeitar as propriedades da estrutura (não podemos, por exemplo, remover de uma fila vazia sem tratar isso).
+**A** representa o conjunto de axiomas ou propriedades que governam o comportamento das operações
+- Exemplos:
+    - Em uma pilha: após um push(x) seguido de pop(), o elemento retornado deve ser x (propriedade LIFO).
+    - Em uma fila: a ordem de saída deve ser a mesma ordem de entrada (propriedade FIFO).
+- Esses axiomas são importantes para provar correção e consistência.
 
 #### Classificação das Estruturas de Dados
 
