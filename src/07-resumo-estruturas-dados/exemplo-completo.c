@@ -131,13 +131,15 @@ void merge(int arr[], int esq, int meio, int dir) {
     
     // Criar arrays temporários
     int* L = (int*)malloc(n1 * sizeof(int));
-    int* R = (int*)malloc(n2 * sizeof(int));
+    if (L == NULL) {
+        fprintf(stderr, "Erro: falha na alocação de memória para L\n");
+        return;
+    }
     
-    // Verificar se malloc foi bem-sucedido
-    if (L == NULL || R == NULL) {
-        fprintf(stderr, "Erro: falha na alocação de memória\n");
-        free(L);  // free(NULL) é seguro
-        free(R);
+    int* R = (int*)malloc(n2 * sizeof(int));
+    if (R == NULL) {
+        fprintf(stderr, "Erro: falha na alocação de memória para R\n");
+        free(L);
         return;
     }
     

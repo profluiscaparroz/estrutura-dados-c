@@ -308,6 +308,9 @@ Passo 3: [34, 25, 64, 12] → comparar 64 e 12 → trocar → [34, 25, 12, 64]
 
 **Implementação Completa**:
 ```c
+#include <stdio.h>
+#include <stdbool.h>
+
 // Bubble Sort com otimização de parada antecipada
 void bubbleSort(int arr[], int n) {
     for (int i = 0; i < n - 1; i++) {
