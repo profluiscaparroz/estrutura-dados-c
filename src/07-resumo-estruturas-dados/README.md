@@ -40,6 +40,146 @@ Este resumo consolida os seguintes tópicos estudados:
 
 ---
 
+## 📖 Fundamentos Teóricos: Estruturas de Dados e Tipos Abstratos de Dados
+
+### O que é uma Estrutura de Dados?
+
+Uma **estrutura de dados** é uma forma sistemática de organizar, armazenar e gerenciar dados na memória de um computador, de modo a permitir seu uso eficiente. Do ponto de vista acadêmico, estruturas de dados são modelos matemáticos que definem a organização lógica dos dados e as operações que podem ser realizadas sobre eles.
+
+#### Definição Formal
+
+Formalmente, uma estrutura de dados pode ser definida como uma tupla **(D, F, A)** onde:
+- **D** representa o conjunto de dados (domínio)
+- **F** representa o conjunto de funções ou operações aplicáveis aos dados
+- **A** representa o conjunto de axiomas ou propriedades que governam o comportamento das operações
+
+#### Classificação das Estruturas de Dados
+
+As estruturas de dados podem ser classificadas de diferentes formas:
+
+**1. Quanto à Organização:**
+- **Lineares**: Os elementos são organizados sequencialmente (vetores, listas, pilhas, filas)
+- **Não-Lineares**: Os elementos são organizados de forma hierárquica ou em rede (árvores, grafos)
+
+**2. Quanto à Alocação de Memória:**
+- **Estáticas**: Tamanho fixo definido em tempo de compilação (arrays)
+- **Dinâmicas**: Tamanho variável, alocação em tempo de execução (listas encadeadas)
+
+**3. Quanto à Homogeneidade:**
+- **Homogêneas**: Todos os elementos são do mesmo tipo (vetores de inteiros)
+- **Heterogêneas**: Elementos de tipos diferentes (structs, registros)
+
+#### Importância Acadêmica
+
+O estudo de estruturas de dados é fundamental na Ciência da Computação porque:
+
+1. **Eficiência Algorítmica**: A escolha da estrutura de dados impacta diretamente a complexidade temporal e espacial dos algoritmos
+2. **Modelagem de Problemas**: Permite representar problemas do mundo real de forma computacional
+3. **Fundamento para Disciplinas Avançadas**: Base para estudo de bancos de dados, sistemas operacionais, compiladores e inteligência artificial
+4. **Análise de Complexidade**: Permite avaliar e comparar soluções computacionais de forma rigorosa
+
+### O que é um Tipo Abstrato de Dados (TAD)?
+
+Um **Tipo Abstrato de Dados (TAD)**, do inglês *Abstract Data Type (ADT)*, é um modelo matemático que define um tipo de dado através de seu comportamento (semântica), independentemente de sua implementação concreta. É uma abstração que especifica **O QUE** as operações fazem, sem definir **COMO** elas são implementadas.
+
+#### Definição Formal
+
+Um TAD é definido formalmente por:
+- **Um conjunto de valores** (domínio)
+- **Um conjunto de operações** sobre esses valores
+- **Especificações formais** (pré-condições, pós-condições e invariantes)
+
+#### Componentes de um TAD
+
+1. **Interface**: Conjunto de operações públicas disponíveis para os usuários
+2. **Especificação**: Descrição formal do comportamento de cada operação
+3. **Implementação**: Realização concreta do TAD (oculta do usuário)
+
+#### Exemplo Acadêmico: TAD Pilha
+
+```
+TAD Pilha
+    Domínio: Sequência de elementos do tipo T
+    
+    Operações:
+        criar(): Pilha
+            - Pré-condição: nenhuma
+            - Pós-condição: retorna uma pilha vazia
+            
+        empilhar(p: Pilha, e: T): Pilha
+            - Pré-condição: nenhuma
+            - Pós-condição: retorna pilha com e no topo
+            
+        desempilhar(p: Pilha): (Pilha, T)
+            - Pré-condição: pilha não está vazia
+            - Pós-condição: retorna pilha sem o elemento do topo e o elemento removido
+            
+        topo(p: Pilha): T
+            - Pré-condição: pilha não está vazia
+            - Pós-condição: retorna o elemento do topo sem removê-lo
+            
+        estaVazia(p: Pilha): Booleano
+            - Pré-condição: nenhuma
+            - Pós-condição: retorna verdadeiro se pilha está vazia
+            
+    Axiomas:
+        - topo(empilhar(p, e)) = e
+        - estaVazia(criar()) = verdadeiro
+        - estaVazia(empilhar(p, e)) = falso
+```
+
+#### Princípios Fundamentais dos TADs
+
+1. **Encapsulamento**: Os detalhes de implementação são ocultados do usuário
+2. **Abstração**: O usuário interage apenas com a interface, não com a implementação
+3. **Modularidade**: TADs podem ser desenvolvidos e testados independentemente
+4. **Reutilização**: A mesma interface pode ter múltiplas implementações
+
+#### Relação entre TAD e Estrutura de Dados
+
+| Aspecto | TAD | Estrutura de Dados |
+|---------|-----|-------------------|
+| **Nível** | Abstrato (conceitual) | Concreto (implementação) |
+| **Define** | O que fazer (comportamento) | Como fazer (algoritmos) |
+| **Foco** | Interface e especificação | Organização na memória |
+| **Exemplo** | TAD Pilha | Array ou Lista Encadeada |
+
+#### Importância do Conceito de TAD
+
+1. **Separação de Interesses**: Divide o problema em especificação e implementação
+2. **Manutenibilidade**: Permite alterar a implementação sem afetar o código cliente
+3. **Correção de Software**: Facilita a verificação formal de programas
+4. **Design de Software**: Fundamento para programação orientada a objetos e interfaces
+
+### Hierarquia de Abstração
+
+A relação entre os conceitos pode ser visualizada em níveis de abstração:
+
+```
+┌─────────────────────────────────────────┐
+│     TIPO ABSTRATO DE DADOS (TAD)        │  ← Nível mais alto (O QUÊ)
+│     Especificação comportamental        │
+└─────────────────────────────────────────┘
+                    ↓
+┌─────────────────────────────────────────┐
+│       ESTRUTURA DE DADOS                │  ← Nível intermediário (COMO organizar)
+│       Organização lógica dos dados      │
+└─────────────────────────────────────────┘
+                    ↓
+┌─────────────────────────────────────────┐
+│       REPRESENTAÇÃO NA MEMÓRIA          │  ← Nível mais baixo (ONDE)
+│       Bits, bytes, endereços            │
+└─────────────────────────────────────────┘
+```
+
+### Referências Acadêmicas
+
+- **Wirth, N. (1976)**. *Algorithms + Data Structures = Programs*. Prentice Hall.
+- **Aho, A. V., Hopcroft, J. E., & Ullman, J. D. (1983)**. *Data Structures and Algorithms*. Addison-Wesley.
+- **Liskov, B., & Zilles, S. (1974)**. Programming with abstract data types. *ACM SIGPLAN Notices*, 9(4), 50-59.
+
+---
+
 ## 1️⃣ Vetores e Matrizes
 
 ### Conceito Fundamental
