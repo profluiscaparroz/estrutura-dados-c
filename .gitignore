@@ -77,3 +77,14 @@ src/algoritmos-avancados/*/consistent_hashing
 src/algoritmos-avancados/*/trie
 src/algoritmos-avancados/*/bloom_filter
 src/algoritmos-avancados/*/consistent
+src/algoritmos-avancados/*/recursao
+src/algoritmos-avancados/*/divisao_conquista
+src/algoritmos-avancados/*/hash_avancada
+src/algoritmos-avancados/*/bst_avancada
+src/algoritmos-avancados/*/suffix_array
+src/algoritmos-avancados/*/lcp_array
+src/algoritmos-avancados/*/count_min_sketch
+src/algoritmos-avancados/*/hyperloglog
+src/algoritmos-avancados/*/treap
+src/algoritmos-avancados/*/splay_tree
+src/algoritmos-avancados/*/avl_tree
