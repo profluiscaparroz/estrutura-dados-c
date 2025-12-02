@@ -285,6 +285,20 @@ int treap_count_less(TreapNode *node, int key) {
     }
 }
 
+// ==================== ALTURA DA ÁRVORE ====================
+
+/**
+ * Calcular altura real da árvore
+ */
+int treap_height(TreapNode *node) {
+    if (node == NULL) return 0;
+    
+    int left_height = treap_height(node->left);
+    int right_height = treap_height(node->right);
+    
+    return 1 + (left_height > right_height ? left_height : right_height);
+}
+
 // ==================== TRAVESSIAS ====================
 
 void inorder(TreapNode *node) {
@@ -518,22 +532,12 @@ void comparar_balanceamento() {
         treap_insert_wrapper(t, i);
     }
     
-    // Calcular altura
-    int altura = 0;
-    TreapNode *node = t->root;
-    while (node) {
-        altura++;
-        // Ir para o filho com maior subárvore
-        if (get_size(node->left) > get_size(node->right)) {
-            node = node->left;
-        } else {
-            node = node->right;
-        }
-    }
+    // Calcular altura real da árvore
+    int altura = treap_height(t->root);
     
     printf("Inserção de %d elementos em ordem:\n", n);
     printf("  BST normal: altura = %d (pior caso)\n", n);
-    printf("  Treap: altura aproximada = %d\n", altura);
+    printf("  Treap: altura = %d\n", altura);
     printf("  Altura ótima: log2(%d) = %.0f\n", n, log2(n));
     printf("\n");
     

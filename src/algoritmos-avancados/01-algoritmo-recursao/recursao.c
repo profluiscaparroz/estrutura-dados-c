@@ -68,20 +68,35 @@ long fibonacci_ingenuo(int n) {
     return fibonacci_ingenuo(n - 1) + fibonacci_ingenuo(n - 2);
 }
 
-// Cache para memoização
+// Cache para memoização (inicializado com -1 para indicar não calculado)
 static long memo[100];
+static int memo_initialized = 0;
+
+/**
+ * Inicializar cache de memoização
+ */
+void init_memo() {
+    for (int i = 0; i < 100; i++) {
+        memo[i] = -1;
+    }
+    memo_initialized = 1;
+}
 
 /**
  * Fibonacci com memoização
  * Complexidade: O(n) tempo, O(n) espaço
  */
 long fibonacci_memo(int n) {
+    if (!memo_initialized) {
+        init_memo();
+    }
+    
     if (n <= 1) {
         return n;
     }
     
     // Verificar se já calculamos
-    if (memo[n] != 0) {
+    if (memo[n] != -1) {
         return memo[n];
     }
     
@@ -286,15 +301,15 @@ void testar_fatorial() {
 void testar_fibonacci() {
     printf("=== TESTE FIBONACCI ===\n");
     
-    // Limpar memo
-    memset(memo, 0, sizeof(memo));
+    // Reinicializar memo
+    memo_initialized = 0;
     
     printf("Fibonacci ingênuo (n=20): %ld\n", fibonacci_ingenuo(20));
     printf("Fibonacci com memo (n=20): %ld\n", fibonacci_memo(20));
     printf("Fibonacci com memo (n=40): %ld\n", fibonacci_memo(40));
     
     printf("\nSequência Fibonacci (0-10): ");
-    memset(memo, 0, sizeof(memo));
+    memo_initialized = 0;  // Reinicializar para nova sequência
     for (int i = 0; i <= 10; i++) {
         printf("%ld ", fibonacci_memo(i));
     }
