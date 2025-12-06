@@ -1,0 +1,19 @@
+# Compiled binaries
+*/test
+*/vertex_cover
+*/bin_packing
+*.o
+*.out
+a.out
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*~
