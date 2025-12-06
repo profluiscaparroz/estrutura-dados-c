@@ -18,7 +18,7 @@
 #define MAX_VERTICES 100
 
 /**
- * Estrutura para representar um grafo usando lista de adjacências
+ * Estrutura para representar um grafo usando matriz de adjacência
  */
 typedef struct {
     int n_vertices;                          // Número de vértices

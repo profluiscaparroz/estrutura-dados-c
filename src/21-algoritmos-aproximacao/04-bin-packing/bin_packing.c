@@ -1,6 +1,6 @@
 /**
  * Bin Packing - Heurísticas de Aproximação
- * Next Fit, First Fit, Best Fit, First Fit Decreasing
+ * Next Fit, First Fit, First Fit Decreasing
  * 
  * Complexidade FFD: O(n log n)
  * Fator de Aproximação FFD: 11/9 ≈ 1.222
@@ -81,14 +81,9 @@ int first_fit_decreasing(double items[], int n, Bin bins[]) {
     return first_fit(sorted, n, bins);
 }
 
-void print_bins(Bin bins[], int n_bins, double items[]) {
+void print_bins(Bin bins[], int n_bins) {
     for (int i = 0; i < n_bins; i++) {
-        printf("Bin %d (%.2f/%.2f): ", i+1, bins[i].used, CAPACITY);
-        for (int j = 0; j < bins[i].n_items; j++) {
-            int idx = bins[i].items[j];
-            printf("%.2f ", items[idx]);
-        }
-        printf("\n");
+        printf("Bin %d (%.2f/%.2f)\n", i+1, bins[i].used, CAPACITY);
     }
 }
 
@@ -110,21 +105,21 @@ int main() {
     for (int i = 0; i < MAX_ITEMS; i++) bins[i].n_items = 0;
     int nf = next_fit(items, n, bins);
     printf("=== Next Fit: %d bins ===\n", nf);
-    print_bins(bins, nf, items);
+    print_bins(bins, nf);
     
     // First Fit
     printf("\n=== First Fit: ");
     for (int i = 0; i < MAX_ITEMS; i++) bins[i].n_items = 0;
     int ff = first_fit(items, n, bins);
     printf("%d bins ===\n", ff);
-    print_bins(bins, ff, items);
+    print_bins(bins, ff);
     
     // First Fit Decreasing
     printf("\n=== First Fit Decreasing: ");
     for (int i = 0; i < MAX_ITEMS; i++) bins[i].n_items = 0;
     int ffd = first_fit_decreasing(items, n, bins);
     printf("%d bins ===\n", ffd);
-    print_bins(bins, ffd, items);
+    print_bins(bins, ffd);
     
     printf("\nResumo:\n");
     printf("NF: %d bins (fator 2)\n", nf);
