@@ -93,7 +93,7 @@ int mid = (left + right) / 2;
 int mid = left + (right - left) / 2;
 
 // ALTERNATIVA - bit shift (apenas para não-negativos)
-int mid = (left + right) >>> 1;
+int mid = left + ((right - left) >> 1);
 ```
 
 ### 7. buscaBinariaTernaria.c
