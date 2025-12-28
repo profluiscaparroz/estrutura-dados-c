@@ -92,7 +92,7 @@ int mid = (left + right) / 2;
 // CORRETO - previne overflow
 int mid = left + (right - left) / 2;
 
-// ALTERNATIVA - bit shift (apenas para não-negativos)
+// ALTERNATIVA - bit shift (também previne overflow)
 int mid = left + ((right - left) >> 1);
 ```
 

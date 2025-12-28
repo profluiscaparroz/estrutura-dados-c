@@ -8,7 +8,7 @@ Este diretório contém exemplos de processamento de imagens usando arrays (veto
 
 ### Exemplos de Código
 
-- **exemplo_imagem_simples.c** - Exemplo básico de processamento de imagem
+- **exemplo_iamgem_simples.c** - Exemplo básico de processamento de imagem (nota: nome do arquivo contém erro de digitação)
 - **main.c** - Programa principal com processamento de imagem
 - **main_simples.c** - Versão simplificada do programa principal
 

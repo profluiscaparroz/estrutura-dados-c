@@ -14,7 +14,7 @@ Esta aula apresenta os fundamentos essenciais da linguagem C, incluindo conceito
 4. **03_exemplo_struct.c** - Estruturas (structs) em C
 5. **04_exemplo_constantes.c** - Uso de constantes e macros
 6. **05_exemplo_booleano.c** - Tipos booleanos em C
-7. **06_variaveis_estaticas.c** - Variáveis estáticas e seu comportamento
+7. **06_variaives_estaticas.c** - Variáveis estáticas e seu comportamento (nota: nome do arquivo contém erro de digitação)
 8. **07_exemplo_escopo.c** - Escopo de variáveis (local, global, estático)
 
 ## 🎯 Objetivos de Aprendizado
