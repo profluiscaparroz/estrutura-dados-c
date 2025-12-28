@@ -124,7 +124,7 @@ for (int i = 0; i < n; i += 4) {
 Elimina branches condicionais.
 
 ```c
-int mid = (left + right) >> 1;
+int mid = left + (right - left) / 2;
 left = (arr[mid] < x) ? mid + 1 : left;
 right = (arr[mid] >= x) ? mid : right;
 ```
