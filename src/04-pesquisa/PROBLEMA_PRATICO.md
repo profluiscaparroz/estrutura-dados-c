@@ -145,8 +145,8 @@ Produto* buscaInterpoladaPorId(Produto *produtos, int total, int id) {
         
         // Verificar se IDs são iguais (evitar divisão por zero)
         if (produtos[high].id == produtos[low].id) {
-            if (produtos[low].id == id) return &produtos[low];
-            return NULL;
+            // Todos elementos neste range têm o mesmo ID
+            return (produtos[low].id == id) ? &produtos[low] : NULL;
         }
         
         // Estimativa da posição usando interpolação
