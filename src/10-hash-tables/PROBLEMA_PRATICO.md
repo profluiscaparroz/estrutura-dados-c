@@ -133,6 +133,9 @@ unsigned long hash(const char *str) {
 
 NoLRU* criarNoLRU(const char *chave) {
     NoLRU *no = (NoLRU*)malloc(sizeof(NoLRU));
+    if (no == NULL) {
+        return NULL;
+    }
     strcpy(no->chave, chave);
     no->anterior = NULL;
     no->proximo = NULL;
@@ -294,6 +297,10 @@ bool inserir(Cache *cache, const char *chave, const char *valor) {
     
     // Criar nova entrada
     EntradaHash *nova = (EntradaHash*)malloc(sizeof(EntradaHash));
+    if (nova == NULL) {
+        printf("❌ Erro ao alocar memória para entrada de cache\n");
+        return false;
+    }
     strcpy(nova->chave, chave);
     strcpy(nova->valor, valor);
     nova->timestamp = time(NULL);
@@ -302,6 +309,11 @@ bool inserir(Cache *cache, const char *chave, const char *valor) {
     
     // Criar nó LRU
     nova->noLRU = criarNoLRU(chave);
+    if (nova->noLRU == NULL) {
+        printf("❌ Erro ao alocar memória para nó LRU\n");
+        free(nova);
+        return false;
+    }
     adicionarNoInicio(cache, nova->noLRU);
     
     // Inserir na hash table (início da lista de chaining)

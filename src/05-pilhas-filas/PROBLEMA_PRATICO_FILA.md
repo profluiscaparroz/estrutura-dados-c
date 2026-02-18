@@ -83,6 +83,7 @@ int main() {
 
 ```c
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
 #include <time.h>
@@ -261,6 +262,11 @@ bool atenderProximoCliente(CallCenter *cc) {
     // Nota: A memória alocada aqui deve ser liberada em finalizarAtendimento()
     atendente->ocupado = true;
     atendente->clienteAtual = malloc(sizeof(Cliente));
+    if (atendente->clienteAtual == NULL) {
+        printf("❌ Erro de memória: não foi possível registrar o atendimento do cliente.\n");
+        atendente->ocupado = false;
+        return false;
+    }
     *atendente->clienteAtual = cliente;
     atendente->inicioAtendimento = agora;
     

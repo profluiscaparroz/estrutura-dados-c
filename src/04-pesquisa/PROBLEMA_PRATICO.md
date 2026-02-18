@@ -143,6 +143,12 @@ Produto* buscaInterpoladaPorId(Produto *produtos, int total, int id) {
             return NULL;
         }
         
+        // Verificar se IDs são iguais (evitar divisão por zero)
+        if (produtos[high].id == produtos[low].id) {
+            if (produtos[low].id == id) return &produtos[low];
+            return NULL;
+        }
+        
         // Estimativa da posição usando interpolação
         int pos = low + ((double)(high - low) / 
                         (produtos[high].id - produtos[low].id)) * 

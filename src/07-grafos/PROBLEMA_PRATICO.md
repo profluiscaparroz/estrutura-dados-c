@@ -179,6 +179,9 @@ void inserirHeap(MinHeap *h, int vertice, int distancia) {
 NoHeap extrairMin(MinHeap *h) {
     NoHeap min = h->nos[0];
     
+    // Marcar vértice como não presente no heap
+    h->posicao[min.vertice] = -1;
+    
     h->tamanho--;
     if (h->tamanho > 0) {
         h->nos[0] = h->nos[h->tamanho];
@@ -226,6 +229,10 @@ int adicionarLocal(Grafo *g, const char *nome, double lat, double lon) {
 void adicionarRua(Grafo *g, int origem, int destino, int distancia, const char *nomeRua) {
     // Adicionar aresta origem -> destino
     Aresta *nova = (Aresta*)malloc(sizeof(Aresta));
+    if (nova == NULL) {
+        printf("❌ Erro ao alocar memória para aresta\n");
+        return;
+    }
     nova->destino = destino;
     nova->peso = distancia;
     strcpy(nova->nomeRua, nomeRua);
@@ -234,6 +241,10 @@ void adicionarRua(Grafo *g, int origem, int destino, int distancia, const char *
     
     // Grafo não direcionado: adicionar destino -> origem
     nova = (Aresta*)malloc(sizeof(Aresta));
+    if (nova == NULL) {
+        printf("❌ Erro ao alocar memória para aresta\n");
+        return;
+    }
     nova->destino = origem;
     nova->peso = distancia;
     strcpy(nova->nomeRua, nomeRua);

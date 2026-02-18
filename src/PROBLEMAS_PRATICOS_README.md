@@ -81,15 +81,21 @@ Cada problema demonstra:
 # Navegar para o diretório
 cd src/02-vetor-matriz
 
-# Extrair código C do markdown (opcional, para teste)
-# ... ou copiar manualmente o código da seção "Solução"
+# PASSO 1 (OBRIGATÓRIO): Extrair código C do markdown
+# Você precisa copiar o código da seção "✅ Solução:" do arquivo PROBLEMA_PRATICO.md
+# e salvar em um arquivo .c (por exemplo: estoque.c)
+# 
+# Opção 1: Copiar manualmente o código entre ```c e ``` da seção "Solução"
+# Opção 2: Usar um script/editor para extrair o bloco de código
 
-# Compilar
-gcc PROBLEMA_PRATICO.c -o programa -Wall
+# PASSO 2: Compilar o código extraído
+gcc estoque.c -o estoque -Wall
 
-# Executar
-./programa
+# PASSO 3: Executar
+./estoque
 ```
+
+**Nota Importante**: Os arquivos neste repositório são documentos markdown (.md) contendo explicações e código C. Você deve extrair o código da seção "✅ Solução:" antes de compilar.
 
 ### Estudar os Exemplos
 
