@@ -258,6 +258,7 @@ bool atenderProximoCliente(CallCenter *cc) {
     int tempoEspera = (int)difftime(agora, cliente.horaChegada);
     
     // Registrar atendimento
+    // Nota: A memória alocada aqui deve ser liberada em finalizarAtendimento()
     atendente->ocupado = true;
     atendente->clienteAtual = malloc(sizeof(Cliente));
     *atendente->clienteAtual = cliente;

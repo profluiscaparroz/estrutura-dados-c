@@ -113,6 +113,10 @@ typedef struct {
 
 void inicializarHeap(MinHeap *h) {
     h->tamanho = 0;
+    // Inicializar posições como inválidas
+    for (int i = 0; i < MAX_VERTICES; i++) {
+        h->posicao[i] = -1;
+    }
 }
 
 void trocarNos(NoHeap *a, NoHeap *b) {
@@ -285,7 +289,8 @@ void dijkstra(Grafo *g, int origem, int destino, int *distancias, int *anteriore
                     distancias[v] = novaDistancia;
                     anteriores[v] = u;
                     
-                    if (heap.posicao[v] < heap.tamanho) {
+                    // Verificar se o vértice já está no heap (posição válida)
+                    if (heap.posicao[v] >= 0 && heap.posicao[v] < heap.tamanho) {
                         diminuirChave(&heap, v, novaDistancia);
                     } else {
                         inserirHeap(&heap, v, novaDistancia);
